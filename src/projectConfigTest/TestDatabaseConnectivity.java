@@ -2,6 +2,7 @@ package projectConfigTest;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -14,6 +15,16 @@ import static org.junit.jupiter.api.Assertions.fail;
 class TestDatabaseConnectivity {
     private static final String DATA_DIRECTORY = System.getProperty("user.dir").replace("\\", "/") + "/data/";
     private static final String TEST_DB_FILE = DATA_DIRECTORY + "test.db";
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    @BeforeEach
+    void setup(){
+        try {
+            File f = new File(TEST_DB_FILE);
+            f.getParentFile().mkdirs();
+            f.createNewFile();
+        }catch(Exception ignored){}
+    }
 
     @Test
     void testDriver() {
