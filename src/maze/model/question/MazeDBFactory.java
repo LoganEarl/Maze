@@ -1,4 +1,4 @@
-package maze.db;
+package maze.model.question;
 
 import java.util.List;
 

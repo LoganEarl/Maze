@@ -1,4 +1,4 @@
-package maze.db;
+package maze.model.question;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,20 +28,20 @@ public class TextDatabase implements IMazeDB {
 		}
 
 		scanner.close();
-		
+
 		///////////////////////////////////////////////////////////////////////
 		boolean isNextLineQuestion = false;
 		int readAnswerCount = -1; //-1 means we are not reading
 		QuestionHeader header = null;
 		MazeQuestion question = null;
 
-		
+
 		for (String line : lines) {
 
 			if (line.startsWith("#")) {
 				continue;
 			}
-			
+
 			if(isNextLineQuestion)
 			{
 				question.question = line;
@@ -51,8 +51,8 @@ public class TextDatabase implements IMazeDB {
 			else if(readAnswerCount > 0)
 			{
 				question.answers.add(line);
-				readAnswerCount--;	
-				
+				readAnswerCount--;
+
 				if(readAnswerCount == 0)
 				{
 					questions.add(question);
@@ -71,24 +71,24 @@ public class TextDatabase implements IMazeDB {
 				isNextLineQuestion = false;
 				readAnswerCount = -1;
 			}
-			
 
-			
+
+
 			if (line.startsWith("[")) {
 
 				header = QuestionHeader.parse(line);
-				
-				if(header != null) 
+
+				if(header != null)
 				{
 					question = new MazeQuestion();
 					question.type = header.type;
 					question.answerIndex = header.correctAnswerIndex;
-					
+
 					if(header.keywords.size() > 0)
 						question.keywords.addAll(header.keywords);
-					
+
 					isNextLineQuestion = true;
-					readAnswerCount = header.answersCount;					
+					readAnswerCount = header.answersCount;
 					 //System.out.println(header);
 				}
 			}
@@ -108,38 +108,38 @@ public class TextDatabase implements IMazeDB {
 
 	@Override
 	public Iterator<IQuestion> iterator() {
-		
+
 		return new TextDBIterator(this);
 	}
-	
-	
+
+
 	class TextDBIterator implements Iterator<IQuestion> {
-		
+
 		TextDatabase db;
 		int currentIndex = -1;
-		
+
 		public TextDBIterator(TextDatabase db) {
 			this.db = db;
-			
+
 		}
 		@Override
 		public boolean hasNext() {
 			int next = currentIndex + 1;
-			
+
 			return next < db.questions.size();
 		}
 
 		@Override
 		public IQuestion next() {
-			
+
 			if(hasNext()) {
 				return db.questions.get(++currentIndex);
 			}
-			
-			throw new IndexOutOfBoundsException();	
+
+			throw new IndexOutOfBoundsException();
 		}
-		
-		
+
+
 	}
 }
 
@@ -151,10 +151,10 @@ class QuestionHeader {
 	public ArrayList<String> keywords = new ArrayList<String>(); // keyword that identifies item
 
 	public String toString() {
-		
+
 		return this.type + ", " + this.answersCount + ", " + this.correctAnswerIndex + ", " + this.keywords.size();
 	}
-	
+
 	public static QuestionHeader parse(String line) {
 
 		QuestionHeader header = new QuestionHeader();
@@ -178,7 +178,7 @@ class QuestionHeader {
 			default:
 				return null;
 			}
-			
+
 			// Parse number of questions
 			try {
 				header.answersCount = Integer.parseInt(parts[1]);
@@ -215,12 +215,12 @@ class QuestionHeader {
 
 			}
 
-			return header;		
-			
-		} 
+			return header;
+
+		}
 
 		return null;
 	}
-	
-	
+
+
 }
