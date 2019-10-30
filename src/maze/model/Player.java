@@ -1,6 +1,6 @@
-package world.model;
+package maze.model;
 
-import world.Direction;
+import maze.Direction;
 
 public class Player {
     private Room currentRoom;

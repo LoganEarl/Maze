@@ -1,7 +1,7 @@
-package world.model;
+package maze.model;
 
 import utils.Pair;
-import world.question.Question;
+import maze.model.question.Question;
 
 public class Door {
     private Pair<Room> connectedRooms;

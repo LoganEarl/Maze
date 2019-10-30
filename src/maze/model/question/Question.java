@@ -1,6 +1,6 @@
-package world.question;
+package maze.model.question;
 
-import world.model.Item;
+import maze.model.Item;
 
 public interface Question {
     boolean isCorrect(String answer);

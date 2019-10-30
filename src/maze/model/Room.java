@@ -1,7 +1,6 @@
-package world.model;
+package maze.model;
 
-import utils.Pair;
-import world.Direction;
+import maze.Direction;
 
 import java.util.Collection;
 import java.util.HashMap;

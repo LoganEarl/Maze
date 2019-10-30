@@ -1,4 +1,4 @@
-package world.model;
+package maze.model;
 
 public interface Item {
 
