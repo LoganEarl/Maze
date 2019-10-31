@@ -6,30 +6,22 @@ public interface Question {
     boolean isCorrect(String answer);
     boolean isCorrect(Item keyItem);
     QuestionInfo getInfo();
-    String getCorrectAnswer();
     Item constructKeyItem();
+    int getQuestionID();
 
     interface QuestionInfo {
         //Or something to the effect of this.
         String getPromptText();
         String getQuestionType();
+        String getCorrectAnswer();
     }
-
-
-
-
-
-
-
-
-
 
     Question stubbedQuestion = new Question(){
         public static final String TYPE = "STUBBED";
 
         @Override
         public boolean isCorrect(String answer) {
-            return answer.toLowerCase().trim().equals("friend");
+            return answer.toLowerCase().trim().contains("friend");
         }
 
         @Override
@@ -38,8 +30,18 @@ public interface Question {
         }
 
         @Override
+        public int getQuestionID() {
+            return 0;
+        }
+
+        @Override
         public QuestionInfo getInfo() {
             return new QuestionInfo(){
+                @Override
+                public String getCorrectAnswer() {
+                    return "friend";
+                }
+
                 @Override
                 public String getPromptText() {
                     return "Say friend and enter";
@@ -50,11 +52,6 @@ public interface Question {
                     return TYPE;
                 }
             };
-        }
-
-        @Override
-        public String getCorrectAnswer() {
-            return "friend";
         }
 
         @Override
