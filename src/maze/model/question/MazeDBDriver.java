@@ -4,13 +4,13 @@ import java.util.Iterator;
 
 public class MazeDBDriver {
 
-	public static void main(String[] args) throws Exception {
+	public static void driver(String[] args) throws Exception {
 		
-		IMazeDB db = MazeDBFactory.createMazeDb(MazeDBType.TEXT, "data/QuestionDb.txt");
+		IMazeDB db = MazeDBFactory.createMazeDb(MazeDBType.TEXT, "QuestionDb.txt");
 		
 		System.out.println("IMazeDB of type: " + db.getDbType());
 		
-        Iterator<IQuestion> iterator = db.iterator(); 
+        Iterator<Question> iterator = db.iterator(); 
         
         System.out.println("List elements : "); 
   

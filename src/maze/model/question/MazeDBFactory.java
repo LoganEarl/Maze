@@ -15,23 +15,22 @@ public class MazeDBFactory {
 	
 }
 
-interface IMazeDB extends Iterable<IQuestion> {
+interface IMazeDB extends Iterable<Question> {
 	MazeDBType getDbType();
 	
-	IQuestion getNextQuestion(QuestionType questionType);
+	Question getNextQuestion(QuestionType questionType);
 }
 
-enum QuestionType {
-	TRUE_FALSE,
-	MULTIPLE,
-	SHORT
-}
+
+
+
 
 enum MazeDBType {
 	TEXT,
 	SQLITE
 }
 
+/*
 interface IQuestion {
 	
 	QuestionType getType();
@@ -40,3 +39,4 @@ interface IQuestion {
 	int getCorrectAnswerIndex();
 	List<String> getKeyWords();
 }
+*/
