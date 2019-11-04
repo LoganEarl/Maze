@@ -14,12 +14,20 @@ public class Player {
         this.items = new HashSet<>();
     }
 
-    public boolean canReachRoom(Room destination){
+    //moves the player only if the door in that direction is open
+    public boolean move(Direction direction){
+        Door toMove = currentRoom.getDoor(direction);
+        if(toMove != null && toMove.isOpen()){
+            currentRoom = toMove.getOtherRoom(currentRoom);
+            return true;
+        }
         return false;
     }
 
-    public boolean move(Direction direction){
-        return false;
+    //will move the player regardless of obstacles
+    public void forceMove(Direction direction){
+        Door toMove = currentRoom.getDoor(direction);
+        if(toMove != null) currentRoom = toMove.getOtherRoom(currentRoom);
     }
 
     public Room getCurrentRoom() {
@@ -28,5 +36,13 @@ public class Player {
 
     public Set<Item> getItems() {
         return items;
+    }
+
+    public void addItem(Item item) {
+        items.add(item);
+    }
+
+    public void removeItem(Item item) {
+        items.remove(item);
     }
 }

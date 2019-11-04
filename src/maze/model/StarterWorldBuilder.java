@@ -24,7 +24,7 @@ public class StarterWorldBuilder implements World.Builder {
         Room ll = new Room(-1,-1);
 
         //this will change later
-        Question myQuestion = Question.stubbedQuestion;
+        Question myQuestion = Question.STUBBED_QUESTION;
 
         //set core path to end
         entryRoom.setRoomConnection(north,ul,south,myQuestion);

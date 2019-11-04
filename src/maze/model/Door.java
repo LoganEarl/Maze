@@ -37,9 +37,18 @@ public class Door {
         return isLocked;
     }
 
+    //doors cannot be unlocked once locked
+    public void lock(){
+        this.isLocked = true;
+    }
+
     //if the door's question was answered or an item was used to open it
     public boolean isOpen() {
         return isOpen;
+    }
+
+    public void open(){
+        this.isOpen = true;
     }
 
     //returns the key item or null if no item exists for this room

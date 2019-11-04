@@ -25,7 +25,7 @@ public class Room implements Iterable<Door>{
     Door setRoomConnection(Direction entryDirection, Room targetRoom, Direction exitDirection, Question question) throws IllegalArgumentException{
         if(doors.containsKey(entryDirection) || targetRoom.doors.containsKey(exitDirection))
             throw new IllegalArgumentException("There is already a room connection using those exists");
-        Door newDoor = new Door(new Pair<>(this, targetRoom), question);
+        Door newDoor = new Door(new Pair<>(this, targetRoom), question, question.constructKeyItem());
         doors.put(entryDirection, newDoor);
         targetRoom.doors.put(exitDirection, newDoor);
         return newDoor;
@@ -53,11 +53,11 @@ public class Room implements Iterable<Door>{
         return doors.values();
     }
 
-    public int getxCoordinate() {
+    public int getXCoordinate() {
         return xCoordinate;
     }
 
-    public int getyCoordinate() {
+    public int getYCoordinate() {
         return yCoordinate;
     }
 

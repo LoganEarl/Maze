@@ -16,7 +16,10 @@ public interface Question {
         String getCorrectAnswer();
     }
 
-    Question stubbedQuestion = new Question(){
+    Item SKELETON_KEY = () -> "Skeleton Key";
+
+    Item STUBBED_ITEM = () -> "StubbedItem";
+    Question STUBBED_QUESTION = new Question(){
         public static final String TYPE = "STUBBED";
 
         @Override
@@ -26,7 +29,7 @@ public interface Question {
 
         @Override
         public boolean isCorrect(Item keyItem) {
-            return false;
+            return keyItem == STUBBED_ITEM || keyItem == SKELETON_KEY;
         }
 
         @Override
@@ -56,7 +59,7 @@ public interface Question {
 
         @Override
         public Item constructKeyItem() {
-            return null;
+            return STUBBED_ITEM;
         }
     };
 }

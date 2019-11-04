@@ -18,4 +18,15 @@ public class Pair<T> {
             return itemTwo;
         return itemOne;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(this == obj) return true;
+        if(obj == null) return false;
+        if(obj instanceof Pair){
+            Pair that = (Pair)obj;
+            return this.itemOne.equals(that.itemOne) && this.itemTwo.equals(that.itemTwo);
+        }
+        return false;
+    }
 }

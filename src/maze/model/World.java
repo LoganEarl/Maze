@@ -14,12 +14,17 @@ public class World {
         this.player = new Player(entryRoom);
     }
 
+    //will path from the player's current position to the exit, making sure that it is possible to solve the maze
+    //from where the player is currently and with the player's current items (and any it might find)
     public boolean currentRouteExists(){
-        return canPathTo(player.getCurrentRoom(), exitRoom, new HashSet<>(), new HashSet<>(player.getItems()));
+        return canPathTo(player.getCurrentRoom(), exitRoom, new HashSet<>(), new HashSet<>(player.getItems()), new HashSet<>());
     }
 
+    //will path from the entry point to the exit point, checking if passage is possible. Only use to validate
+    //a freshly minted world, as it is not guaranteed to work once the player starts futzing with items
+
     public boolean baseRouteExists(){
-        return canPathTo(entryRoom, exitRoom, new HashSet<>(), new HashSet<>());
+        return canPathTo(entryRoom, exitRoom, new HashSet<>(), new HashSet<>(),new HashSet<>());
     }
 
     //this algorithm makes the assumption that using a question-specific item is never a bad idea.
@@ -44,6 +49,7 @@ public class World {
         }
 
         myVisited = new HashSet<>(visited);
+        myVisited.add(source);
         
         //class B calls: explore as far as we can without using skeleton keys
         for(Door exit: source){
@@ -55,14 +61,48 @@ public class World {
                 }else if(foundItems.contains(exit.getKeyItem()) && !myUsedItems.contains(exit.getKeyItem())){
                     myUsedItems.add(exit.getKeyItem());
                     foundItems.remove(exit.getKeyItem());
+                    if(canPathTo(nextRoom, exitRoom, myVisited, foundItems, myUsedItems))
+                        return true;
                 }
             }
         }
 
-        //class C calls: explore as far as we can, even using any skeleton keys we might have
+        myVisited = new HashSet<>(visited);
+        myVisited.add(source);
 
+        //class C calls: explore as far as we can, even using any skeleton keys we might have
+        for(Door exit: source){
+            Room nextRoom = exit.getOtherRoom(source);
+            if(!myVisited.contains(nextRoom)){
+                if(!exit.isLocked() || exit.isOpen()){
+                    if(canPathTo(nextRoom, exitRoom, myVisited, foundItems, myUsedItems))
+                        return true;
+                }else{
+                    for(Item i:foundItems){
+                        if(exit.getQuestion().isCorrect(i) && !usedItems.contains(i)){
+                            Set<Item> newUsedItems = new HashSet<>(usedItems);
+                            newUsedItems.add(i);
+                            if(canPathTo(nextRoom, exitRoom, myVisited, foundItems, newUsedItems))
+                                return true;
+                        }
+                    }
+                }
+            }
+        }
 
         return false;
+    }
+
+    public Room getEntryRoom() {
+        return entryRoom;
+    }
+
+    public Room getExitRoom() {
+        return exitRoom;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 
     public interface Builder {
