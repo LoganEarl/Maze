@@ -7,13 +7,16 @@ import maze.model.Item;
 
 public class MazeQuestion implements Question {
 
+	public int id;
 	public String question;
 	public List<String> answers = new ArrayList<String>();
 	public int answerIndex;
 	public List<String> keywords = new ArrayList<String>(); //list of item names that can answer question for you
 	public QuestionType type = maze.model.question.QuestionType.MULTIPLE;
 	
-	
+	public int getId() {
+		return this.id;
+	}
 	
 	public QuestionType getType() {
 		return this.type;
