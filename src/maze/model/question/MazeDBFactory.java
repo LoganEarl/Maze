@@ -1,33 +1,61 @@
 package maze.model.question;
 
+import java.io.File;
 import java.util.List;
 
-public class MazeDBFactory {
+public class DatabaseManager {
 	
-	public static IMazeDB createMazeDb(MazeDBType DbType, String FileName) throws Exception {
+    /**
+     * This is the declaration for the /data directory used to store db files in
+     */
+    public static final String DATA_DIRECTORY = System.getProperty("user.dir").replace("\\", "/") + "/data/";
+    
+    public static final String DEFAULT_DB_FILE = "mazedb.sqlite3";
+    
+    static void createDirectories(String appDir) {
+        File f = new File(DATA_DIRECTORY + appDir + "/");
+        if (!f.exists()) {
+            f.getParentFile().mkdirs();
+            f.mkdirs();
+        }
+    }
+    
+    static String createDbFileName(String appDir)
+    {
+		createDirectories(appDir);
 		
-		if(DbType == MazeDBType.TEXT)
-			return new TextDatabase(FileName);
+		return DATA_DIRECTORY + appDir + "/" + DEFAULT_DB_FILE;
+    }
+    
+	public static MazeDatabase openDatabase(String appDir)  {
 		
-		throw new Exception("DB w/ sqLite not supported yet");
-		//return ;
+		// Makes sure that the DATA_DIRECTORY and all sub directories exist
+		String fName = createDbFileName(appDir);		
+		
+		return new SqLiteDatabase(fName);
+	}	
+	
+	/*
+	public void closeDatabase(MazeDatabase)
+	{
+		
 	}
-	
+	*/
 }
 
-interface IMazeDB extends Iterable<Question> {
-	MazeDBType getDbType();
+ 
+interface MazeDatabase {
 	
 	Question getNextQuestion(QuestionType questionType);
-}
-
-
-
-
-
-enum MazeDBType {
-	TEXT,
-	SQLITE
+	
+	List<Question> readAllRecords();
+	
+	MazeQuestion add(MazeQuestion q);	
+	
+	MazeQuestion remove(int questionId);
+	
+	boolean update(MazeQuestion q);
+	
 }
 
 /*
