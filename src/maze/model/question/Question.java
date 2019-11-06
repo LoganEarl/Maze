@@ -2,8 +2,6 @@ package maze.model.question;
 
 import maze.model.Item;
 
-
-
 public interface Question {
     boolean isCorrect(String answer);
     boolean isCorrect(Item keyItem);
@@ -11,8 +9,10 @@ public interface Question {
     String getCorrectAnswer();
     Item constructKeyItem();
     
+    
     //sveta's
     QuestionType getType();
+    int getId();
 
     interface QuestionInfo {
         //Or something to the effect of this.
@@ -20,20 +20,16 @@ public interface Question {
         String getQuestionType();
     }
 
-
-
-
-
-
-
-
-
+    
 
     Question stubbedQuestion = new Question(){
         public static final String TYPE = "STUBBED";
         
         public final QuestionType QTYPE = QuestionType.MULTIPLE;
-
+        
+        public int getId() {
+        	return 1;
+        }
         @Override
         public boolean isCorrect(String answer) {
             return answer.toLowerCase().trim().equals("friend");
@@ -78,7 +74,16 @@ public interface Question {
 }
 
 enum QuestionType {
-	TRUE_FALSE,
-	MULTIPLE,
-	SHORT
+	MULTIPLE(0),
+	TRUE_FALSE(1),
+	SHORT(2);
+	
+	private final int value;
+    private QuestionType(int value) {
+        this.value = value;
+    }
+
+    public int getValue() {
+        return value;
+    }
 }
