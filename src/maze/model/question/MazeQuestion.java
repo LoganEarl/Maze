@@ -6,11 +6,10 @@ import java.util.List;
 import maze.model.Item;
 
 public class MazeQuestion implements Question {
-
+	
 	public int id;
 	public String question;
-	public List<String> answers = new ArrayList<String>();
-	public int answerIndex;
+	public List<MazeAnswer> answers = new ArrayList<MazeAnswer>();
 	public List<String> keywords = new ArrayList<String>(); //list of item names that can answer question for you
 	public QuestionType type = maze.model.question.QuestionType.MULTIPLE;
 	
@@ -27,14 +26,23 @@ public class MazeQuestion implements Question {
 		return this.question;
 	}
 
-	public List<String> getAnswers() {
+	public List<MazeAnswer> getAnswers() {
 		
 		return this.answers;
 	}
 
 	
 	public int getCorrectAnswerIndex() {
-		return this.answerIndex;
+		int index = 0;
+		for(MazeAnswer a: answers) {
+			if(a.correct) {
+				return index;
+			}
+			
+			index++;
+		}
+		
+		return 0;
 	}
 
 	
@@ -44,7 +52,7 @@ public class MazeQuestion implements Question {
 	
 	public String toString()
 	{
-		return "Q: " + question +"\n  A: " + this.answers.get(answerIndex) + "\n";
+		return "Q: " + question +"\n  A: " + this.answers.get(getCorrectAnswerIndex()) + "\n";
 	}
 
 
@@ -70,19 +78,19 @@ public class MazeQuestion implements Question {
 					return false;
 			}
 			
-			return userAnswer.compareTo(this.answers.get(0)) == 0;			
+			return userAnswer.compareTo(this.answers.get(0).answer) == 0;			
 		}
 		
 		if(this.type == QuestionType.MULTIPLE)
 		{
-			return (answer.compareToIgnoreCase(answers.get(answerIndex)) == 0);				
+			return (answer.compareToIgnoreCase(answers.get(getCorrectAnswerIndex()).answer) == 0);				
 		}
 		
 		if(this.type == QuestionType.SHORT)
 		{
-			for(String ans: answers)
+			for(MazeAnswer ans: answers)
 			{
-				if(answer.compareToIgnoreCase(ans) == 0)
+				if(answer.compareToIgnoreCase(ans.answer) == 0)
 					return true;						
 			}			
 		}
@@ -156,7 +164,7 @@ public class MazeQuestion implements Question {
 
 	@Override
 	public String getCorrectAnswer() {
-		return this.answers.get(this.answerIndex);
+		return this.answers.get(this.getCorrectAnswerIndex()).answer;
 	}
 
 	 class MazeItem implements Item {
@@ -178,5 +186,20 @@ public class MazeQuestion implements Question {
 		
 		return new MazeItem(this.keywords.size() > 0 ? this.keywords.get(0) : "gold");
 	}
+}
 
+class MazeAnswer {
+	public int id;
+	public String answer;
+	public boolean correct;
+	
+	public MazeAnswer(int id, String answer, boolean correct) {
+		this.id = id;
+		this.answer = answer;
+		this.correct = correct;
+	}
+	
+	public MazeAnswer(String answer, boolean correct) {
+		this(0, answer, correct);
+	}
 }
