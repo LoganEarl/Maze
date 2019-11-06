@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 class MazequestionTests {
 	
-	IMazeDB db = null;
+	MazeDatabase db = null;
 	ArrayList<Question> tfQuestions = new ArrayList<Question>();
 	ArrayList<Question> multQuestions = new ArrayList<Question>();
 	ArrayList<Question> shQuestions = new ArrayList<Question>();
@@ -32,13 +32,10 @@ class MazequestionTests {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		 db = MazeDBFactory.createMazeDb(MazeDBType.TEXT, "QuestionDb.txt");
+		 db = new TextDatabase("QuestionDb.txt"); //DatabaseManager.createMazeDb(MazeDBType.TEXT, "QuestionDb.txt");
 
-	     Iterator<Question> iterator = db.iterator(); 
-
-	      while (iterator.hasNext()) 
+	      for (Question q: db.readAllRecords()) 
 	      {
-	    	 Question q = iterator.next();
 	    	  switch(q.getType())
 	    	  {
 	    	  	case MULTIPLE:
@@ -50,8 +47,7 @@ class MazequestionTests {
 	    	  	case SHORT:
 		    	  	shQuestions.add(q);
 		    	  	break;	    	  	   		  	    	
-	    	  }
-	    	  
+	    	  }	    	  
 	      }
 	}
 
@@ -59,16 +55,15 @@ class MazequestionTests {
 	void tearDown() throws Exception {
 	}
 
-	// @Test
+	@Test
 	void ParserTest() {
-		System.out.println("IMazeDB of type: " + db.getDbType());
+		//System.out.println("IMazeDB of type: " + db.getDbType());
 		
-        Iterator<Question> iterator = db.iterator(); 
         
         System.out.println("List elements : "); 
   
-        while (iterator.hasNext()) {
-            System.out.println(iterator.next() + " ");
+        for (Question q: db.readAllRecords()) {
+            System.out.println(q + " ");
         }
 	}
 	
@@ -115,8 +110,7 @@ class MazequestionTests {
 			Assert.assertEquals(true, userResponse);
 			
 			//Wrong answer
-			Assert.assertEquals(false, next.isCorrect(userResponse + "haha"));
-
+			assert(!next.isCorrect(userResponse + "haha"));
 		}
 		
 		
@@ -139,9 +133,6 @@ class MazequestionTests {
 			
 			//Wrong answer
 			Assert.assertEquals(false, next.isCorrect(userResponse + "haha"));
-
-		}
-			
+		}			
 	}
-
 }
