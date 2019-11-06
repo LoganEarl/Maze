@@ -1,0 +1,11 @@
+
+public enum PlayerEventType {
+	NEWGAME,
+	LOADGAME,
+	SAVEGAME,
+	MOVENORTH,
+	MOVESOUTH,
+	MOVEEAST,
+	MOVEWEST,
+	
+}
