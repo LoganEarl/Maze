@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
-public class TextDatabase implements IMazeDB {
+public class TextDatabase implements MazeDatabase {
 
 	public List<Question> questions = new ArrayList<Question>();
 
@@ -19,6 +19,9 @@ public class TextDatabase implements IMazeDB {
 	public void parse(String FileName) throws FileNotFoundException {
 
 		List<String> lines = new ArrayList<String>();
+		
+		int questionId = 1;
+		int answerId = 1;
 
 		Scanner scanner = new Scanner(new File(FileName));
 
@@ -50,11 +53,19 @@ public class TextDatabase implements IMazeDB {
 			}
 			else if(readAnswerCount > 0)
 			{
-				question.answers.add(line);
+				MazeAnswer answer = new MazeAnswer(answerId++, line, false);
+				
+				// Current size of the answer list is an index for the next quest. So it is OK
+				// to compare the correct index to it.
+				if(header.correctAnswerIndex == question.answers.size())
+					answer.correct = true;
+					
+				question.answers.add(new MazeAnswer(answerId++, line, false));
 				readAnswerCount--;	
 				
 				if(readAnswerCount == 0)
 				{
+					question.id = questionId++;
 					questions.add(question);
 					question = null;
 					header = null;
@@ -82,7 +93,6 @@ public class TextDatabase implements IMazeDB {
 				{
 					question = new MazeQuestion();
 					question.type = header.type;
-					question.answerIndex = header.correctAnswerIndex;
 					
 					if(header.keywords.size() > 0)
 						question.keywords.addAll(header.keywords);
@@ -95,52 +105,39 @@ public class TextDatabase implements IMazeDB {
 		}
 
 	}
-
+	
+	int index = -1;
+	
 	public Question getNextQuestion(QuestionType questionType) {
+		
+		index = (index + 1) % questions.size();
+		return questions.get(index);
+	}
 
+	@Override
+	public List<Question> readAllRecords() {
+		// TODO Auto-generated method stub
+		return questions;
+	}
+
+	@Override
+	public MazeQuestion add(MazeQuestion q) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public MazeDBType getDbType() {
-		return MazeDBType.TEXT;
+	public MazeQuestion remove(int questionId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public Iterator<Question> iterator() {
-		
-		return new TextDBIterator(this);
+	public boolean update(MazeQuestion q) {
+		// TODO Auto-generated method stub
+		return false;
 	}
-	
-	
-	class TextDBIterator implements Iterator<Question> {
-		
-		TextDatabase db;
-		int currentIndex = -1;
-		
-		public TextDBIterator(TextDatabase db) {
-			this.db = db;
-			
-		}
-		@Override
-		public boolean hasNext() {
-			int next = currentIndex + 1;
-			
-			return next < db.questions.size();
-		}
 
-		@Override
-		public Question next() {
-			
-			if(hasNext()) {
-				return db.questions.get(++currentIndex);
-			}
-			
-			throw new IndexOutOfBoundsException();	
-		}
-		
-		
-	}
 }
 
 class QuestionHeader {
