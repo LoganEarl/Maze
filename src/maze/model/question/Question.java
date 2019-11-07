@@ -1,6 +1,11 @@
 package maze.model.question;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import maze.model.Item;
+
+
 
 public interface Question {
     boolean isCorrect(String answer);
@@ -10,9 +15,13 @@ public interface Question {
     Item constructKeyItem();
     
     
-    //sveta's
-    QuestionType getType();
+    //-- sveta's particulars --
     int getId();
+    String getQuestion();
+    List<MazeAnswer> getAnswers();
+    List<String> getKeywords();
+    QuestionType getType();  
+    
 
     interface QuestionInfo {
         //Or something to the effect of this.
@@ -69,6 +78,18 @@ public interface Question {
 		public QuestionType getType() {
 			
 			return QTYPE;
+		}
+		@Override
+		public String getQuestion() {
+			return "How are you?";
+		}
+		@Override
+		public List<MazeAnswer> getAnswers() {
+			return new ArrayList<MazeAnswer>();
+		}
+		@Override
+		public List<String> getKeywords() {
+			return new ArrayList<String>();
 		}
     };
 }
