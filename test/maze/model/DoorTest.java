@@ -49,9 +49,4 @@ class DoorTest {
         testDoor.open();
         assert(testDoor.isOpen());
     }
-
-    @Test
-    void getKeyItem() {
-        assert testDoor.getKeyItem() == Question.STUBBED_ITEM;
-    }
 }

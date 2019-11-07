@@ -6,14 +6,13 @@ import org.junit.jupiter.api.Test;
 
 import static maze.model.question.Question.SKELETON_KEY;
 import static maze.model.question.Question.STUBBED_ITEM;
-import static org.junit.jupiter.api.Assertions.*;
 
 class WorldTest {
     private World world;
 
     @BeforeEach
     void setUp() {
-        world = new StarterWorldBuilder().build();
+        world = new StubbedStaticWorldBuilder().build();
     }
 
     //assumes that the player is working properly
@@ -28,6 +27,7 @@ class WorldTest {
         assert(world.currentRouteExists());
         curRoom = world.getPlayer().getCurrentRoom();
         curRoom.getDoor(Direction.east).lock();
+
         assert(!world.currentRouteExists());
         curRoom.addItem(STUBBED_ITEM);
         assert(world.currentRouteExists());
