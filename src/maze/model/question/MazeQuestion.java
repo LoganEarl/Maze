@@ -30,6 +30,10 @@ public class MazeQuestion implements Question {
 		
 		return this.answers;
 	}
+	
+	public List<String> getKeywords() {
+		return keywords;
+	}
 
 	
 	public int getCorrectAnswerIndex() {
@@ -201,5 +205,9 @@ class MazeAnswer {
 	
 	public MazeAnswer(String answer, boolean correct) {
 		this(0, answer, correct);
+	}
+	
+	public String toString() {
+		return answer + "[" + (correct ? "CORRECT" : "WRONG") + "]";
 	}
 }
