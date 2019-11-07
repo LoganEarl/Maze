@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
-// Textdatabase
+// This used to be Textdatabase.java
 public class QuestionImporter {
 
 	public List<Question> questions = new ArrayList<Question>();
