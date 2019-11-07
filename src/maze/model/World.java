@@ -1,6 +1,8 @@
 package maze.model;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 public class World {
@@ -12,6 +14,24 @@ public class World {
         this.entryRoom = entryRoom;
         this.exitRoom = exitRoom;
         this.player = new Player(entryRoom);
+    }
+
+    public Set<Room> getAllRooms(){
+        Set<Room> visited = new HashSet<>();
+        LinkedList<Room> toExplore = new LinkedList<>();
+        toExplore.add(entryRoom);
+        toExplore.add(exitRoom);
+
+        while(!toExplore.isEmpty()){
+            Room cur = toExplore.pop();
+            visited.add(cur);
+            for(Door d: cur) {
+                Room next = d.getOtherRoom(cur);
+                if (!visited.contains(next))
+                    toExplore.add(next);
+            }
+        }
+        return visited;
     }
 
     //will path from the player's current position to the exit, making sure that it is possible to solve the maze
