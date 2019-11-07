@@ -7,23 +7,26 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
-public class TextDatabase implements MazeDatabase {
+// Textdatabase
+public class QuestionImporter {
 
 	public List<Question> questions = new ArrayList<Question>();
 
-	public TextDatabase(String FileName) throws FileNotFoundException {
+	public QuestionImporter(String FileName) throws FileNotFoundException {
 
-		parse(FileName);
+		Scanner scanner = new Scanner(new File(FileName));
+
+		parse(scanner);
 	}
 
-	public void parse(String FileName) throws FileNotFoundException {
+	private QuestionImporter() {}
+	
+	public void parse(Scanner scanner) {
 
 		List<String> lines = new ArrayList<String>();
 		
 		int questionId = 1;
 		int answerId = 1;
-
-		Scanner scanner = new Scanner(new File(FileName));
 
 		while (scanner.hasNext()) {
 
@@ -60,7 +63,7 @@ public class TextDatabase implements MazeDatabase {
 				if(header.correctAnswerIndex == question.answers.size())
 					answer.correct = true;
 					
-				question.answers.add(new MazeAnswer(answerId++, line, false));
+				question.answers.add(answer);
 				readAnswerCount--;	
 				
 				if(readAnswerCount == 0)
@@ -114,28 +117,25 @@ public class TextDatabase implements MazeDatabase {
 		return questions.get(index);
 	}
 
-	@Override
-	public List<Question> readAllRecords() {
+	
+	public List<Question> getQuestions() {
 		// TODO Auto-generated method stub
 		return questions;
 	}
 
-	@Override
-	public MazeQuestion add(MazeQuestion q) {
-		// TODO Auto-generated method stub
-		return null;
+	public static QuestionImporter parseString(String questions) 
+	{
+		QuestionImporter db = new QuestionImporter();
+		
+		Scanner scanner = new Scanner(questions);
+		
+		db.parse(scanner);
+		
+		return db;
 	}
 
-	@Override
-	public MazeQuestion remove(int questionId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean update(MazeQuestion q) {
-		// TODO Auto-generated method stub
-		return false;
+	public static QuestionImporter getDefaultQuestions() {
+		return parseString(DefaultQuestions.QUESTIONS);
 	}
 
 }
@@ -209,15 +209,76 @@ class QuestionHeader {
 					}
 				} catch (Exception e) {
 				}
-
 			}
 
-			return header;		
-			
+			return header;					
 		} 
 
 		return null;
-	}
-	
-	
+	}		
 }
+
+
+class DefaultQuestions
+{
+	public static final String QUESTIONS = 
+		"# TF\n" +
+		"# MULT\n" +
+		"# SH\n" +
+		"# |------------ REQUIRED ----------|------------- OPITIONAL ------------------|\n" +
+		"# [FORMAT,NUM-ANSWERS,CORRECT-INDEX,NUMBER-OF-KEYWORDS,KEYWORD_0,...,KEYWORD_N]\n" +
+	
+		"[TF,1,0]\n" +
+		"The color of sky is blue?\n" +
+		"true\n" +
+	
+		"[SH,2,0]\n" +
+		"What is the color of the sky?\n" +
+		"blue\n" +
+		"blueish\n" +
+	
+		"[MULT,3,0]\n" +
+		"Finish this sentence, \"My name is Inigo Montoya......\"\n" +
+		"You killed my father, prepare to die.\n" +
+		"Would you like fries with that?\n" +
+		"Gimme a hive five!\n" +
+	
+		"[MULT,3,1]\n" +
+		"Wesley's eyes are the color of?\n" +
+		"The fire of a thousand suns.\n" +
+		"High seas after a storm.\n" +
+		"Black as the night sky.\n" +
+	
+		"[MULT,3,1]\n" +
+		"Lying \"mostly dead\" on Miracle Max's table, Wesley responds to Max's question \"What's so important?\" with what response?\n" +
+		"To blave\n" +
+		"True love\n" +
+		"As you wish\n" +
+					
+		"[MULT,3,2]\n" +
+		"What is the name of the Six-Fingered Man?\n" +
+		"Prince Humperdink\n" +
+		"Inigo Montoya\n" +
+		"Count Rugen\n" +
+		
+		"[MULT,3,2]\n" +
+		"What does \"R.O.U.S.\" stand for?\n" +
+		"Rotten old umbrella stands\n" +
+		"Rats of usual shape\n" +
+		"Rodents of unusual size\n" +
+		
+		"[MULT,3,0]\n" +
+		"What is the name of the poison that Westley uses to match wits with Vincini?\n" +
+		"Iokane\n" +
+		"Cyanide\n" +
+		"Iodine\n" +
+		
+		"[MULT,3,1]\n" +
+		"Is Westley is left handed ?\n" +
+		"Yes\n" +
+		"No\n" +
+		"Neither\n";
+}	
+
+
+
