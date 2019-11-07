@@ -5,6 +5,7 @@ import maze.Direction;
 import java.util.HashSet;
 import java.util.Set;
 
+@SuppressWarnings("WeakerAccess")
 public class Player {
     private Room currentRoom;
     private Set<Item> items;

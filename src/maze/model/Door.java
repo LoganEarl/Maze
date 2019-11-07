@@ -3,6 +3,7 @@ package maze.model;
 import utils.Pair;
 import maze.model.question.Question;
 
+@SuppressWarnings("WeakerAccess")
 public class Door {
     private Pair<Room> connectedRooms;
     private Question question;

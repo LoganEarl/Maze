@@ -2,9 +2,9 @@ package maze.model;
 
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
+@SuppressWarnings("WeakerAccess")
 public class World {
     private Room entryRoom;
     private Room exitRoom;

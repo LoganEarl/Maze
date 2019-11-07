@@ -6,6 +6,7 @@ import utils.Pair;
 
 import java.util.*;
 
+@SuppressWarnings("WeakerAccess")
 public class Room implements Iterable<Door>{
     private int xCoordinate;
     private int yCoordinate;

@@ -3,6 +3,7 @@ package maze.model;
 import maze.model.question.Question;
 import static maze.Direction.*;
 
+@SuppressWarnings("WeakerAccess")
 public class StubbedStaticWorldBuilder implements World.Builder {
     private Room entryRoom;
     private Room exitRoom;
