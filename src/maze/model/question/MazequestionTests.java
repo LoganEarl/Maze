@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 class MazequestionTests {
 	
-	MazeDatabase db = null;
+	QuestionImporter db = null;
 	ArrayList<Question> tfQuestions = new ArrayList<Question>();
 	ArrayList<Question> multQuestions = new ArrayList<Question>();
 	ArrayList<Question> shQuestions = new ArrayList<Question>();
@@ -32,9 +32,9 @@ class MazequestionTests {
 
 	@BeforeEach
 	void setUp() throws Exception {
-		 db = new TextDatabase("QuestionDb.txt"); //DatabaseManager.createMazeDb(MazeDBType.TEXT, "QuestionDb.txt");
+		 db = QuestionImporter.getDefaultQuestions(); //DatabaseManager.createMazeDb(MazeDBType.TEXT, "QuestionDb.txt");
 
-	      for (Question q: db.readAllRecords()) 
+	      for (Question q: db.getQuestions()) 
 	      {
 	    	  switch(q.getType())
 	    	  {
@@ -47,7 +47,8 @@ class MazequestionTests {
 	    	  	case SHORT:
 		    	  	shQuestions.add(q);
 		    	  	break;	    	  	   		  	    	
-	    	  }	    	  
+	    	  }
+	    	  
 	      }
 	}
 
@@ -62,7 +63,7 @@ class MazequestionTests {
         
         System.out.println("List elements : "); 
   
-        for (Question q: db.readAllRecords()) {
+        for (Question q: db.getQuestions()) {
             System.out.println(q + " ");
         }
 	}
@@ -111,6 +112,7 @@ class MazequestionTests {
 			
 			//Wrong answer
 			assert(!next.isCorrect(userResponse + "haha"));
+
 		}
 		
 		
@@ -133,6 +135,9 @@ class MazequestionTests {
 			
 			//Wrong answer
 			Assert.assertEquals(false, next.isCorrect(userResponse + "haha"));
-		}			
+
+		}
+			
 	}
+
 }
