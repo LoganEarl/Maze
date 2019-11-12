@@ -7,11 +7,60 @@ import maze.model.Item;
 
 public class MazeQuestion implements Question {
 	
-	public int id;
-	public String question;
-	public List<MazeAnswer> answers = new ArrayList<MazeAnswer>();
-	public List<String> keywords = new ArrayList<String>(); //list of item names that can answer question for you
-	public QuestionType type = maze.model.question.QuestionType.MULTIPLE;
+	//make this private
+	private int id;
+	private String question;
+	private List<Answer> answers = new ArrayList<Answer>();
+	private List<String> keywords = new ArrayList<String>(); //list of item names that can answer question for you
+	private QuestionType type = maze.model.question.QuestionType.MULTIPLE;
+	
+	
+	public MazeQuestion()
+	{
+		
+	}
+	
+	//for pavel
+	public MazeQuestion(String question, List<String> answers, int correct, QuestionType type)
+	{
+		this.question = question;
+		for(String answer: answers)
+		{
+			this.answers.add(new MazeAnswer(answer, false));
+		}
+		
+		if(correct < 0 || correct > answers.size() - 1)
+		{
+			throw new IndexOutOfBoundsException("Can't be the correct answer");
+		}
+		this.answers.get(correct).setCorrect(true);
+		
+		this.type = type;
+	}
+	
+	public void setId(int id)
+	{
+		this.id = id;
+	}
+	
+	public void setQuestion(String question)
+	{
+		this.question = question;
+	}
+	
+	public void setAnswer(List<Answer> answers)
+	{
+		this.answers = new ArrayList<Answer>(answers);
+	}
+	
+	public void setKeywords(List<String> keywords)
+	{
+		this.keywords = keywords; 
+	}
+	 public void setType(QuestionType type)
+	 {
+		 this.type = type;
+	 }
 	
 	public int getId() {
 		return this.id;
@@ -26,20 +75,20 @@ public class MazeQuestion implements Question {
 		return this.question;
 	}
 
-	public List<MazeAnswer> getAnswers() {
+	public List<Answer> getAnswers() {
 		
 		return this.answers;
 	}
 	
 	public List<String> getKeywords() {
-		return keywords;
+		return this.keywords;
 	}
 
 	
 	public int getCorrectAnswerIndex() {
 		int index = 0;
-		for(MazeAnswer a: answers) {
-			if(a.correct) {
+		for(Answer a: answers) {
+			if(a.getCorrect()) {
 				return index;
 			}
 			
@@ -47,11 +96,6 @@ public class MazeQuestion implements Question {
 		}
 		
 		return 0;
-	}
-
-	
-	public List<String> getKeyWords() {
-		return this.keywords;
 	}
 	
 	public String toString()
@@ -82,19 +126,19 @@ public class MazeQuestion implements Question {
 					return false;
 			}
 			
-			return userAnswer.compareTo(this.answers.get(0).answer) == 0;			
+			return userAnswer.compareTo(this.answers.get(0).getAnswer()) == 0;			
 		}
 		
 		if(this.type == QuestionType.MULTIPLE)
 		{
-			return (answer.compareToIgnoreCase(answers.get(getCorrectAnswerIndex()).answer) == 0);				
+			return (answer.compareToIgnoreCase(answers.get(getCorrectAnswerIndex()).getAnswer()) == 0);				
 		}
 		
 		if(this.type == QuestionType.SHORT)
 		{
-			for(MazeAnswer ans: answers)
+			for(Answer ans: answers)
 			{
-				if(answer.compareToIgnoreCase(ans.answer) == 0)
+				if(answer.compareToIgnoreCase(ans.getAnswer()) == 0)
 					return true;						
 			}			
 		}
@@ -168,7 +212,7 @@ public class MazeQuestion implements Question {
 
 	@Override
 	public String getCorrectAnswer() {
-		return this.answers.get(this.getCorrectAnswerIndex()).answer;
+		return this.answers.get(this.getCorrectAnswerIndex()).getAnswer();
 	}
 
 	 class MazeItem implements Item {
@@ -192,22 +236,4 @@ public class MazeQuestion implements Question {
 	}
 }
 
-class MazeAnswer {
-	public int id;
-	public String answer;
-	public boolean correct;
-	
-	public MazeAnswer(int id, String answer, boolean correct) {
-		this.id = id;
-		this.answer = answer;
-		this.correct = correct;
-	}
-	
-	public MazeAnswer(String answer, boolean correct) {
-		this(0, answer, correct);
-	}
-	
-	public String toString() {
-		return answer + "[" + (correct ? "CORRECT" : "WRONG") + "]";
-	}
-}
+
