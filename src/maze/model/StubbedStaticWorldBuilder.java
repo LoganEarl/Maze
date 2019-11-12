@@ -3,11 +3,12 @@ package maze.model;
 import maze.model.question.Question;
 import static maze.Direction.*;
 
-public class StarterWorldBuilder implements World.Builder {
+@SuppressWarnings("WeakerAccess")
+public class StubbedStaticWorldBuilder implements World.Builder {
     private Room entryRoom;
     private Room exitRoom;
 
-    public StarterWorldBuilder(){
+    public StubbedStaticWorldBuilder(){
         entryRoom = new Room(-1,0);
 
         exitRoom = new Room(1,0);

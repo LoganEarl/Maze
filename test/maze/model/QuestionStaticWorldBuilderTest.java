@@ -1,17 +1,21 @@
 package maze.model;
 
-import org.junit.jupiter.api.AfterEach;
+import maze.model.question.Question;
+import maze.model.question.QuestionImporter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.List;
 
-class StarterWorldBuilderTest {
-    private StarterWorldBuilder builder;
+class QuestionStaticWorldBuilderTest {
+    private QuestionStaticWorldBuilder builder;
+    private List<Question> questions = QuestionImporter.getDefaultQuestions().getQuestions();
+
+    private static final long randomSeed = 1111;
 
     @BeforeEach
     void setUp() {
-        builder = new StarterWorldBuilder();
+        builder = new QuestionStaticWorldBuilder(questions, randomSeed);
     }
 
     @Test
@@ -25,4 +29,5 @@ class StarterWorldBuilderTest {
         assert(builtWorld.getPlayer().getCurrentRoom() == builtWorld.getEntryRoom());
         assert(builtWorld.baseRouteExists());
     }
+
 }

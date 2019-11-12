@@ -1,13 +1,11 @@
 package maze.model;
 
 import maze.Direction;
-import maze.model.question.Question;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static maze.model.question.Question.STUBBED_ITEM;
 import static maze.model.question.Question.STUBBED_QUESTION;
-import static org.junit.jupiter.api.Assertions.*;
 
 class RoomTest {
     private Room testRoom1;

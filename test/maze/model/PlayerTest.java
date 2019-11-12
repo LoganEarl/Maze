@@ -14,7 +14,7 @@ class PlayerTest {
 
     @BeforeEach
     void setUp() {
-        testWorld = new StarterWorldBuilder().build();
+        testWorld = new StubbedStaticWorldBuilder().build();
         testPlayer = testWorld.getPlayer();
     }
 
