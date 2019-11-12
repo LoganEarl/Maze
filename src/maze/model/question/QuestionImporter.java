@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
-// This used to be Textdatabase.java
+// Textdatabase
 public class QuestionImporter {
 
 	public List<Question> questions = new ArrayList<Question>();
@@ -50,7 +50,8 @@ public class QuestionImporter {
 			
 			if(isNextLineQuestion)
 			{
-				question.question = line;
+				//question.question = line;
+				question.setQuestion(line);
 				isNextLineQuestion = false;
 				continue;
 			}
@@ -60,15 +61,15 @@ public class QuestionImporter {
 				
 				// Current size of the answer list is an index for the next quest. So it is OK
 				// to compare the correct index to it.
-				if(header.correctAnswerIndex == question.answers.size())
-					answer.correct = true;
+				if(header.correctAnswerIndex == question.getAnswers().size())
+					answer.setCorrect(true);
 					
-				question.answers.add(answer);
+				question.getAnswers().add(answer);
 				readAnswerCount--;	
 				
 				if(readAnswerCount == 0)
 				{
-					question.id = questionId++;
+					question.setId(questionId++);
 					questions.add(question);
 					question = null;
 					header = null;
@@ -95,10 +96,10 @@ public class QuestionImporter {
 				if(header != null) 
 				{
 					question = new MazeQuestion();
-					question.type = header.type;
+					question.setType(header.type);
 					
 					if(header.keywords.size() > 0)
-						question.keywords.addAll(header.keywords);
+						question.getKeywords().addAll(header.keywords);
 					
 					isNextLineQuestion = true;
 					readAnswerCount = header.answersCount;					
@@ -209,13 +210,17 @@ class QuestionHeader {
 					}
 				} catch (Exception e) {
 				}
+
 			}
 
-			return header;					
+			return header;		
+			
 		} 
 
 		return null;
-	}		
+	}
+	
+	
 }
 
 
