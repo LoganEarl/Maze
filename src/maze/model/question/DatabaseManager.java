@@ -41,7 +41,7 @@ public class DatabaseManager {
 		
 	}
 	
-	private static void deleteIfExists(String appDir)
+	private static void  deleteIfExists(String appDir)
 	{
 		String fname = createDbFileName(appDir);		
 
