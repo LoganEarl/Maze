@@ -100,21 +100,22 @@ public class SqLiteDatabase implements MazeDatabase {
 			      ResultSet rs = pstmt.getGeneratedKeys();
 			      if(rs.next())
 			      {
+			    	 //Question.setid //addsetter and pass in rs.getLong
 		             int id = (int) rs.getLong(1);
 		             
-		             for(MazeAnswer a: q.getAnswers()) {
+		             for(Answer a: q.getAnswers()) {
 		 			    sql = "INSERT INTO answer (question_id, answer, correct) VALUES(?, ?, ?)";
 		 			    
 		 			   pstmt = conn.prepareStatement(sql);
 						  pstmt.setInt(1, q.getId());
-						  pstmt.setString(2, a.answer);
-						  pstmt.setInt(3, a.correct ? 1 : 0);
+						  pstmt.setString(2, a.getAnswer());
+						  pstmt.setInt(3, a.getCorrect() ? 1 : 0);
 						  pstmt.executeUpdate();
 						
 						  rs = pstmt.getGeneratedKeys();
 						  
 						  if(rs.next()) {
-							  a.id = (int) rs.getLong(1);
+							  a.setId((int) rs.getLong(1));
 						  }
 		             }
 			      }
@@ -193,6 +194,7 @@ public class SqLiteDatabase implements MazeDatabase {
     	conn.createStatement().execute(sql);            
     }
     
+    //another class has getNextQuestion already implemented
 	@Override
 	public Question getNextQuestion(QuestionType questionType) {
 		return null;
@@ -256,19 +258,20 @@ public class SqLiteDatabase implements MazeDatabase {
 	            		q = new MazeQuestion();
 	            	}
 
-	            	q.id= id;
-	            	q.question = question;
-	            	q.type = toQuestionType(type);
+	            	q.setId(id);
+	            	//q.question = question;
+	            	q.setQuestion(question);
+	            	q.setType(toQuestionType(type));
 	            	if(keywords.length() > 0)
 	            	{
 	            		String[] parts = keywords.split(",");
 	            		
 	            		for(String part: parts)
 	            		{
-	            			q.keywords.add(part);
+	            			q.getKeywords().add(part);
 	            		}
 	            	}
-	            	q.answers.add(new MazeAnswer(answerId, answer, correct != 0));
+	            	q.getAnswers().add(new MazeAnswer(answerId, answer, correct != 0));
 	           
 	            }
 
@@ -325,7 +328,10 @@ public class SqLiteDatabase implements MazeDatabase {
         } catch (SQLException ex) {
             System.out.println(ex.getMessage());
         }
-    }    
+    }
+    
+    
+    
+    
+    
 }
-
-
