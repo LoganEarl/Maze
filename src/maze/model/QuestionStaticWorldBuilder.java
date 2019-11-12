@@ -18,7 +18,7 @@ public class QuestionStaticWorldBuilder implements World.Builder {
     public QuestionStaticWorldBuilder(List<Question> availableQuestions, long randomSeed) {
         if (availableQuestions.size() < 7)
             throw new IllegalArgumentException("This builder needs at least 7 questions to choose from");
-        this.questions = new ArrayList<Question>(availableQuestions);
+        this.questions = new ArrayList<>(availableQuestions);
         rnd = new Random(randomSeed);
         entryRoom = new Room(-1, 0);
         exitRoom = new Room(1, 0);

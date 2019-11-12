@@ -3,7 +3,6 @@ package maze.model;
 import maze.Direction;
 import maze.model.question.Question;
 import utils.Pair;
-
 import java.util.*;
 
 @SuppressWarnings("WeakerAccess")

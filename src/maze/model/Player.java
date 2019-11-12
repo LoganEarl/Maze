@@ -9,6 +9,7 @@ import java.util.Set;
 public class Player {
     private Room currentRoom;
     private Set<Item> items;
+    private Direction direction = Direction.north;
 
     public Player(Room currentRoom) {
         this.currentRoom = currentRoom;
@@ -29,6 +30,14 @@ public class Player {
     public void forceMove(Direction direction){
         Door toMove = currentRoom.getDoor(direction);
         if(toMove != null) currentRoom = toMove.getOtherRoom(currentRoom);
+    }
+
+    public void setFacing(Direction direction){
+        this.direction = direction;
+    }
+
+    public Direction getFacing(){
+        return direction;
     }
 
     public Room getCurrentRoom() {
