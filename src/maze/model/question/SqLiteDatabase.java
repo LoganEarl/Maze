@@ -11,25 +11,25 @@ import java.sql.SQLException;
 
 public class SqLiteDatabase implements MazeDatabase {
 	
-    public static final String QUESTION_TABLE = "CREATE TABLE IF NOT EXISTS \"question\" (\r\n" + 
+    private static final String QUESTION_TABLE = "CREATE TABLE IF NOT EXISTS \"question\" (\r\n" + 
     		"	\"id\"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\r\n" + 
     		"	\"question\"	TEXT NOT NULL,\r\n" + 
     		"	\"type\"	INTEGER NOT NULL DEFAULT 0,\r\n" + 
     		"	\"keywords\"	TEXT DEFAULT 0\r\n" + 
     		");";
     
-    public static final String ANSWER_TABLE = "CREATE TABLE IF NOT EXISTS \"answer\" (\r\n" + 
+    private static final String ANSWER_TABLE = "CREATE TABLE IF NOT EXISTS \"answer\" (\r\n" + 
     		"	\"id\"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\r\n" + 
     		"	\"question_id\"	INTEGER NOT NULL,\r\n" + 
     		"	\"answer\"	TEXT NOT NULL,\r\n" + 
     		"	\"correct\"	INTEGER NOT NULL\r\n" + 
     		");";
 	
-	public String fullFileName;
-	public final Object lock = new Object();
+	private String fullFileName;
 	
+	private final Object lock = new Object();
 	
-	public SqLiteDatabase(String fullFileName)
+	protected SqLiteDatabase(String fullFileName)
 	{
 		this.fullFileName = fullFileName;
 		
@@ -56,19 +56,6 @@ public class SqLiteDatabase implements MazeDatabase {
 			}
 			
 		}
-	}
-	
-	boolean questionExists(Connection conn, String question) throws SQLException
-	{
-	    String sql = "SELECT * FROM question WHERE question=?" ;
-	    
-        PreparedStatement pstmt  = conn.prepareStatement(sql);
-        
-        pstmt.setString(1, question);
-        
-        ResultSet rs  = pstmt.executeQuery();
-        
-        return rs.next();
 	}
 	
 	public boolean insert(Question q)
@@ -135,12 +122,7 @@ public class SqLiteDatabase implements MazeDatabase {
         
 		return false;
 	}
-	
-	public void exceptionHandling(Exception e)
-	{
-		System.out.println(e.getMessage());
-	}
-	
+
 	public boolean delete(int questionId)
 	{		
 		synchronized(lock)
@@ -188,31 +170,16 @@ public class SqLiteDatabase implements MazeDatabase {
 		//todo
 		return false;
 	}
-	
-    public static void createNewTable(Connection conn, String sql) throws SQLException 
-    {        
-    	conn.createStatement().execute(sql);            
-    }
-    
+  
     //another class has getNextQuestion already implemented
 	@Override
 	public Question getNextQuestion(QuestionType questionType) {
 		return null;
 	}
 	
-	public QuestionType toQuestionType(int i) throws Exception
-	{
-		switch(i)
-		{
-			case 0:
-				return QuestionType.MULTIPLE;
-			case 1:
-				return QuestionType.TRUE_FALSE;
-			case 2:
-				return QuestionType.SHORT;
-		}
-		
-		throw new Exception("Not suppoerted Question Type: " + i);
+	private static void createNewTable(Connection conn, String sql) throws SQLException 
+	{        
+	    conn.createStatement().execute(sql);            
 	}
 	
 	@Override
@@ -294,7 +261,7 @@ public class SqLiteDatabase implements MazeDatabase {
         return "jdbc:sqlite:" + fileName;
     }
 	
-    public Connection openConnection() {
+    private Connection openConnection() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
         }catch (Exception e){
@@ -319,7 +286,7 @@ public class SqLiteDatabase implements MazeDatabase {
         return conn;
     }
     
-    void closeConnection(Connection conn)
+    private void closeConnection(Connection conn)
     {
         try {
             if (conn != null) {
@@ -330,8 +297,36 @@ public class SqLiteDatabase implements MazeDatabase {
         }
     }
     
+	private QuestionType toQuestionType(int i) throws Exception
+	{
+		switch(i)
+		{
+			case 0:
+				return QuestionType.MULTIPLE;
+			case 1:
+				return QuestionType.TRUE_FALSE;
+			case 2:
+				return QuestionType.SHORT;
+		}
+		
+		throw new Exception("Not suppoerted Question Type: " + i);
+	} 
     
-    
-    
-    
+	private void exceptionHandling(Exception e)
+	{
+		System.out.println(e.getMessage());
+	}  
+	
+	private boolean questionExists(Connection conn, String question) throws SQLException
+	{
+	    String sql = "SELECT * FROM question WHERE question=?" ;
+	    
+        PreparedStatement pstmt  = conn.prepareStatement(sql);
+        
+        pstmt.setString(1, question);
+        
+        ResultSet rs  = pstmt.executeQuery();
+        
+        return rs.next();
+	}
 }
