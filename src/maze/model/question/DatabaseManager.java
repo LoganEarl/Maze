@@ -8,15 +8,20 @@ import java.util.List;
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.DatabaseMetaData;
 
-public class DatabaseManager {
+public class DatabaseManager extends SqLiteDatabase {
 	
     /**
      * This is the declaration for the /data directory used to store db files in
      */
-    public static final String DATA_DIRECTORY = System.getProperty("user.dir").replace("\\", "/") + "/data/";
+    private static final String DATA_DIRECTORY = System.getProperty("user.dir").replace("\\", "/") + "/data/";
     
-    public static final String DEFAULT_DB_FILE = "mazedb.sqlite3";
-       
+    private static final String DEFAULT_DB_FILE = "mazedb.sqlite3";
+    
+    private DatabaseManager(String fullFileName)
+    {
+    	super(fullFileName);
+    }
+    
     static void createDirectories(String appDir) {
         File f = new File(DATA_DIRECTORY + appDir + "/");
         if (!f.exists()) {
@@ -25,24 +30,21 @@ public class DatabaseManager {
         }
     }
     
-    static String createDbFileName(String appDir)
-    {
+    static String createDbFileName(String appDir) {
 		createDirectories(appDir);
 		
 		return DATA_DIRECTORY + appDir + "/" + DEFAULT_DB_FILE;
     }
     
-	public static MazeDatabase openDatabase(String appDir)  {
+	private static MazeDatabase openDatabase(String appDir)  {
 		
 		// Makes sure that the DATA_DIRECTORY and all sub directories exist
 		String fname = createDbFileName(appDir);		
 		
-		return new SqLiteDatabase(fname);	
-		
+		return new SqLiteDatabase(fname);			
 	}
 	
-	private static void  deleteIfExists(String appDir)
-	{
+	private static void  deleteIfExists(String appDir){
 		String fname = createDbFileName(appDir);		
 
         File f = new File(fname);
@@ -52,8 +54,7 @@ public class DatabaseManager {
         
 	}
 	
-	public static MazeDatabase createDatabaseWithDefaultQuestions(String appDir)
-	{
+	public static MazeDatabase createDatabaseWithDefaultQuestions(String appDir) {
 		String fname = createDbFileName(appDir);		
 
 		deleteIfExists(appDir);
@@ -66,8 +67,7 @@ public class DatabaseManager {
         
 	}
 	
-	public static void importDatabase(String fname, String appDir, boolean deleteDatabaseFirst) throws FileNotFoundException
-	{
+	public static void importDatabase(String fname, String appDir, boolean deleteDatabaseFirst) throws FileNotFoundException {
 		QuestionImporter importer = new QuestionImporter(fname);
 		
 		if(deleteDatabaseFirst)
@@ -83,8 +83,7 @@ public class DatabaseManager {
 		}
 	}
 
-	static void ImportDefault(MazeDatabase db) 
-	{
+	static void ImportDefault(MazeDatabase db) {
 		QuestionImporter defaults = QuestionImporter.getDefaultQuestions();
 		
 		for(Question q: defaults.getQuestions()) {	
@@ -96,7 +95,6 @@ public class DatabaseManager {
 			*/
 			db.insert(q);
 		}
-
 	}
 }
 
@@ -115,13 +113,3 @@ interface MazeDatabase {
 	
 }
 
-/*
-interface IQuestion {
-	
-	QuestionType getType();
-	String getQuestion();
-	List<String> getAnswers();
-	int getCorrectAnswerIndex();
-	List<String> getKeyWords();
-}
-*/
