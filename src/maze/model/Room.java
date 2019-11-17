@@ -49,6 +49,10 @@ public class Room implements Iterable<Door>{
         return null;
     }
 
+    public Set<Direction> getPossibleDirections(){
+        return new HashSet<>(doors.keySet());
+    }
+
     public Collection<Door> getDoors(){
         return doors.values();
     }
