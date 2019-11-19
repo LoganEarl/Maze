@@ -22,7 +22,7 @@ public class NewGameEvent implements GameEvent {
 
 		SqLiteDatabase db = new SqLiteDatabase("data/mazedb.sqlite3");
 		List<Question> questions = db.readAllRecords();
-		World.Builder worldBuilder = new RandomWorldBuilder(11, questions,2, 1111);
+		World.Builder worldBuilder = new RandomWorldBuilder(20, questions,1,1111);
 		world = worldBuilder.build();
 
 		player = new Player(world.getEntryRoom());

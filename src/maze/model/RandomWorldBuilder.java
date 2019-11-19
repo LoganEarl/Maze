@@ -15,8 +15,8 @@ public class RandomWorldBuilder implements World.Builder {
     private int maxCorridorLength;
 
     public RandomWorldBuilder(int numRooms, List<Question> questions, int maxCorridorLength, long randomSeed) {
-        if(questions.size() < numRooms * 2)
-            throw new IllegalArgumentException("Not enough rooms");
+        if(questions.size() < numRooms * 1.5)
+            throw new IllegalArgumentException("Not enough questions");
         rnd = new Random(randomSeed);
         this.numRooms = numRooms;
         this.questions = questions;
@@ -31,9 +31,9 @@ public class RandomWorldBuilder implements World.Builder {
 
         //phase 2 make start and end
         Room startRoom, endRoom;
-        //TempRoom[] tempArray = rooms.values().toArray(new TempRoom[0]);
-        //Pair<TempRoom> furthestApart = new Pair<>(tempArray[0], tempArray[1]);
-        Pair<TempRoom> furthestApart = getFurthestApart(new ArrayList<>(rooms.values()));
+        TempRoom[] tempArray = rooms.values().toArray(new TempRoom[0]);
+        Pair<TempRoom> furthestApart = new Pair<>(tempArray[0], tempArray[1]);
+        //Pair<TempRoom> furthestApart = getFurthestApart(new ArrayList<>(rooms.values()));
         startRoom = furthestApart.itemA();
         endRoom = furthestApart.itemB();
 
@@ -131,22 +131,22 @@ public class RandomWorldBuilder implements World.Builder {
     private static Map<Direction, Integer> getPotentialDirections(TempRoom sourceRoom, Map<Point, TempRoom> allRooms, Set<Point> reserved, int maxCorridor) {
         Map<Direction, Integer> potentialDirections = new HashMap<>();
         for (Direction direction : Direction.values()) {
-            int distance = 1;
+            int roomDistance = 0;
             if (sourceRoom.getDoor(direction) == null) {
-                for (Point walker = sourceRoom.getPosition().getAdjacent(direction);
-                     distance <= maxCorridor;
-                     walker = walker.getAdjacent(direction), distance++){
-
-                    if(isOccupied(walker, allRooms, maxCorridor, direction, reserved)) {
-                        distance--;
+                Point walker = sourceRoom.getPosition().getAdjacent(direction);
+                do {
+                    roomDistance++;
+                    if (isOccupied(walker, allRooms, maxCorridor, direction, reserved)) {
+                        roomDistance--;
                         break;
                     }
-                }
-            }else{
-                distance = 0;
-            }
-            if (distance > 0)
-                potentialDirections.put(direction, distance);
+                    walker = walker.getAdjacent(direction);
+                } while (roomDistance <= maxCorridor);
+            }else
+                roomDistance = 0;
+
+            if (roomDistance > 0)
+                potentialDirections.put(direction, roomDistance);
         }
         return potentialDirections;
     }
@@ -165,7 +165,7 @@ public class RandomWorldBuilder implements World.Builder {
         }
 
         boolean rightOpen = false;
-        for(int i = maxCorridor; i > 1; i--){
+        for(int i = maxCorridor; i > 0; i--){
             Point current = selectPoint.getAdjacent(perpendicular.right(),i);
             Room r = allRooms.get(current);
             if(r != null){
