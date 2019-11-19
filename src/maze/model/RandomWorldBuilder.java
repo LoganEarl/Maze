@@ -18,22 +18,32 @@ public class RandomWorldBuilder implements World.Builder {
         if(questions.size() < numRooms * 1.5)
             throw new IllegalArgumentException("Not enough questions");
         rnd = new Random(randomSeed);
+
+
         this.numRooms = numRooms;
         this.questions = questions;
         this.maxCorridorLength = maxCorridorLength;
     }
 
+    private void probeRandom(){
+        for(int i = 0; i < 5; i++)
+            System.out.println(rnd.nextInt(10));
+        System.out.print("\n\n");
+    }
+
     @Override
     public World build() {
         //phase 1 generate rooms
-        Map<Point, TempRoom> rooms = new HashMap<>();
-        generateRooms(numRooms, new Point(0, 0), null, rooms, new HashSet<>(), 0);
+        Map<Point, TempRoom> rooms = new LinkedHashMap<>();
+        probeRandom();
+        generateRooms(numRooms, new Point(0, 0), null, rooms, new LinkedHashSet<>(), 0);
+        probeRandom();
 
         //phase 2 make start and end
         Room startRoom, endRoom;
-        TempRoom[] tempArray = rooms.values().toArray(new TempRoom[0]);
-        Pair<TempRoom> furthestApart = new Pair<>(tempArray[0], tempArray[1]);
-        //Pair<TempRoom> furthestApart = getFurthestApart(new ArrayList<>(rooms.values()));
+        //TempRoom[] tempArray = rooms.values().toArray(new TempRoom[0]);
+        //Pair<TempRoom> furthestApart = new Pair<>(tempArray[0], tempArray[1]);
+        Pair<TempRoom> furthestApart = getFurthestApart(new ArrayList<>(rooms.values()));
         startRoom = furthestApart.itemA();
         endRoom = furthestApart.itemB();
 
@@ -87,8 +97,8 @@ public class RandomWorldBuilder implements World.Builder {
             int[] allocations = allocateSum(roomAllocation, toExplore.size(), rnd);
             int[] distances = new int[toExplore.size()];
             for (int i = 0; i < allocations.length; i++) {
-                if(allocations[i] > 0) {
-                    Direction d = toExplore.get(i);
+                Direction d = toExplore.get(i);
+                if(allocations[i] > 0 && potentialDirections.get(d) > 0) {
                     distances[i] = rnd.nextInt(potentialDirections.get(d)) + 1;
                     Point walker = roomPos.getAdjacent(d);
                     for (int j = 0; j < distances[i]; j++) {
@@ -129,7 +139,7 @@ public class RandomWorldBuilder implements World.Builder {
     }
 
     private static Map<Direction, Integer> getPotentialDirections(TempRoom sourceRoom, Map<Point, TempRoom> allRooms, Set<Point> reserved, int maxCorridor) {
-        Map<Direction, Integer> potentialDirections = new HashMap<>();
+        Map<Direction, Integer> potentialDirections = new LinkedHashMap<>();
         for (Direction direction : Direction.values()) {
             int roomDistance = 0;
             if (sourceRoom.getDoor(direction) == null) {
