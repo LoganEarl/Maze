@@ -1,4 +1,4 @@
-package view;
+package maze.view;
 
 public enum Panel {
 	MAINMENU,

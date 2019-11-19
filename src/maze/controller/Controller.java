@@ -2,8 +2,8 @@ package maze.controller;
 
 import maze.model.Player;
 import maze.model.World;
-import view.GraphicsPanel;
-import view.MainFrame;
+import maze.view.GraphicsPanel;
+import maze.view.MainFrame;
 
 public class Controller implements GameEventListener {
 	private MainFrame mainFrame;

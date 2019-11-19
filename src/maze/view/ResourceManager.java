@@ -1,4 +1,4 @@
-package view;
+package maze.view;
 
 import java.awt.Image;
 import java.io.File;

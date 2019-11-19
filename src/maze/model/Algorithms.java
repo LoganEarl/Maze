@@ -1,7 +1,6 @@
 package maze.model;
 
 import maze.Direction;
-import maze.model.Room;
 
 import java.util.*;
 

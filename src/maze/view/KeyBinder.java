@@ -1,4 +1,4 @@
-package view;
+package maze.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
