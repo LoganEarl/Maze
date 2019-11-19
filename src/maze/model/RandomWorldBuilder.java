@@ -36,11 +36,11 @@ public class RandomWorldBuilder implements World.Builder {
         //phase 1 generate rooms
         Map<Point, TempRoom> rooms = new LinkedHashMap<>();
         probeRandom();
-        generateRooms(numRooms, new Point(0, 0), null, rooms, new LinkedHashSet<>(), 0);
+        generateRooms(numRooms, new Point(0, 0), null, rooms, new LinkedHashSet<>());
         probeRandom();
 
         //phase 2 make start and end
-        Room startRoom, endRoom;
+        TempRoom startRoom, endRoom;
         //TempRoom[] tempArray = rooms.values().toArray(new TempRoom[0]);
         //Pair<TempRoom> furthestApart = new Pair<>(tempArray[0], tempArray[1]);
         Pair<TempRoom> furthestApart = getFurthestApart(new ArrayList<>(rooms.values()));
@@ -48,13 +48,51 @@ public class RandomWorldBuilder implements World.Builder {
         endRoom = furthestApart.itemB();
 
         //phase 3 mark side rooms
+        List<Direction> mainRoute = Algorithms.aStar(startRoom, endRoom);
+        List<Door> mainItemableDoors = new ArrayList<>();
+        Set<TempRoom> sideRooms = new HashSet<>(rooms.values());
+        Map<Door, Set<TempRoom>> roomsAccessibleBeforeDoor = new LinkedHashMap<>();
+        TempRoom mainPathWalker = startRoom;
+        sideRooms.remove(startRoom);
 
+        for(Direction d: mainRoute){
+            Door door = mainPathWalker.getDoor(d);
+            mainPathWalker.isOnMainRoute = true;
+            roomsAccessibleBeforeDoor.put(door,filterNonMainRouteOnly(Algorithms.floodFill(mainPathWalker,d)));
+            mainPathWalker = (TempRoom)door.getOtherRoom(mainPathWalker);
+            sideRooms.remove(mainPathWalker);
+            if(roomsAccessibleBeforeDoor.get(door).size() > 0)
+                mainItemableDoors.add(door);
+        }
 
         //phase 4 place conventional items
+        int numKeys = mainItemableDoors.size()/3;
+        for(int i = 1; i <= numKeys; i++){
+            int doorIndex = (i * 3);
+            Item key = mainItemableDoors.get(doorIndex).getKeyItem();
+            Set<TempRoom> possibleRooms = roomsAccessibleBeforeDoor.get(mainItemableDoors.get(doorIndex));
+            possibleRooms.toArray(new TempRoom[0])[rnd.nextInt(possibleRooms.size())].addItem(key);
+        }
 
-        //phase 5 place sk
+        //phase 5 place skeleton keys
+        int numSkeletonKeys = (int)Math.ceil(mainItemableDoors.size()/6.0);
+        Set<TempRoom> possibleRooms = filterNonMainRouteOnly(rooms.values());
+        for(int i = 0; i < numSkeletonKeys; i++){
+            TempRoom cur = possibleRooms.toArray(new TempRoom[0])[rnd.nextInt(possibleRooms.size())];
+            possibleRooms.remove(cur);
+            cur.addItem(new Item.SkeletonKey());
+        }
 
         return new World(startRoom, endRoom);
+    }
+
+    private static <T extends Room> Set<T> filterNonMainRouteOnly(Collection<T> in){
+        Set<T> out = new HashSet<>();
+        for(T t:in){
+            if(!((TempRoom)t).isOnMainRoute)
+                out.add(t);
+        }
+        return out;
     }
 
     private Pair<TempRoom> getFurthestApart(List<TempRoom> allRooms) {
@@ -79,11 +117,10 @@ public class RandomWorldBuilder implements World.Builder {
             Point roomPos,
             TempRoom lastRoom,
             Map<Point, TempRoom> existingRooms,
-            Set<Point> reserved,
-            int jumpsFromCenter) {
+            Set<Point> reserved) {
         if (roomAllocation > 0) {
             roomAllocation--;
-            TempRoom newRoom = new TempRoom(roomPos, jumpsFromCenter);
+            TempRoom newRoom = new TempRoom(roomPos);
             existingRooms.put(roomPos, newRoom);
             if (lastRoom != null) {
                 Direction toLastRoom = getDirection(roomPos, lastRoom.getPosition());
@@ -116,8 +153,8 @@ public class RandomWorldBuilder implements World.Builder {
                         roomPos.getAdjacent(d, distances[i]),
                         newRoom,
                         existingRooms,
-                        reserved,
-                        jumpsFromCenter + 1);
+                        reserved
+                );
             }
             return amountRemaining;
         }
@@ -190,11 +227,10 @@ public class RandomWorldBuilder implements World.Builder {
 
     //Utility classes beyond this point
     private static class TempRoom extends Room {
-        private int jumpsFromCenter;
+        private boolean isOnMainRoute = false;
 
-        private TempRoom(Point p, int jumpsFromCenter) {
+        private TempRoom(Point p) {
             super(p.x, p.y);
-            this.jumpsFromCenter = jumpsFromCenter;
         }
 
         private Point getPosition() {
