@@ -1,0 +1,11 @@
+package maze.view;
+
+public enum Panel {
+	MAINMENU,
+	PAUSEMENU,
+	LOADING,
+	GRAPHICS,
+	QUESTION,
+	QUESTION_MENU,
+	QUESTION_MANAGER,
+}

@@ -1,0 +1,11 @@
+Replace Color: 255, 205, 5
+Fuzziness: 200
+-20
+-100
+-60
+
+Replace Color: 91, 74, 50
+Fuzziness: 200
+0
+-100
+0
