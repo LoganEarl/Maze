@@ -65,8 +65,11 @@ public class MainMenuPanel extends JPanel {
 	}
 	
 	private void addNewGameButton(GridBagConstraints gc) {
-		JButton button  = new JButton("New Game");		
-		formatButton(button, new Color(63, 106, 145));
+		JButton button = new JButton("New Game");
+		button.setFocusPainted(false);
+		ViewUtils.componentSetFont(button, 32);
+		ViewUtils.componentSetSize(button, 400, 80);
+		ViewUtils.componentColorBorder(button, new Color(63, 106, 145));
 
 		gc.gridy = 2;
 		add(button, gc);
@@ -86,8 +89,11 @@ public class MainMenuPanel extends JPanel {
 	}
 	
 	private void addLoadGameButton(GridBagConstraints gc) {
-		JButton button  = new JButton("Load Game");
-		formatButton(button, new Color(63, 106, 145));
+		JButton button = new JButton("Load Game");
+		button.setFocusPainted(false);
+		ViewUtils.componentSetFont(button, 32);
+		ViewUtils.componentSetSize(button, 400, 80);
+		ViewUtils.componentColorBorder(button, new Color(63, 106, 145));
 
 		gc.gridy = 3;
 		add(button, gc);
@@ -106,8 +112,11 @@ public class MainMenuPanel extends JPanel {
 	}
 	
 	private void addManageQuestionsButton(GridBagConstraints gc) {
-		JButton button  = new JButton("Manage Questions");
-		formatButton(button, new Color(63, 106, 145));
+		JButton button = new JButton("Manage Questions");
+		button.setFocusPainted(false);
+		ViewUtils.componentSetFont(button, 32);
+		ViewUtils.componentSetSize(button, 400, 80);
+		ViewUtils.componentColorBorder(button, new Color(63, 106, 145));
 
 		gc.gridy = 4;
 		add(button, gc);
@@ -124,13 +133,5 @@ public class MainMenuPanel extends JPanel {
 				});
 			}
 		});	
-	}
-	
-	private void formatButton(JButton button, Color color) {
-		button.setFocusPainted(false);
-		button.setPreferredSize(new Dimension(400, 80));
-		button.setFont(button.getFont().deriveFont(32.0f));
-		button.setBorder(BorderFactory.createLineBorder(color, 5));
-		button.setForeground(color);
 	}
 }

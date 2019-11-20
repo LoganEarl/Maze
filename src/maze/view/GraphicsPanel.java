@@ -54,59 +54,57 @@ public class GraphicsPanel extends JPanel implements MouseWheelListener {
 			Room curRoom = player.getCurrentRoom();
 			int curScale = resManager.getScale();
 			
-			System.out.println("Player: X:" + curRoom.getXCoordinate() + ", Y:" + curRoom.getYCoordinate());
-			
-			Door temp = curRoom.getDoor(Direction.north);
-			if (temp != null) System.out.println("Door North: X:" + temp.getOtherRoom(curRoom).getXCoordinate() + ", Y:" + temp.getOtherRoom(curRoom).getYCoordinate());
-			temp = curRoom.getDoor(Direction.south);
-			if (temp != null) System.out.println("Door South: X:" + temp.getOtherRoom(curRoom).getXCoordinate() + ", Y:" + temp.getOtherRoom(curRoom).getYCoordinate());
-			temp = curRoom.getDoor(Direction.east);
-			if (temp != null) System.out.println("Door East: X:" + temp.getOtherRoom(curRoom).getXCoordinate() + ", Y:" + temp.getOtherRoom(curRoom).getYCoordinate());
-			temp = curRoom.getDoor(Direction.west);
-			if (temp != null) System.out.println("Door West: X:" + temp.getOtherRoom(curRoom).getXCoordinate() + ", Y:" + temp.getOtherRoom(curRoom).getYCoordinate());
-			
+//			System.out.println("Player: X:" + curRoom.getXCoordinate() + ", Y:" + curRoom.getYCoordinate());
+//			
+//			Door temp = curRoom.getDoor(Direction.north);
+//			if (temp != null) System.out.println("Door North: X:" + temp.getOtherRoom(curRoom).getXCoordinate() + ", Y:" + temp.getOtherRoom(curRoom).getYCoordinate());
+//			temp = curRoom.getDoor(Direction.south);
+//			if (temp != null) System.out.println("Door South: X:" + temp.getOtherRoom(curRoom).getXCoordinate() + ", Y:" + temp.getOtherRoom(curRoom).getYCoordinate());
+//			temp = curRoom.getDoor(Direction.east);
+//			if (temp != null) System.out.println("Door East: X:" + temp.getOtherRoom(curRoom).getXCoordinate() + ", Y:" + temp.getOtherRoom(curRoom).getYCoordinate());
+//			temp = curRoom.getDoor(Direction.west);
+//			if (temp != null) System.out.println("Door West: X:" + temp.getOtherRoom(curRoom).getXCoordinate() + ", Y:" + temp.getOtherRoom(curRoom).getYCoordinate());			
 
 			if (world != null) {
 				for (Room room : world.getAllRooms()) {
-					if (Math.abs(room.getYCoordinate() - curRoom.getYCoordinate()) <= 5) {
-						int posX = (int) (centerX + (room.getXCoordinate() - curRoom.getXCoordinate() - 0.5) * curScale);
-						int posY = (int) (centerY + (room.getYCoordinate() - curRoom.getYCoordinate() - 0.5) * curScale);
-						
-						//System.out.println("X:" + room.getXCoordinate() + ", Y:" + room.getYCoordinate());
-						
-						graphics.drawImage(resManager.getImage("Floor.png"), posX, posY, null);
-						graphics.drawImage(resManager.getImage("Columns.png"), posX, posY, null);
+					int posX = (int) (centerX + (room.getXCoordinate() - curRoom.getXCoordinate() - 0.5) * curScale);
+					int posY = (int) (centerY + (room.getYCoordinate() - curRoom.getYCoordinate() - 0.5) * curScale);
+					
+					//System.out.println("X:" + room.getXCoordinate() + ", Y:" + room.getYCoordinate());
+					
+					graphics.drawImage(resManager.getImage("Floor.png"), posX, posY, null);
+					graphics.drawImage(resManager.getImage("Columns.png"), posX, posY, null);
 
-						for (Direction direction : Direction.values()) {
-							graphics.drawImage(getDoorImage(room, direction), posX, posY, null);
+					for (Direction direction : Direction.values()) {
+						graphics.drawImage(getDoorImage(room, direction), posX, posY, null);
+						
+						if (room.hasDoor(direction)) {
+							Door door = room.getDoor(direction);
+							Room other = door.getOtherRoom(room);
 							
-							if (room.hasDoor(direction)) {
-								Door door = room.getDoor(direction);
-								Room other = door.getOtherRoom(room);
-								
-								int room1X = room.getXCoordinate();
-								int room2X = other.getXCoordinate();
-								int room1Y = room.getYCoordinate();
-								int room2Y = other.getYCoordinate();
-								
-								if (Math.abs(room1X - room2X) > 1 && direction == Direction.east) {
-									for (int x = Integer.signum(room1X - room2X); x != room1X - room2X; x += Integer.signum(room1X - room2X)) {
-										graphics.drawImage(resManager.getImage("Hall_Horizontal.png"), posX - x * curScale, posY, null);
-									}
-									//graphics.drawImage(getDoorImage(room, direction), posX - (room1X - room2X + 1) * curScale, posY, null);
-									//graphics.drawImage(getDoorImage(other, direction.opposite()), posX - Integer.signum(room1X - room2X) * curScale, posY, null);
+							int room1X = room.getXCoordinate();
+							int room2X = other.getXCoordinate();
+							int room1Y = room.getYCoordinate();
+							int room2Y = other.getYCoordinate();
+							
+							if (Math.abs(room1X - room2X) > 1 && direction == Direction.east) {
+								for (int x = Integer.signum(room1X - room2X); x != room1X - room2X; x += Integer.signum(room1X - room2X)) {
+									graphics.drawImage(resManager.getImage("Hall_Horizontal.png"), posX - x * curScale, posY, null);
 								}
-								
-								if (Math.abs(room1Y - room2Y) > 1 && direction == Direction.north) {
-									for (int y = Integer.signum(room1Y - room2Y); y != room1Y - room2Y; y += Integer.signum(room1Y - room2Y)) {
-										graphics.drawImage(resManager.getImage("Hall_Vertical.png"), posX, posY - y * curScale, null);
-									}
-									//graphics.drawImage(getDoorImage(room, direction), posX, posY - (room1Y - room2Y + 1) * curScale, null);
-									//graphics.drawImage(getDoorImage(other, direction.opposite()), posX, posY - Integer.signum(room1Y - room2Y) * curScale, null);
+								graphics.drawImage(getDoorImage(room, direction), posX - (room1X - room2X + 1) * curScale, posY, null);
+								graphics.drawImage(getDoorImage(other, direction.opposite()), posX - Integer.signum(room1X - room2X) * curScale, posY, null);
+							}
+							
+							if (Math.abs(room1Y - room2Y) > 1 && direction == Direction.north) {
+								for (int y = Integer.signum(room1Y - room2Y); y != room1Y - room2Y; y += Integer.signum(room1Y - room2Y)) {
+									graphics.drawImage(resManager.getImage("Hall_Vertical.png"), posX, posY - y * curScale, null);
 								}
+								graphics.drawImage(getDoorImage(room, direction), posX, posY - Integer.signum(room1Y - room2Y) * curScale, null);
+								graphics.drawImage(getDoorImage(other, direction.opposite()), posX, posY - Integer.signum(room1Y - room2Y) * curScale, null);
 							}
 						}
 					}
+					
 				}
 			}
 			

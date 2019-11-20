@@ -68,14 +68,14 @@ public class QuestionManagerPanel extends JPanel implements ActionListener {
 		insertComponent(labelAnswers, 			3, 0, 1, 1, 600, 30);
 		insertComponent(tableAnswers, 			4, 0, 3, 1, 600, 200);
 		insertComponent(labelSpacer2,			7, 0, 1, 1, 600, 40);
-		insertComponent(buttonSave, 			8, 0, 1, 1, 600, 50);
+		insertComponent(buttonSave, 			8, 0, 1, 1, 600, 75);
 		
 		insertComponent(labelQuestionType, 		0, 1, 1, 2, 400, 30);
 		insertComponent(comboBoxQuestionType, 	1, 1, 1, 2, 400, 50);
 		insertComponent(buttonAdd,				4, 1, 1, 1, 180, 50);
 		insertComponent(buttonEdit, 			5, 1, 1, 1, 180, 50);
 		insertComponent(buttonDelete, 			6, 1, 1, 1, 180, 50);
-		insertComponent(buttonCancel,		 	8, 1, 1, 2, 400, 50);
+		insertComponent(buttonCancel,		 	8, 1, 1, 2, 400, 75);
 		
 		insertComponent(buttonMoveUp,			4, 2, 1, 1, 180, 50);
 		insertComponent(buttonMoveDown, 		5, 2, 1, 1, 180, 50);
@@ -87,13 +87,17 @@ public class QuestionManagerPanel extends JPanel implements ActionListener {
 		gc.gridx = gridx;
 		gc.gridheight = spany;
 		gc.gridwidth = spanx;
+		
+		ViewUtils.componentSetFont(component, 24);
+		ViewUtils.componentSetSize(component, 400, 80);
 		component.setPreferredSize(new Dimension(sizey, sizex));
 		component.setFont(component.getFont().deriveFont(24.0f));
 		add(component, gc);
 		
 		if (component instanceof JButton){
-			JButton button = (JButton) component;
+			JButton button = (JButton) component;			
 			button.setFocusPainted(false);
+			ViewUtils.componentColorBorder(button, new Color(63, 106, 145));
 			button.addActionListener(this);
 		}
 	}
