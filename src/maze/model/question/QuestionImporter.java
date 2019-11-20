@@ -19,12 +19,13 @@ public class QuestionImporter {
 		parse(scanner);
 	}
 
-	private QuestionImporter() {}
-	
+	private QuestionImporter() {
+	}
+
 	public void parse(Scanner scanner) {
 
 		List<String> lines = new ArrayList<String>();
-		
+
 		int questionId = 1;
 		int answerId = 1;
 
@@ -34,104 +35,92 @@ public class QuestionImporter {
 		}
 
 		scanner.close();
-		
+
 		///////////////////////////////////////////////////////////////////////
 		boolean isNextLineQuestion = false;
-		int readAnswerCount = -1; //-1 means we are not reading
+		int readAnswerCount = -1; // -1 means we are not reading
 		QuestionHeader header = null;
 		MazeQuestion question = null;
 
-		
 		for (String line : lines) {
 
 			if (line.startsWith("#")) {
 				continue;
 			}
-			
-			if(isNextLineQuestion)
-			{
-				//question.question = line;
+
+			if (isNextLineQuestion) {
+				// question.question = line;
 				question.setQuestion(line);
 				isNextLineQuestion = false;
 				continue;
-			}
-			else if(readAnswerCount > 0)
-			{
+			} else if (readAnswerCount > 0) {
 				MazeAnswer answer = new MazeAnswer(answerId++, line, false);
-				
+
 				// Current size of the answer list is an index for the next quest. So it is OK
 				// to compare the correct index to it.
-				if(header.correctAnswerIndex == question.getAnswers().size())
+				if (header.correctAnswerIndex == question.getAnswers().size())
 					answer.setCorrect(true);
-					
+
 				question.getAnswers().add(answer);
-				readAnswerCount--;	
-				
-				if(readAnswerCount == 0)
-				{
+				readAnswerCount--;
+
+				if (readAnswerCount == 0) {
 					question.setId(questionId++);
 					questions.add(question);
 					question = null;
 					header = null;
 					isNextLineQuestion = false;
 					readAnswerCount = -1;
-				}
-				else
+				} else
 					continue;
-			}
-			else // reset and start looking for []
+			} else // reset and start looking for []
 			{
 				question = null;
 				header = null;
 				isNextLineQuestion = false;
 				readAnswerCount = -1;
 			}
-			
 
-			
 			if (line.startsWith("[")) {
 
 				header = QuestionHeader.parse(line);
-				
-				if(header != null) 
-				{
+
+				if (header != null) {
 					question = new MazeQuestion();
 					question.setType(header.type);
-					
-					if(header.keywords.size() > 0)
+
+					if (header.keywords.size() > 0)
 						question.getKeywords().addAll(header.keywords);
-					
+
 					isNextLineQuestion = true;
-					readAnswerCount = header.answersCount;					
-					 //System.out.println(header);
+					readAnswerCount = header.answersCount;
+					// System.out.println(header);
 				}
 			}
 		}
 
 	}
-	
+
 	int index = -1;
-	
+
 	public Question getNextQuestion(QuestionType questionType) {
-		
+
 		index = (index + 1) % questions.size();
 		return questions.get(index);
 	}
 
-	
 	public List<Question> getQuestions() {
 		// TODO Auto-generated method stub
 		return questions;
 	}
 
-	public static QuestionImporter parseString(String questions) 
-	{
+	public static QuestionImporter parseString(String questions) {
 		QuestionImporter db = new QuestionImporter();
-		
+
 		Scanner scanner = new Scanner(questions);
-		
+
 		db.parse(scanner);
-		
+
 		return db;
 	}
 
@@ -149,10 +138,10 @@ class QuestionHeader {
 	public ArrayList<String> keywords = new ArrayList<String>(); // keyword that identifies item
 
 	public String toString() {
-		
+
 		return this.type + ", " + this.answersCount + ", " + this.correctAnswerIndex + ", " + this.keywords.size();
 	}
-	
+
 	public static QuestionHeader parse(String line) {
 
 		QuestionHeader header = new QuestionHeader();
@@ -176,7 +165,7 @@ class QuestionHeader {
 			default:
 				return null;
 			}
-			
+
 			// Parse number of questions
 			try {
 				header.answersCount = Integer.parseInt(parts[1]);
@@ -213,14 +202,13 @@ class QuestionHeader {
 
 			}
 
-			return header;		
-			
-		} 
+			return header;
+
+		}
 
 		return null;
 	}
-	
-	
+
 }
 
 
@@ -235,18 +223,76 @@ class DefaultQuestions
 	
 		"[TF,1,0]\n" +
 		"The color of sky is blue?\n" +
+		"true\n" +		
+		
+		"[TF,1,0]\n" +
+		"The 'D' in D-Day stands for'Dooms-day'" +
+		"false\n" +
+		
+		"[TF,1,0]\n" +
+		"Meteorology the study of weather?\n" +
+		"true\n" +	
+		
+		"[TF,1,0]\n" +
+		"Cats can be allergic to humans?\n" +
+		"true\n" +
+		
+		"[TF,1,0]\n" +
+		"In Lord of the Rings, 20 Rings of Power were forged?\n" +
 		"true\n" +
 	
 		"[SH,2,0]\n" +
 		"What is the color of the sky?\n" +
 		"blue\n" +
 		"blueish\n" +
+		
+		"[SH,1,0]\n" +
+		"What is the symbol for potassium?\n" +
+		"k\n" +
+	
+		"[SH,1,0]\n" +
+		"Is Java a type of OS?\n" +
+		"no\n" +
+	
+		"[SH,1,0]\n" +
+		"Which email service is owned by Microsoft?\n" +
+		"hotmail\n" +
+	
+		"[SH,1,0]\n" +
+		"What year was the very first model of the iPhone released?\n" +
+		"2007\n" +
 	
 		"[MULT,3,0]\n" +
-		"Finish this sentence, \"My name is Inigo Montoya......\"\n" +
+		"What was a Puffing Billy?\n" +
+		"Steam Train\n" +
+		"Steam Engine" +
+		"Steam Boat\n" +
+		
+		"[MULT,3,2]\n" +
+		"What is the bluebird a symbol of?\n" +
+		"Wisdom\n" +
+		"Joy\n" +
+		"Happiness\n" +		
+		
+		"[MULT,3,0]\n" +
+		"Finish this sentence, \"My name is Inigo Montoya...\"\n" +
 		"You killed my father, prepare to die.\n" +
 		"Would you like fries with that?\n" +
-		"Gimme a hive five!\n" +
+		"Gimme a hive five!\n" +	
+		
+		"[MULT,3,2]\n" +
+		"Where were cats once the most honored?\n" +
+		"Greece\n" +
+		"China" +
+		"Egypt" +
+		
+		
+		
+		"[MULT,3,0]\n" +
+		"What gift does Lady Galadriel give to Gimli before the fellowship leaves Lothlorien?\"\n" +
+		"Three stands of her hair\n" +
+		"Elvin rope\n" +
+		"An ancient axe known as Dramborleg\n" +
 	
 		"[MULT,3,1]\n" +
 		"Wesley's eyes are the color of?\n" +
@@ -272,6 +318,54 @@ class DefaultQuestions
 		"Rats of usual shape\n" +
 		"Rodents of unusual size\n" +
 		
+		"[MULT,3,1]\n" +
+		"DEF CON usually takes place during..?\n" +
+		"last week of June or the first week of July\n" +
+		"last week of July or the first week of Augest\n" +
+		"mid Augest or the end of Augest\n" +
+		
+		"[MULT,3,1]\n" +
+		"Who is often called the father of the computer?\n" +
+		"Marie Curie\n" +
+		"Charles Babbage\n" +
+		"James Gosling\n" +
+		
+		"[MULT,3,2]\n" +
+		"What is the only edible food that is said to never spoil?\n" +
+		"Sugar\n" +
+		"Honey\n" +
+		"Crackers\n" +
+		
+		"[MULT,3,0]\n" +
+		"Who is the creator of C programming language?\n" +
+		"Dennis Ritchie\n" +
+		"Charles Babbage\n" +
+		"James Gosling\n" +
+		
+		"[MULT,3,0]\n" +
+		"What was Twitter’s original name?\n" +
+		"twttr\n" +
+		"twit\n" +
+		"twtr\n" +
+		
+		"[MULT,3,0]\n" +
+		"What was Twitter’s original name?\n" +
+		"twttr\n" +
+		"twit\n" +
+		"twtr\n" +
+		
+		"[MULT,3,0]\n" +
+		"What year was the ps4 released\n" +
+		"2013\n" +
+		"2014\n" +
+		"2015\n" +
+		
+		"[MULT,3,1]\n" +
+		"Which country once knighted a penguin?\n" +
+		"England\n" +
+		"Norway\n" +
+		"Greenland\n" +
+		
 		"[MULT,3,0]\n" +
 		"What is the name of the poison that Westley uses to match wits with Vincini?\n" +
 		"Iokane\n" +
@@ -279,7 +373,7 @@ class DefaultQuestions
 		"Iodine\n" +
 		
 		"[MULT,3,1]\n" +
-		"Is Westley is left handed ?\n" +
+		"In Princess Bride, is Westley left handed ?\n" +
 		"Yes\n" +
 		"No\n" +
 		"Neither\n";
