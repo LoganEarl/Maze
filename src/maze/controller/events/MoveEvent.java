@@ -7,7 +7,7 @@ import maze.model.Door;
 import maze.model.Player;
 import maze.model.Room;
 import maze.model.World;
-import view.MainFrame;
+import maze.view.MainFrame;
 
 public class MoveEvent implements GameEvent {
 	private Direction direction;

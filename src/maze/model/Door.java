@@ -1,7 +1,7 @@
 package maze.model;
 
-import utils.Pair;
 import maze.model.question.Question;
+import utils.Pair;
 
 @SuppressWarnings("WeakerAccess")
 public class Door {

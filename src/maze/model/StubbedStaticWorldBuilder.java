@@ -1,6 +1,7 @@
 package maze.model;
 
 import maze.model.question.Question;
+
 import static maze.Direction.*;
 
 @SuppressWarnings("WeakerAccess")
