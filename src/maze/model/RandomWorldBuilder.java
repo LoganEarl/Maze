@@ -15,8 +15,14 @@ public class RandomWorldBuilder implements World.Builder {
     private int maxCorridorLength;
 
     public RandomWorldBuilder(int numRooms, List<Question> questions, int maxCorridorLength, long randomSeed) {
+        if(questions == null || questions.size() < 2)
+            throw new IllegalArgumentException("Not enough questions provided");
         if(questions.size() < numRooms * 1.5)
             throw new IllegalArgumentException("Not enough questions");
+        if(numRooms < 2)
+            throw new IllegalArgumentException("Need at least 2 rooms");
+        if(maxCorridorLength < 0)
+            throw new IllegalArgumentException("Corridors must have a length of 0 or more");
         rnd = new Random(randomSeed);
 
 
@@ -25,19 +31,12 @@ public class RandomWorldBuilder implements World.Builder {
         this.maxCorridorLength = maxCorridorLength;
     }
 
-    private void probeRandom(){
-        for(int i = 0; i < 5; i++)
-            System.out.println(rnd.nextInt(10));
-        System.out.print("\n\n");
-    }
-
     @Override
     public World build() {
         //phase 1 generate rooms
         Map<Point, TempRoom> rooms = new LinkedHashMap<>();
-        probeRandom();
         generateRooms(numRooms, new Point(0, 0), null, rooms, new LinkedHashSet<>());
-        probeRandom();
+
 
         //phase 2 make start and end
         TempRoom startRoom, endRoom;
@@ -50,17 +49,14 @@ public class RandomWorldBuilder implements World.Builder {
         //phase 3 mark side rooms
         List<Direction> mainRoute = Algorithms.aStar(startRoom, endRoom);
         List<Door> mainItemableDoors = new ArrayList<>();
-        Set<TempRoom> sideRooms = new HashSet<>(rooms.values());
         Map<Door, Set<TempRoom>> roomsAccessibleBeforeDoor = new LinkedHashMap<>();
         TempRoom mainPathWalker = startRoom;
-        sideRooms.remove(startRoom);
 
         for(Direction d: mainRoute){
             Door door = mainPathWalker.getDoor(d);
             mainPathWalker.isOnMainRoute = true;
             roomsAccessibleBeforeDoor.put(door,filterNonMainRouteOnly(Algorithms.floodFill(mainPathWalker,d)));
             mainPathWalker = (TempRoom)door.getOtherRoom(mainPathWalker);
-            sideRooms.remove(mainPathWalker);
             if(roomsAccessibleBeforeDoor.get(door).size() > 0)
                 mainItemableDoors.add(door);
         }
