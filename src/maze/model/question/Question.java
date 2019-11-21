@@ -1,9 +1,9 @@
 package maze.model.question;
 
+import maze.model.Item;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import maze.model.Item;
 
 
 

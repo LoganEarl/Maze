@@ -2,11 +2,7 @@ package maze.model.question;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.sql.SQLException;
 import java.util.List;
-
-import com.mysql.jdbc.Connection;
-import com.mysql.jdbc.DatabaseMetaData;
 
 public class DatabaseManager {
 

@@ -1,7 +1,6 @@
 package maze.model.question;
 
 import java.io.FileNotFoundException;
-import java.util.Iterator;
 import java.util.List;
 
 public class MazeDBDriver {

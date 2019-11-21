@@ -185,8 +185,7 @@ public class RandomWorldBuilder implements World.Builder {
                     }
                     walker = walker.getAdjacent(direction);
                 } while (roomDistance <= maxCorridor);
-            }else
-                roomDistance = 0;
+            }
 
             if (roomDistance > 0)
                 potentialDirections.put(direction, roomDistance);
@@ -248,13 +247,9 @@ public class RandomWorldBuilder implements World.Builder {
         private int x;
         private int y;
 
-        public Point(int x, int y) {
+        Point(int x, int y) {
             this.x = x;
             this.y = y;
-        }
-
-        private double distanceTo(Point p){
-            return Math.sqrt(Math.pow(x-p.x,2) + Math.pow(y-p.y,2));
         }
 
         private Point getAdjacent(Direction d) {

@@ -2,7 +2,6 @@ package maze.model;
 
 import maze.model.question.Question;
 import maze.model.question.SqLiteDatabase;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -13,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RandomWorldBuilderTest {
     private List<Question> questions;
 
-    public RandomWorldBuilderTest() {
+    RandomWorldBuilderTest() {
         SqLiteDatabase db = new SqLiteDatabase("data/mazedb.sqlite3");
         questions = db.readAllRecords();
     }
@@ -49,20 +48,10 @@ class RandomWorldBuilderTest {
 
     @Test
     void textExpectedExceptions(){
-        assertThrows(IllegalArgumentException.class, ()-> {
-            new RandomWorldBuilder(0, questions, 0, 1111);
-        });
-        assertThrows(IllegalArgumentException.class, ()-> {
-            new RandomWorldBuilder(1, questions, 0, 1111);
-        });
-        assertThrows(IllegalArgumentException.class, ()-> {
-            new RandomWorldBuilder(30000, questions, 0, 1111);
-        });
-        assertThrows(IllegalArgumentException.class, ()-> {
-            new RandomWorldBuilder(2, questions, -1, 1111);
-        });
-        assertThrows(IllegalArgumentException.class, ()-> {
-            new RandomWorldBuilder(2, null, -1, 1111);
-        });
+        assertThrows(IllegalArgumentException.class, ()-> new RandomWorldBuilder(0, questions, 0, 1111));
+        assertThrows(IllegalArgumentException.class, ()-> new RandomWorldBuilder(1, questions, 0, 1111));
+        assertThrows(IllegalArgumentException.class, ()-> new RandomWorldBuilder(30000, questions, 0, 1111));
+        assertThrows(IllegalArgumentException.class, ()-> new RandomWorldBuilder(2, questions, -1, 1111));
+        assertThrows(IllegalArgumentException.class, ()-> new RandomWorldBuilder(2, null, -1, 1111));
     }
 }
