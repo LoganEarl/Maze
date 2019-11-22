@@ -8,6 +8,8 @@ import maze.view.Panel;
 import maze.view.View;
 import utils.ObjectPersister;
 
+import static utils.FileUtils.DATA_DIRECTORY;
+
 public class LoadGameEvent implements GameEvent {
     private int loadSlotNumber;
 
@@ -17,7 +19,7 @@ public class LoadGameEvent implements GameEvent {
 
     @Override
     public void resolveTo(Controller controller, View view, Player player, World world) {
-        ObjectPersister<World> persister = new ObjectPersister<>("/data/");
+        ObjectPersister<World> persister = new ObjectPersister<>(DATA_DIRECTORY);
         world = persister.loadObject(SaveGameEvent.getSaveFileName(loadSlotNumber));
         if(world != null){
             player = world.getPlayer();

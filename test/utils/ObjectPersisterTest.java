@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static utils.FileUtils.DATA_DIRECTORY;
 
 class ObjectPersisterTest {
     private ObjectPersister<String> persister;
-    private static final String DATA_DIRECTORY = System.getProperty("user.dir").replace("\\", "/") + "/data/";
     private static final String toSave = "TestString";
     private static final String fileName = "testFile.ser";
 

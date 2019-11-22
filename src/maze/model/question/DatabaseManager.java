@@ -4,13 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 
+import static utils.FileUtils.DATA_DIRECTORY;
+
 public class DatabaseManager {
-
-    /**
-     * This is the declaration for the /data directory used to store db files in
-     */
-    public static final String DATA_DIRECTORY = System.getProperty("user.dir").replace("\\", "/") + "/data/";
-
     public static final String DEFAULT_DB_FILE = "mazedb.sqlite3";
 
     static void createDirectories(String appDir) {

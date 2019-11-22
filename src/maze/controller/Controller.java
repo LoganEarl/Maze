@@ -22,8 +22,20 @@ public class Controller implements GameEventListener {
 	public void setWorld(World world) {
 		this.world = world;
 	}
-	
-	@Override
+
+    public View getView() {
+        return view;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public World getWorld() {
+        return world;
+    }
+
+    @Override
 	public void onGameEvent(GameEvent gameEvent) {
 		gameEvent.resolveTo(this, view, player, world);
 		view.initialize(player, world);
