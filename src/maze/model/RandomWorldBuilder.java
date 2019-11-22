@@ -25,7 +25,6 @@ public class RandomWorldBuilder implements World.Builder {
             throw new IllegalArgumentException("Corridors must have a length of 0 or more");
         rnd = new Random(randomSeed);
 
-
         this.numRooms = numRooms;
         this.questions = questions;
         this.maxCorridorLength = maxCorridorLength;
