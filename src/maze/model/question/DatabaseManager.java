@@ -98,18 +98,3 @@ public class DatabaseManager extends SqLiteDatabase {
 	}
 }
 
- 
-interface MazeDatabase {
-	
-	Question getNextQuestion(QuestionType questionType);
-	
-	List<Question> readAllRecords();
-	
-	boolean insert(Question q);	
-	
-	boolean delete(int questionId);
-	
-	boolean update(Question q);
-	
-}
-

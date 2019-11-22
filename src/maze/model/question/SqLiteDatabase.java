@@ -209,6 +209,7 @@ public class SqLiteDatabase implements MazeDatabase {
 	public Question getNextQuestion() {
 		return getNextQuestion(rand);
 	}
+
 	@Override
 	public Question getNextQuestion(Random rand) {
 		// happens once (once we get at least one record)
