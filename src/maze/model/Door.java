@@ -3,8 +3,10 @@ package maze.model;
 import maze.model.question.Question;
 import utils.Pair;
 
+import java.io.Serializable;
+
 @SuppressWarnings("WeakerAccess")
-public class Door {
+public class Door implements Serializable {
     private Pair<Room> connectedRooms;
     private Question question;
     //locked due to repeated open attempts

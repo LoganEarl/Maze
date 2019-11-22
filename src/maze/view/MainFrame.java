@@ -4,7 +4,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 
 import maze.controller.Controller;
 import maze.controller.events.*;
@@ -12,15 +12,13 @@ import maze.Direction;
 import maze.model.Player;
 import maze.model.World;
 
-public class MainFrame extends JFrame {
-	private Controller controller;
+public class MainFrame extends JFrame implements View {
 	private MainMenuPanel mainMenuPanel;
-	public LoadingPanel loadingPanel;
+	private LoadingPanel loadingPanel;
 	private GraphicsPanel graphicsPanel;
 
 	public MainFrame(Controller controller) {
 		super("Trivia Maze");
-		this.controller = controller;
 
 		mainMenuPanel = new MainMenuPanel(controller);
 		loadingPanel = new LoadingPanel();
@@ -42,6 +40,10 @@ public class MainFrame extends JFrame {
 		mainMenuPanel.setVisible(true);
 		loadingPanel.setVisible(false);
 		graphicsPanel.setVisible(false);
+
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setSize(1280, 900);
+		setVisible(true);
 
 		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_W, "MoveNorth", (e) -> {
 			MoveEvent moveEvent = new MoveEvent(Direction.south);
@@ -71,15 +73,14 @@ public class MainFrame extends JFrame {
 
 	public void initialize(Player player, World world) {
 		graphicsPanel.initialize(player, world);
-	}
-
-	public GraphicsPanel getGraphicsPanel() {
-		return graphicsPanel;
+		graphicsPanel.repaint();
 	}
 
 	public void switchToPanel(Panel panel) {
-		mainMenuPanel.setVisible(panel == Panel.MAINMENU);
-		loadingPanel.setVisible(panel == Panel.LOADING);
-		graphicsPanel.setVisible(panel == Panel.GRAPHICS);
+		SwingUtilities.invokeLater(() -> {
+			mainMenuPanel.setVisible(panel == Panel.MAINMENU);
+			loadingPanel.setVisible(panel == Panel.LOADING);
+			graphicsPanel.setVisible(panel == Panel.GRAPHICS);
+		});
 	}
 }

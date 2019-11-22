@@ -4,10 +4,11 @@ import maze.Direction;
 import maze.model.question.Question;
 import utils.Pair;
 
+import java.io.Serializable;
 import java.util.*;
 
 @SuppressWarnings("WeakerAccess")
-public class Room implements Iterable<Door>{
+public class Room implements Iterable<Door>, Serializable {
     private int xCoordinate;
     private int yCoordinate;
     private Set<Item> items;

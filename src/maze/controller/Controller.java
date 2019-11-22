@@ -4,14 +4,15 @@ import maze.model.Player;
 import maze.model.World;
 import maze.view.GraphicsPanel;
 import maze.view.MainFrame;
+import maze.view.View;
 
 public class Controller implements GameEventListener {
-	private MainFrame mainFrame;
+	private View view;
 	private Player player;
 	private World world;
 	
-	public void setMainFrame(MainFrame mainFrame) {
-		this.mainFrame = mainFrame;
+	public void setView(View view) {
+		this.view = view;
 	}
 	
 	public void setPlayer(Player player) {
@@ -24,9 +25,7 @@ public class Controller implements GameEventListener {
 	
 	@Override
 	public void onGameEvent(GameEvent gameEvent) {
-		gameEvent.resolveTo(this, mainFrame, player, world);
-		GraphicsPanel graphicsPanel = mainFrame.getGraphicsPanel();
-		graphicsPanel.initialize(player, world);
-		graphicsPanel.repaint();
+		gameEvent.resolveTo(this, view, player, world);
+		view.initialize(player, world);
 	}
 }

@@ -162,20 +162,6 @@ public class MazeQuestion implements Question {
         return this.answers.get(this.getCorrectAnswerIndex()).answer;
     }
 
-    class MazeItem implements Item {
-
-        String name;
-
-        public MazeItem(String name) {
-
-            this.name = name;
-        }
-
-        public String getName() {
-            return this.name;
-        }
-    }
-
     @Override
     public Item constructKeyItem() {
 

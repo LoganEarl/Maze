@@ -1,19 +1,26 @@
 package maze.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
 @SuppressWarnings("WeakerAccess")
-public class World {
+public class World implements Serializable {
     private Room entryRoom;
     private Room exitRoom;
     private Player player;
+    private long seed = -1;
 
     World(Room entryRoom, Room exitRoom) {
         this.entryRoom = entryRoom;
         this.exitRoom = exitRoom;
         this.player = new Player(entryRoom);
+    }
+
+    World(Room entryRoom, Room exitRoom, long seed){
+        this(entryRoom, exitRoom);
+        this.seed = seed;
     }
 
     public Set<Room> getAllRooms(){
@@ -123,6 +130,10 @@ public class World {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public long getSeed(){
+        return this.seed;
     }
 
     public interface Builder {

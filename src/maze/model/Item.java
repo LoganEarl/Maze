@@ -1,6 +1,8 @@
 package maze.model;
 
-public interface Item {
+import java.io.Serializable;
+
+public interface Item extends Serializable {
     String getName();
 
     //skeleton keys are special cases that can open any door.

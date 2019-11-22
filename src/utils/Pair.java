@@ -3,9 +3,12 @@ package utils;
 public class Pair<T> {
     private final T itemOne;
     private final T itemTwo;
-    public Pair(T itemOne, T itemTwo){
-        this.itemOne = itemOne;
-        this.itemTwo = itemTwo;
+    public Pair(T itemA, T itemB){
+        if(itemA == null || itemB == null)
+            throw new IllegalArgumentException("Cannot have null items");
+
+        this.itemOne = itemA;
+        this.itemTwo = itemB;
     }
     public T itemA(){
         return itemOne;
@@ -14,6 +17,8 @@ public class Pair<T> {
         return itemTwo;
     }
     public T otherItem(T item){
+        if(item == null)
+            throw new IllegalArgumentException("item cannot be null");
         if(item.equals(itemOne))
             return itemTwo;
         return itemOne;

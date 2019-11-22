@@ -3,7 +3,8 @@ package maze.controller;
 import maze.model.Player;
 import maze.model.World;
 import maze.view.MainFrame;
+import maze.view.View;
 
 public interface GameEvent {
-	public void resolveTo(Controller controller, MainFrame mainFrame, Player player, World world);
+	void resolveTo(Controller controller, View mainFrame, Player player, World world);
 }

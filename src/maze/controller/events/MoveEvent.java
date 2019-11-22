@@ -8,6 +8,7 @@ import maze.model.Player;
 import maze.model.Room;
 import maze.model.World;
 import maze.view.MainFrame;
+import maze.view.View;
 
 public class MoveEvent implements GameEvent {
 	private Direction direction;
@@ -17,7 +18,7 @@ public class MoveEvent implements GameEvent {
 	}
 
 	@Override
-	public void resolveTo(Controller controller, MainFrame mainFrame, Player player, World world) {
+	public void resolveTo(Controller controller, View view, Player player, World world) {
 		if (direction == Direction.east || direction == Direction.west) {
 			player.setFacing(direction);
 		};
