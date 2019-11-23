@@ -49,8 +49,8 @@ public class ResourceManager {
 	
 	public void adjustScale(int amount) {
 		int newScale = scale + amount;
-		if (newScale > 512) {
-			newScale = 512;
+		if (newScale > 640) {
+			newScale = 640;
 		}
 		if (newScale < 64) {
 			newScale = 64;

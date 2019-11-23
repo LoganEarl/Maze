@@ -1,21 +1,51 @@
 package maze.model.question;
 
-public class MazeAnswer {
-    public int id;
-    public String answer;
-    public boolean correct;
+public class MazeAnswer implements Answer {
+	private int id;
+	private String answer;
+	private boolean correct;
+	
+	public MazeAnswer(int id, String answer, boolean correct) {
+		this.id = id;
+		this.answer = answer;
+		this.correct = correct;
+	}
+	
+	public MazeAnswer(String answer, boolean correct) {
+		this(0, answer, correct);
+	}
+	
+	public String toString() {
+		return answer + "[" + (correct ? "CORRECT" : "WRONG") + "]";
+	}
 
-    public MazeAnswer(int id, String answer, boolean correct) {
-        this.id = id;
-        this.answer = answer;
-        this.correct = correct;
-    }
+	@Override
+	public int getId() {
+		return this.id;
+	}
 
-    public MazeAnswer(String answer, boolean correct) {
-        this(0, answer, correct);
-    }
+	@Override
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public String toString() {
-        return answer + "[" + (correct ? "CORRECT" : "WRONG") + "]";
-    }
+	@Override
+	public String getAnswer() {
+		return this.answer;
+	}
+
+	@Override
+	public void setAnswer(String answer) {
+		this.answer = answer;
+	}
+
+	@Override
+	public boolean getCorrect() {
+		return this.correct;
+	}
+
+	@Override
+	public void setCorrect(boolean correct) {
+		this.correct = correct;
+	}
 }

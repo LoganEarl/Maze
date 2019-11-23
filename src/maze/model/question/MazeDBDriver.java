@@ -6,20 +6,20 @@ import java.util.List;
 
 public class MazeDBDriver {
 
-    public static void driver(String[] args) throws Exception {
-
-        //MazeDatabase db = new TextDatabase("QuestionDb.txt");
-
-        //System.out.println("IMazeDB of type: " + db.getDbType());
+	public static void driver(String[] args) throws Exception {
+		
+		//MazeDatabase db = new TextDatabase("QuestionDb.txt");
+		
+		//System.out.println("IMazeDB of type: " + db.getDbType());
 		 /*       
         System.out.println("List elements : "); 
   
         for (Question q: db.readAllRecords()) 
             System.out.println(q + " "); 
             */
-
-
-        //MazeDatabase db = DatabaseManager.openDatabase("mazeApp");
+		
+	
+		//MazeDatabase db = DatabaseManager.openDatabase("mazeApp");
 		
 		/*
 		MazeQuestion q = new MazeQuestion();
@@ -35,28 +35,30 @@ public class MazeDBDriver {
 			System.out.println(q.id);
 		}
 		*/
+		
+		MazeDatabase db = DatabaseManager.createDatabaseWithDefaultQuestions("mazeApp");
+		List<Question> list = db.readAllRecords();
+		
+		for(Question g: list)
+		{
+			System.out.println(g);
+		}
+		
+		//ImportDefault(db);
+	}
+	
+	static void ImportDefault(MazeDatabase db) throws FileNotFoundException
+	{
+		QuestionImporter defaults = QuestionImporter.getDefaultQuestions();
+		
+		for(Question q: defaults.getQuestions()) {		
+			if(db.insert(q))
+				System.out.println("Inserted: " + q);
+			else
+				System.out.println("Existed: " + q);
 
-        MazeDatabase db = DatabaseManager.createDatabaseWithDefaultQuestions("mazeApp");
-        List<Question> list = db.readAllRecords();
+		}
 
-        for (Question g : list) {
-            System.out.println(g);
-        }
-
-        //ImportDefault(db);
-    }
-
-    static void ImportDefault(MazeDatabase db) throws FileNotFoundException {
-        QuestionImporter defaults = QuestionImporter.getDefaultQuestions();
-
-        for (Question q : defaults.getQuestions()) {
-            if (db.insert(q))
-                System.out.println("Inserted: " + q);
-            else
-                System.out.println("Existed: " + q);
-
-        }
-
-    }
+	}
 
 }

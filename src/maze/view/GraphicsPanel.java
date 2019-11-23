@@ -72,7 +72,13 @@ public class GraphicsPanel extends JPanel implements MouseWheelListener {
 					
 					//System.out.println("X:" + room.getXCoordinate() + ", Y:" + room.getYCoordinate());
 					
-					graphics.drawImage(resManager.getImage("Floor.png"), posX, posY, null);
+					if (room == world.getEntryRoom()) {
+						graphics.drawImage(resManager.getImage("Entry.png"), posX, posY, null);
+					} else if (room == world.getExitRoom()) {
+						graphics.drawImage(resManager.getImage("Exit.png"), posX, posY, null);
+					} else {
+						graphics.drawImage(resManager.getImage("Floor.png"), posX, posY, null);
+					}
 					graphics.drawImage(resManager.getImage("Columns.png"), posX, posY, null);
 
 					for (Direction direction : Direction.values()) {
@@ -125,6 +131,8 @@ public class GraphicsPanel extends JPanel implements MouseWheelListener {
 			
 			if (door.isOpen()) {
 				key += "_Open";
+			} else if (door.isLocked()){
+				key += "_Locked";
 			} else {
 				key += "_Closed";
 			}

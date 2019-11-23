@@ -20,7 +20,7 @@ public class NewGameEvent implements GameEvent {
 
 		SqLiteDatabase db = new SqLiteDatabase("data/mazedb.sqlite3");
 		List<Question> questions = db.readAllRecords();
-		World.Builder worldBuilder = new RandomWorldBuilder(18, questions,1,1111);
+		World.Builder worldBuilder = new RandomWorldBuilder(18, questions,1, ((int) (Math.random() * ((1000 - 1) + 1)) + 1));
 		world = worldBuilder.build();
 
 		controller.setWorld(world);

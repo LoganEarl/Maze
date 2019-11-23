@@ -28,9 +28,8 @@ public class MoveEvent implements GameEvent {
 			if (door.isOpen()) {
 				player.move(direction);
 			} else if (!door.isLocked()) {
-				door.open();
-//				AccessDoorEvent event = new AccessDoorEvent(door);
-//				controller.onGameEvent(event);
+				AccessDoorEvent event = new AccessDoorEvent(door);
+				controller.onGameEvent(event);
 			}
 		}
 	}

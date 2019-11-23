@@ -14,9 +14,10 @@ public interface Question {
     
     
     //-- sveta's particulars --
+    void setId(int id);
     int getId();
     String getQuestion();
-    List<MazeAnswer> getAnswers();
+    List<Answer> getAnswers();
     List<String> getKeywords();
     QuestionType getType();  
     
@@ -27,70 +28,4 @@ public interface Question {
         String getQuestionType();
     }
 
-
-    Item STUBBED_ITEM = () -> "STUBBED ITEM";
-
-    Item SKELETON_KEY = () -> "SKELETON KEY";
-
-    Question STUBBED_QUESTION = new Question(){
-        public static final String TYPE = "STUBBED";
-
-        public final QuestionType QTYPE = QuestionType.MULTIPLE;
-
-        public int getId() {
-        	return 1;
-        }
-        @Override
-        public boolean isCorrect(String answer) {
-            return answer.toLowerCase().trim().equals("friend");
-        }
-
-        @Override
-        public boolean isCorrect(Item keyItem) {
-            return keyItem == STUBBED_ITEM || keyItem == SKELETON_KEY;
-        }
-
-        @Override
-        public QuestionInfo getInfo() {
-            return new QuestionInfo(){
-                @Override
-                public String getPromptText() {
-                    return "Say friend and enter";
-                }
-
-                @Override
-                public String getQuestionType() {
-                    return TYPE;
-                }
-            };
-        }
-
-        @Override
-        public String getCorrectAnswer() {
-            return "friend";
-        }
-
-        @Override
-        public Item constructKeyItem() {
-            return null;
-        }
-
-		@Override
-		public QuestionType getType() {
-
-			return QTYPE;
-		}
-		@Override
-		public String getQuestion() {
-			return "How are you?";
-		}
-		@Override
-		public List<MazeAnswer> getAnswers() {
-			return new ArrayList<MazeAnswer>();
-		}
-		@Override
-		public List<String> getKeywords() {
-			return new ArrayList<String>();
-		}
-    };
 }

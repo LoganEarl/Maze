@@ -25,9 +25,6 @@ public class QuestionManagerPanel extends JPanel implements ActionListener {
 	private Question question;
 	private GridBagConstraints gc;
 	
-	private JPanel panelLeft = new JPanel();
-	private JPanel panelRight = new JPanel();
-	
 	private JLabel labelQuestionType = new JLabel("Question Type");
 	private JLabel labelQuestion = new JLabel("Question");
 	private JLabel labelAnswers = new JLabel("Answers");

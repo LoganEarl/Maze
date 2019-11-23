@@ -6,7 +6,7 @@ public enum QuestionType {
 	SHORT(2);
 	
 	private final int value;
-	QuestionType(int value) {
+    private QuestionType(int value) {
         this.value = value;
     }
 
