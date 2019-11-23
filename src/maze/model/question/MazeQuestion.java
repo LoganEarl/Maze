@@ -1,204 +1,212 @@
 package maze.model.question;
 
-import maze.model.Item;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import maze.model.Item;
+
 public class MazeQuestion implements Question {
 
-    public int id;
-    public String question;
-    public List<MazeAnswer> answers = new ArrayList<MazeAnswer>();
-    public List<String> keywords = new ArrayList<String>(); //list of item names that can answer question for you
-    public QuestionType type = maze.model.question.QuestionType.MULTIPLE;
+	// make this private
+	private int id;
+	private String question;
+	private List<Answer> answers = new ArrayList<Answer>();
+	private List<String> keywords = new ArrayList<String>(); // list of item names that can answer question for you
+	private QuestionType type = maze.model.question.QuestionType.MULTIPLE;
 
-    public int getId() {
-        return this.id;
-    }
+	public MazeQuestion() {
 
-    public QuestionType getType() {
-        return this.type;
-    }
+	}
 
+	// for pavel
+	public MazeQuestion(String question, List<String> answers, int correct, QuestionType type) {
+		this.question = question;
+		for (String answer : answers) {
+			this.answers.add(new MazeAnswer(answer, false));
+		}
 
-    public String getQuestion() {
-        return this.question;
-    }
+		if (correct < 0 || correct > answers.size() - 1) {
+			throw new IndexOutOfBoundsException("Can't be the correct answer");
+		}
+		this.answers.get(correct).setCorrect(true);
 
-    public List<MazeAnswer> getAnswers() {
+		this.type = type;
+	}
 
-        return this.answers;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public List<String> getKeywords() {
-        return keywords;
-    }
+	public void setQuestion(String question) {
+		this.question = question;
+	}
 
+	public void setAnswer(List<Answer> answers) {
+		this.answers = new ArrayList<Answer>(answers);
+	}
 
-    public int getCorrectAnswerIndex() {
-        int index = 0;
-        for (MazeAnswer a : answers) {
-            if (a.correct) {
-                return index;
-            }
+	public void setKeywords(List<String> keywords) {
+		this.keywords = keywords;
+	}
 
-            index++;
-        }
+	public void setType(QuestionType type) {
+		this.type = type;
+	}
 
-        return 0;
-    }
+	public int getId() {
+		return this.id;
+	}
 
+	public QuestionType getType() {
+		return this.type;
+	}
 
-    public List<String> getKeyWords() {
-        return this.keywords;
-    }
+	public String getQuestion() {
+		return this.question;
+	}
 
-    public String toString() {
-        return "Q: " + question + "\n  A: " + this.answers.get(getCorrectAnswerIndex()) + "\n";
-    }
+	public List<Answer> getAnswers() {
 
+		return this.answers;
+	}
 
-    @Override
-    // 1. for t/f Q's valid user input: t, true, f, false
-    //
-    public boolean isCorrect(String answer) {
-        if (this.type == QuestionType.TRUE_FALSE) {
-            //FORMAT: true/false in txt
-            String userAnswer = "false";
+	public List<String> getKeywords() {
+		return this.keywords;
+	}
 
-            switch (answer.toLowerCase()) {
-                case "t":
-                case "true":
-                    userAnswer = "true";
-                    break;
-                case "f":
-                case "false":
-                    break;
-                default:
-                    return false;
-            }
+	public int getCorrectAnswerIndex() {
+		int index = 0;
+		for (Answer a : answers) {
+			if (a.getCorrect()) {
+				return index;
+			}
 
-            return userAnswer.compareTo(this.answers.get(0).answer) == 0;
-        }
+			index++;
+		}
 
-        if (this.type == QuestionType.MULTIPLE) {
-            return (answer.compareToIgnoreCase(answers.get(getCorrectAnswerIndex()).answer) == 0);
-        }
+		return 0;
+	}
 
-        if (this.type == QuestionType.SHORT) {
-            for (MazeAnswer ans : answers) {
-                if (answer.compareToIgnoreCase(ans.answer) == 0)
-                    return true;
-            }
-        }
+	public String toString() {
+		return "Q: " + question + "\n  A: " + this.answers.get(getCorrectAnswerIndex()) + "\n";
+	}
 
-        return false;
-    }
+	@Override
+	// 1. for t/f Q's valid user input: t, true, f, false
+	//
+	public boolean isCorrect(String answer) {
+		if (this.type == QuestionType.TRUE_FALSE) {
+			// FORMAT: true/false in txt
+			String userAnswer = "false";
 
+			switch (answer.toLowerCase()) {
+			case "t":
+			case "true":
+				userAnswer = "true";
+				break;
+			case "f":
+			case "false":
+				break;
+			default:
+				return false;
+			}
 
-    @Override
-    public boolean isCorrect(Item keyItem) {
+			return userAnswer.compareTo(this.answers.get(0).getAnswer()) == 0;
+		}
 
-        for (String key : keywords) {
-            if (keyItem.getName().compareToIgnoreCase(key) == 0)
-                return true;
-        }
-        return false;
-    }
+		if (this.type == QuestionType.MULTIPLE) {
+			return (answer.compareToIgnoreCase(answers.get(getCorrectAnswerIndex()).getAnswer()) == 0);
+		}
 
-    class MazeQuestionInfo implements QuestionInfo {
+		if (this.type == QuestionType.SHORT) {
+			for (Answer ans : answers) {
+				if (answer.compareToIgnoreCase(ans.getAnswer()) == 0)
+					return true;
+			}
+		}
 
-        MazeQuestion mq;
+		return false;
+	}
 
-        public MazeQuestionInfo(MazeQuestion mq) {
+	@Override
+	public boolean isCorrect(Item keyItem) {
 
-            this.mq = mq;
-        }
+		for (String key : keywords) {
+			if (keyItem.getName().compareToIgnoreCase(key) == 0)
+				return true;
+		}
+		return false;
+	}
 
-        public String getPromptText() {
+	class MazeQuestionInfo implements QuestionInfo {
 
-            //return this.mq.getQuestion();
-        	/*
-        	 * Q: Wesley's eyes are the color of?
-				 1. The fire of a thousand suns.
-				 2. High seas after a storm.
-				 3. Black as the night sky.
-        	 */
+		MazeQuestion mq;
 
-            StringBuilder str = new StringBuilder();
+		public MazeQuestionInfo(MazeQuestion mq) {
 
-            str.append("Q: " + mq.question + "\n");
+			this.mq = mq;
+		}
 
-            if (mq.type == QuestionType.MULTIPLE) {
+		public String getPromptText() {
 
-                for (int i = 0; i < mq.answers.size(); i++) {
-                    str.append("  " + (i + 1) + ". " + mq.answers.get(i) + "\n");
-                }
-            } else if (mq.type == QuestionType.TRUE_FALSE) {
-                str.append("  1. True\n");
-                str.append("  2. False\n");
-            }
+			// return this.mq.getQuestion();
+			/*
+			 * Q: Wesley's eyes are the color of? 1. The fire of a thousand suns. 2. High
+			 * seas after a storm. 3. Black as the night sky.
+			 */
 
-            return str.toString();
+			StringBuilder str = new StringBuilder();
 
-        }
+			str.append("Q: " + mq.question + "\n");
 
-        public String getQuestionType() {
+			if (mq.type == QuestionType.MULTIPLE) {
 
-            return this.mq.getType().toString();
-        }
-    }
+				for (int i = 0; i < mq.answers.size(); i++) {
+					str.append("  " + (i + 1) + ". " + mq.answers.get(i) + "\n");
+				}
+			} else if (mq.type == QuestionType.TRUE_FALSE) {
+				str.append("  1. True\n");
+				str.append("  2. False\n");
+			}
 
-    @Override
-    public QuestionInfo getInfo() {
+			return str.toString();
 
-        return new MazeQuestionInfo(this);
-    }
+		}
 
+		public String getQuestionType() {
 
-    @Override
-    public String getCorrectAnswer() {
-        return this.answers.get(this.getCorrectAnswerIndex()).answer;
-    }
+			return this.mq.getType().toString();
+		}
+	}
 
-    class MazeItem implements Item {
+	@Override
+	public QuestionInfo getInfo() {
 
-        String name;
+		return new MazeQuestionInfo(this);
+	}
 
-        public MazeItem(String name) {
+	@Override
+	public String getCorrectAnswer() {
+		return this.answers.get(this.getCorrectAnswerIndex()).getAnswer();
+	}
 
-            this.name = name;
-        }
+	class MazeItem implements Item {
 
-        public String getName() {
-            return this.name;
-        }
-    }
+		String name;
 
-    @Override
-    public Item constructKeyItem() {
+		public MazeItem(String name) {
 
-        return new MazeItem(this.keywords.size() > 0 ? this.keywords.get(0) : "gold");
-    }
-}
+			this.name = name;
+		}
 
-class MazeAnswer {
-    public int id;
-    public String answer;
-    public boolean correct;
+		public String getName() {
+			return this.name;
+		}
+	}
 
-    public MazeAnswer(int id, String answer, boolean correct) {
-        this.id = id;
-        this.answer = answer;
-        this.correct = correct;
-    }
+	@Override
+	public Item constructKeyItem() {
 
-    public MazeAnswer(String answer, boolean correct) {
-        this(0, answer, correct);
-    }
-
-    public String toString() {
-        return answer + "[" + (correct ? "CORRECT" : "WRONG") + "]";
-    }
+		return new MazeItem(this.keywords.size() > 0 ? this.keywords.get(0) : "gold");
+	}
 }

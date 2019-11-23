@@ -25,7 +25,7 @@ public class Algorithms {
     @SuppressWarnings("unchecked")
     public static <T extends Room> List<Direction> aStar(T source, T destination) {
         Map<T, List<Direction>> shortestPaths = new HashMap<>();
-        Queue<T> toExplore = new PriorityQueue<>(20, new Comparator<>() {
+        Queue<T> toExplore = new PriorityQueue<>(20, new Comparator<T>() {
             @Override
             public int compare(T o1, T o2) {
                 return distance(o1,destination).compareTo(distance(o2,destination));

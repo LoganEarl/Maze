@@ -1,5 +1,7 @@
 package maze.model;
 
+import maze.model.question.DatabaseManager;
+import maze.model.question.MazeDatabase;
 import maze.model.question.Question;
 import maze.model.question.SqLiteDatabase;
 import org.junit.jupiter.api.Test;
@@ -13,7 +15,7 @@ class RandomWorldBuilderTest {
     private List<Question> questions;
 
     RandomWorldBuilderTest() {
-        SqLiteDatabase db = new SqLiteDatabase("data/mazedb.sqlite3");
+        MazeDatabase db = DatabaseManager.openDatabase("data"); // new SqLiteDatabase("data/mazedb.sqlite3");
         questions = db.readAllRecords();
     }
 

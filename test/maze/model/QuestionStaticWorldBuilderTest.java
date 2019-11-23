@@ -9,12 +9,13 @@ import java.util.List;
 
 class QuestionStaticWorldBuilderTest {
     private QuestionStaticWorldBuilder builder;
-    private List<Question> questions = QuestionImporter.getDefaultQuestions().getQuestions();
+    private List<Question> questions = null;
 
     private static final long randomSeed = 1111;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
+    	questions = QuestionImporter.getDefaultQuestions().getQuestions();
         builder = new QuestionStaticWorldBuilder(questions, randomSeed);
     }
 

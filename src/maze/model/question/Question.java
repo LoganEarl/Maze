@@ -1,33 +1,40 @@
 package maze.model.question;
 
-import maze.model.Item;
-
 import java.util.ArrayList;
 import java.util.List;
 
-
+import maze.model.Item;
 
 public interface Question {
-    boolean isCorrect(String answer);
-    boolean isCorrect(Item keyItem);
-    QuestionInfo getInfo();
-    String getCorrectAnswer();
-    Item constructKeyItem();
-    
-    
-    //-- sveta's particulars --
-    int getId();
-    String getQuestion();
-    List<MazeAnswer> getAnswers();
-    List<String> getKeywords();
-    QuestionType getType();  
-    
+	boolean isCorrect(String answer);
 
-    interface QuestionInfo {
-        //Or something to the effect of this.
-        String getPromptText();
-        String getQuestionType();
-    }
+	boolean isCorrect(Item keyItem);
+
+	QuestionInfo getInfo();
+
+	String getCorrectAnswer();
+
+	Item constructKeyItem();
+
+	// -- sveta's particulars --
+	void setId(int id);
+
+	int getId();
+
+	String getQuestion();
+
+	List<Answer> getAnswers();
+
+	List<String> getKeywords();
+
+	QuestionType getType();
+
+	interface QuestionInfo {
+		// Or something to the effect of this.
+		String getPromptText();
+
+		String getQuestionType();
+	}
 
 
     Item STUBBED_ITEM = () -> "STUBBED ITEM";
@@ -87,27 +94,37 @@ public interface Question {
 			return "How are you?";
 		}
 		@Override
-		public List<MazeAnswer> getAnswers() {
-			return new ArrayList<MazeAnswer>();
+		public List<Answer> getAnswers() {
+			return new ArrayList<Answer>();
 		}
 		@Override
 		public List<String> getKeywords() {
 			return new ArrayList<String>();
 		}
+		@Override
+		public void setId(int id) {
+			// TODO Auto-generated method stub
+			
+		}
     };
 }
 
-enum QuestionType {
-	MULTIPLE(0),
-	TRUE_FALSE(1),
-	SHORT(2);
-	
-	private final int value;
-	QuestionType(int value) {
-        this.value = value;
-    }
+interface Answer {
+	// gets record id of this answer
+	int getId();
 
-    public int getValue() {
-        return value;
-    }
+	// sets record id of this answer
+	void setId(int id);
+
+	// gets answer of this answer
+	String getAnswer();
+
+	// sets answer of this answer
+	void setAnswer(String answer);
+
+	// gets flag indicating if this answer is correct
+	boolean getCorrect();
+
+	// sets flag indicating if this record is correct
+	void setCorrect(boolean correct);
 }
