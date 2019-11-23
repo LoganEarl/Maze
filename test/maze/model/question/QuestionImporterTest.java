@@ -76,5 +76,13 @@ class QuestionImporterTest {
 	void testDefaultQuestion() throws Exception {
 		QuestionImporter.getDefaultQuestions();
 	}
-
+	
+	/*
+	@Test
+	void updateSampleDatabase() throws Exception {
+		
+		DatabaseManager.createDatabaseWithDefaultQuestions("");
+	}
+	*/
+	
 }
