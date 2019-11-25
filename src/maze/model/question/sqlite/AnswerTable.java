@@ -19,8 +19,8 @@ public class AnswerTable implements DatabaseManager.DatabaseTable {
         TABLE_DEFINITION.put(COLUMN_ANSWER, "TEXT");
         TABLE_DEFINITION.put(COLUMN_IS_CORRECT, "INT");
 
-        CONSTRAINTS.add(String.format(Locale.US,"PRIMARY KEY (%s)", COLUMN_QUESTION_ID));
-        CONSTRAINTS.add(String.format(Locale.US, "FOREIGN KEY %s REFERENCES %s(%s)",
+        CONSTRAINTS.add(String.format(Locale.US,"PRIMARY KEY (%s, %s)", COLUMN_QUESTION_ID, COLUMN_ANSWER));
+        CONSTRAINTS.add(String.format(Locale.US, "FOREIGN KEY (%s) REFERENCES %s(%s)",
                 COLUMN_QUESTION_ID, QuestionTable.TABLE_NAME, QuestionTable.COLUMN_ID));
     }
 

@@ -2,6 +2,7 @@ package maze.model;
 
 import maze.Direction;
 import maze.model.question.Question;
+import maze.model.question.SkeletonKey;
 import utils.Pair;
 
 import java.util.*;
@@ -14,14 +15,14 @@ public class RandomWorldBuilder implements World.Builder {
     private List<Question> questions;
     private int maxCorridorLength;
 
-    public RandomWorldBuilder(int numRooms, List<Question> questions, int maxCorridorLength, long randomSeed) {
+    public RandomWorldBuilder(int numRooms, Set<Question> questions, int maxCorridorLength, long randomSeed) {
         if(questions.size() < numRooms * 1.5)
             throw new IllegalArgumentException("Not enough questions");
         rnd = new Random(randomSeed);
 
 
         this.numRooms = numRooms;
-        this.questions = questions;
+        this.questions = new ArrayList<>(questions);
         this.maxCorridorLength = maxCorridorLength;
     }
 
@@ -80,7 +81,7 @@ public class RandomWorldBuilder implements World.Builder {
         for(int i = 0; i < numSkeletonKeys; i++){
             TempRoom cur = possibleRooms.toArray(new TempRoom[0])[rnd.nextInt(possibleRooms.size())];
             possibleRooms.remove(cur);
-            cur.addItem(new Item.SkeletonKey());
+            cur.addItem(new SkeletonKey());
         }
 
         return new World(startRoom, endRoom);

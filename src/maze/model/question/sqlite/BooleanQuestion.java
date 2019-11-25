@@ -11,8 +11,8 @@ import static maze.model.question.sqlite.SQLiteQuestionDataSource.GeneralPurpose
 
 public class BooleanQuestion implements SQLiteQuestion {
     public static final String TYPE_BOOLEAN = "typeBoolean";
-    public static final String TEXT_TRUE = "true";
-    public static final String TEXT_FALSE = "false";
+    public static final String TEXT_TRUE = "True";
+    public static final String TEXT_FALSE = "False";
     private int id;
     private boolean correctAnswer;
     private String prompt;

@@ -1,6 +1,7 @@
 package maze.model;
 
 import maze.model.question.Question;
+import maze.model.question.TestingQuestions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,18 +9,14 @@ import java.util.Random;
 
 import static maze.Direction.*;
 
-public class QuestionStaticWorldBuilder implements World.Builder {
-    private Random rnd;
+public class StubbedWorldBuilder implements World.Builder {
     private Room entryRoom;
     private Room exitRoom;
 
     private List<Question> questions;
 
-    public QuestionStaticWorldBuilder(List<Question> availableQuestions, long randomSeed) {
-        if (availableQuestions.size() < 7)
-            throw new IllegalArgumentException("This builder needs at least 7 questions to choose from");
-        this.questions = new ArrayList<>(availableQuestions);
-        rnd = new Random(randomSeed);
+    public StubbedWorldBuilder() {
+        this.questions = new ArrayList<>(List.of(TestingQuestions.questions));
         entryRoom = new Room(-1, 0);
         exitRoom = new Room(1, 0);
     }
@@ -49,6 +46,6 @@ public class QuestionStaticWorldBuilder implements World.Builder {
     }
 
     private Question takeNextQuestion() {
-        return questions.remove(rnd.nextInt(questions.size()));
+        return questions.remove(0);
     }
 }

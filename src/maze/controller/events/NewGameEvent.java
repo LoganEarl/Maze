@@ -6,21 +6,21 @@ import maze.controller.Controller;
 import maze.controller.GameEvent;
 import maze.model.RandomWorldBuilder;
 import maze.model.question.Question;
-import maze.model.question.SqLiteDatabase;
+import maze.model.question.sqlite.SQLiteQuestionDataSource;
 import maze.view.MainFrame;
 import maze.view.Panel;
 import maze.model.World;
 
-import java.util.List;
+import java.util.Set;
 
 public class NewGameEvent implements GameEvent {
 	@Override
 	public void resolveTo(Controller controller, MainFrame mainFrame, World world) {
 		mainFrame.switchToPanel(Panel.LOADING);
 
-		SqLiteDatabase db = new SqLiteDatabase("data/mazedb.sqlite3");
-		List<Question> questions = db.readAllRecords();
-		World.Builder worldBuilder = new RandomWorldBuilder(18, questions,1, ((int) (Math.random() * ((1000 - 1) + 1)) + 1));
+		SQLiteQuestionDataSource questionDataSource = new SQLiteQuestionDataSource("questions.db");
+		Set<Question> questions = questionDataSource.getAllQuestions();
+		World.Builder worldBuilder = new RandomWorldBuilder(4, questions,1, ((int) (Math.random() * ((1000 - 1) + 1)) + 1));
 		world = worldBuilder.build();
 
 		controller.setWorld(world);

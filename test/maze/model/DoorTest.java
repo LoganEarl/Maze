@@ -2,10 +2,13 @@ package maze.model;
 
 import maze.Direction;
 import maze.model.question.Question;
+import maze.model.question.TestingQuestions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import utils.Pair;
+
+import static maze.model.question.TestingQuestions.*;
 
 class DoorTest {
     private Room testRoom1;
@@ -16,7 +19,7 @@ class DoorTest {
     void setUp() {
         testRoom1 = new Room(0,0);
         testRoom2 = new Room(1,0);
-        testDoor = testRoom1.setRoomConnection(Direction.east,testRoom2,Direction.west, Question.STUBBED_QUESTION);
+        testDoor = testRoom1.setRoomConnection(Direction.east,testRoom2,Direction.west, questions[0]);
     }
 
     @Test
@@ -33,7 +36,7 @@ class DoorTest {
 
     @Test
     void getQuestion() {
-        assert(testDoor.getQuestion() == Question.STUBBED_QUESTION);
+        assert(testDoor.getQuestion() == questions[0]);
     }
 
     @Test

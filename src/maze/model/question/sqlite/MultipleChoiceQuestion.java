@@ -34,12 +34,12 @@ public class MultipleChoiceQuestion implements SQLiteQuestion {
         this.prompt = questionSet.getString(QuestionTable.COLUMN_PROMPT);
         this.keyItemName = questionSet.getString(QuestionTable.COLUMN_ITEM_NAME);
         List<String> answers = new ArrayList<>();
-        do{
+        while(questionSet.next() && questionSet.getInt(QuestionTable.COLUMN_ID) == id){
             String answer = questionSet.getString(AnswerTable.COLUMN_ANSWER);
             if(questionSet.getInt(AnswerTable.COLUMN_IS_CORRECT) == 1)
                 correctAnswer = answer;
             answers.add(answer);
-        }while(questionSet.next());
+        }
         possibleAnswers = answers.toArray(new String[0]);
     }
 

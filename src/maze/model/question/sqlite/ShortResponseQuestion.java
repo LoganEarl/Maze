@@ -32,9 +32,9 @@ public class ShortResponseQuestion implements SQLiteQuestion {
         this.prompt = questionSet.getString(QuestionTable.COLUMN_PROMPT);
         this.keyItemName = questionSet.getString(QuestionTable.COLUMN_ITEM_NAME);
         List<String> keywords = new ArrayList<>();
-        do{
+        while(questionSet.next() && questionSet.getInt(QuestionTable.COLUMN_ID) == id){
             keywords.add(questionSet.getString(AnswerTable.COLUMN_ANSWER));
-        }while(questionSet.next());
+        }
         this.keywords = keywords.toArray(new String[0]);
     }
 

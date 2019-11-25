@@ -1,21 +1,14 @@
 package maze.model;
 
-import maze.model.question.Question;
-import maze.model.question.QuestionImporter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
-
-class QuestionStaticWorldBuilderTest {
-    private QuestionStaticWorldBuilder builder;
-    private List<Question> questions = QuestionImporter.getDefaultQuestions().getQuestions();
-
-    private static final long randomSeed = 1111;
+class StubbedWorldBuilderTest {
+    private StubbedWorldBuilder builder;
 
     @BeforeEach
     void setUp() {
-        builder = new QuestionStaticWorldBuilder(questions, randomSeed);
+        builder = new StubbedWorldBuilder();
     }
 
     @Test

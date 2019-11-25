@@ -19,7 +19,12 @@ import maze.controller.Controller;
 import maze.controller.events.CancelDoorEvent;
 import maze.controller.events.QuestionAnsweredEvent;
 import maze.model.question.Question;
+import maze.model.question.sqlite.BooleanQuestion;
 import maze.model.question.sqlite.MultipleChoiceQuestion;
+
+import static maze.model.question.sqlite.BooleanQuestion.TYPE_BOOLEAN;
+import static maze.model.question.sqlite.MultipleChoiceQuestion.TYPE_MULTIPLE_CHOICE;
+import static maze.model.question.sqlite.ShortResponseQuestion.TYPE_SHORT_RESPONSE;
 
 public class QuestionPanel extends JPanel implements ActionListener {
 	private Controller controller;
@@ -189,17 +194,17 @@ public class QuestionPanel extends JPanel implements ActionListener {
 			ViewUtils.componentColorBorder(button, unselectedColor);
 		}
 
-		if (MultipleChoiceQuestion.TYPE_MULTIPLE_CHOICE.equals(question.getQuestionType())) {
+		if (TYPE_MULTIPLE_CHOICE.equals(question.getQuestionType())) {
 			for (int i = 0; i < question.getPossibleAnswers().length; i++) {
 				buttonAnswer[i].setText(question.getPossibleAnswers()[i]);
 				buttonAnswer[i].setVisible(true);
 			}
-		} else if (question.getType() == QuestionType.TRUE_FALSE) {
-			buttonAnswer[0].setText("True");
-			buttonAnswer[1].setText("False");
+		} else if (TYPE_BOOLEAN.equals(question.getQuestionType())) {
+			buttonAnswer[0].setText(BooleanQuestion.TEXT_TRUE);
+			buttonAnswer[1].setText(BooleanQuestion.TEXT_FALSE);
 			buttonAnswer[0].setVisible(true);
 			buttonAnswer[1].setVisible(true);
-		} else if (question.getType() == QuestionType.SHORT) {
+		} else if (TYPE_SHORT_RESPONSE.equals(question.getQuestionType())) {
 			textFieldAnswer.setVisible(true);
 			textFieldAnswer.setText("");
 		}
@@ -210,7 +215,7 @@ public class QuestionPanel extends JPanel implements ActionListener {
 	    JButton buttonClicked = ((JButton) e.getSource());
 
 	    if (buttonClicked == buttonSubmit) {
-	    	if (question.getType() == QuestionType.SHORT && !textFieldAnswer.getText().isEmpty()) {
+	    	if (TYPE_SHORT_RESPONSE.equals(question.getQuestionType()) && !textFieldAnswer.getText().isEmpty()) {
 	    		QuestionAnsweredEvent event = new QuestionAnsweredEvent(question, textFieldAnswer.getText());
 	    		controller.onGameEvent(event);
 	    	} else if (selectedButton != null) {

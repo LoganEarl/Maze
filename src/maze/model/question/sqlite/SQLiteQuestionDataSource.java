@@ -43,7 +43,7 @@ public class SQLiteQuestionDataSource implements QuestionDataSource {
                 getSQL.close();
 
                 for (Integer i : allIDs) {
-                    getSQL = c.prepareStatement(GeneralPurposeSql.GET_ALL_QUESTION_IDS);
+                    getSQL = c.prepareStatement(GeneralPurposeSql.GET_QUESTION);
                     getSQL.setInt(1, i);
                     questionEntries = getSQL.executeQuery();
                     questions.add(factory.parseQuestion(questionEntries));
@@ -74,8 +74,9 @@ public class SQLiteQuestionDataSource implements QuestionDataSource {
                 "SELECT %s FROM %s",
                 QuestionTable.COLUMN_ID, QuestionTable.TABLE_NAME);
         static final String GET_QUESTION = String.format(Locale.US,
-                "SELECT * FROM %s LEFT JOIN %s WHERE %s.%s=?",
-                QuestionTable.TABLE_NAME, AnswerTable.TABLE_NAME, QuestionTable.TABLE_NAME, QuestionTable.COLUMN_ID);
+                "SELECT * FROM %s LEFT JOIN %s ON %s.%s=%s.%s WHERE %s.%s=?",
+                QuestionTable.TABLE_NAME, AnswerTable.TABLE_NAME, QuestionTable.TABLE_NAME, QuestionTable.COLUMN_ID,
+                AnswerTable.TABLE_NAME, AnswerTable.COLUMN_QUESTION_ID, QuestionTable.TABLE_NAME, QuestionTable.COLUMN_ID);
         static final String REPLACE_QUESTION = String.format(Locale.US,
                 "REPLACE INTO %s(%s, %s, %s, %s) VALUES (?, ?, ?, ?)",
                 QuestionTable.TABLE_NAME, QuestionTable.COLUMN_ID, QuestionTable.COLUMN_PROMPT,

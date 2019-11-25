@@ -17,9 +17,6 @@ import javax.swing.SwingUtilities;
 import maze.controller.Controller;
 import maze.controller.GameEvent;
 import maze.controller.events.NewGameEvent;
-import maze.model.question.MazeAnswer;
-import maze.model.question.Question;
-import maze.model.question.QuestionType;
 
 public class QuestionMenuPanel extends JPanel {
 	private Controller controller;
