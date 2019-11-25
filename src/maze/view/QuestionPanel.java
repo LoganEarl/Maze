@@ -19,7 +19,7 @@ import maze.controller.Controller;
 import maze.controller.events.CancelDoorEvent;
 import maze.controller.events.QuestionAnsweredEvent;
 import maze.model.question.Question;
-import maze.model.question.QuestionType;
+import maze.model.question.sqlite.MultipleChoiceQuestion;
 
 public class QuestionPanel extends JPanel implements ActionListener {
 	private Controller controller;
@@ -181,7 +181,7 @@ public class QuestionPanel extends JPanel implements ActionListener {
 	public void setQuestion(Question question) {
 		this.question = question;
 		
-		textPaneQuestion.setText(question.getQuestion());
+		textPaneQuestion.setText(question.getPrompt());
 		textFieldAnswer.setVisible(false);
 		selectedButton = null;
 		for (JButton button : buttonAnswer) {
@@ -189,9 +189,9 @@ public class QuestionPanel extends JPanel implements ActionListener {
 			ViewUtils.componentColorBorder(button, unselectedColor);
 		}
 
-		if (question.getType() == QuestionType.MULTIPLE) {
-			for (int i = 0; i < question.getAnswers().size(); i++) {
-				buttonAnswer[i].setText(question.getAnswers().get(i).getAnswer());
+		if (MultipleChoiceQuestion.TYPE_MULTIPLE_CHOICE.equals(question.getQuestionType())) {
+			for (int i = 0; i < question.getPossibleAnswers().length; i++) {
+				buttonAnswer[i].setText(question.getPossibleAnswers()[i]);
 				buttonAnswer[i].setVisible(true);
 			}
 		} else if (question.getType() == QuestionType.TRUE_FALSE) {
