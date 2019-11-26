@@ -47,17 +47,18 @@ class RandomWorldBuilderTest {
 
     @Test
     void buildComplexTest(){
-        Random r = new Random(System.currentTimeMillis());
-        for(int i = 2; i < questions.size() / 1.5; i++){
-            World builtWorld = new RandomWorldBuilder(2, questions, r.nextInt(5), r.nextLong()).build();
-            assert(builtWorld != null);
-            assert(builtWorld.getEntryRoom() != null);
-            assert(builtWorld.getExitRoom() != null);
-            assert(builtWorld.getEntryRoom() != builtWorld.getExitRoom());
-            assert(builtWorld.getPlayer() != null);
-            assert(builtWorld.getPlayer().getCurrentRoom() == builtWorld.getEntryRoom());
-            assert(builtWorld.baseRouteExists());
-            assert(builtWorld.getAllRooms().size() <= i);
+        for(int seed = 0; seed < 1000; seed++) {
+            for (int i = 2; i < questions.size() / 1.5; i++) {
+                World builtWorld = new RandomWorldBuilder(2, questions, i%5, seed).build();
+                assert (builtWorld != null);
+                assert (builtWorld.getEntryRoom() != null);
+                assert (builtWorld.getExitRoom() != null);
+                assert (builtWorld.getEntryRoom() != builtWorld.getExitRoom());
+                assert (builtWorld.getPlayer() != null);
+                assert (builtWorld.getPlayer().getCurrentRoom() == builtWorld.getEntryRoom());
+                assert (builtWorld.baseRouteExists());
+                assert (builtWorld.getAllRooms().size() <= i);
+            }
         }
     }
 
