@@ -10,7 +10,6 @@ import java.io.FileNotFoundException;
 import javax.swing.JPanel;
 
 import maze.Direction;
-import maze.Zoom;
 import maze.model.Door;
 import maze.model.Player;
 import maze.model.Room;

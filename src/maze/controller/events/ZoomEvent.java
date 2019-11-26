@@ -1,6 +1,6 @@
 package maze.controller.events;
 
-import maze.Zoom;
+import maze.view.Zoom;
 import maze.controller.Controller;
 import maze.controller.GameEvent;
 import maze.model.World;

@@ -7,7 +7,6 @@ import java.awt.event.KeyEvent;
 import javax.swing.JFrame;
 
 import maze.Direction;
-import maze.Zoom;
 import maze.controller.Controller;
 import maze.controller.events.MoveEvent;
 import maze.controller.events.PauseMenuEvent;
