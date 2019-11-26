@@ -122,9 +122,7 @@ public class QuestionImporter {
 				if (header != null) {
 					question = new MazeQuestion();
 					question.setType(header.type);
-
-					if (header.keywords.size() > 0)
-						question.getKeywords().addAll(header.keywords);
+					question.setName(header.name);
 
 					isNextLineQuestion = true;
 					readAnswerCount = header.answersCount;
@@ -169,11 +167,11 @@ class QuestionHeader {
 	public QuestionType type;
 	public int answersCount; // a,b,c, - thats 3!
 	public int correctAnswerIndex; // answer is b so 1
-	public ArrayList<String> keywords = new ArrayList<String>(); // keyword that identifies item
+	public String name = "";
 
 	public String toString() {
 
-		return this.type + ", " + this.answersCount + ", " + this.correctAnswerIndex + ", " + this.keywords.size();
+		return this.type + ", " + this.answersCount + ", " + this.correctAnswerIndex + ", name: " + name;
 	}
 
 	public static QuestionHeader parse(String line) {
@@ -218,22 +216,8 @@ class QuestionHeader {
 
 			// if we are here we need to check for keywords
 			if (parts.length > 3) {
-
-				try {
-					int count = Integer.parseInt(parts[3]);
-
-					for (int i = 0; i < count; i++) {
-
-						int ind = 3 + i;
-
-						if (ind < parts.length) {
-
-							header.keywords.add(parts[ind]);
-						}
-					}
-				} catch (Exception e) {
-				}
-
+				
+				header.name = parts[3];
 			}
 
 			return header;
@@ -296,13 +280,13 @@ class DefaultQuestions
 		"What year was the very first model of the iPhone released?\n" +
 		"2007\n" +
 	
-		"[MULT,3,0]\n" +
+		"[MULT,3,0,duck]\n" +
 		"What was a Puffing Billy?\n" +
 		"Steam Train\n" +
 		"Steam Engine\n" +
 		"Steam Boat\n" +
 		
-		"[MULT,3,2]\n" +
+		"[MULT,3,2,silver]\n" +
 		"What is the bluebird a symbol of?\n" +
 		"Wisdom\n" +
 		"Joy\n" +

@@ -12,7 +12,7 @@ public class SqLiteDatabase implements MazeDatabase {
 
 	private static final String QUESTION_TABLE = "CREATE TABLE IF NOT EXISTS \"question\" (\r\n"
 			+ "	\"id\"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\r\n" + "	\"question\"	TEXT NOT NULL,\r\n"
-			+ "	\"type\"	INTEGER NOT NULL DEFAULT 0,\r\n" + "	\"keywords\"	TEXT DEFAULT 0\r\n" + ");";
+			+ "	\"type\"	INTEGER NOT NULL DEFAULT 0,\r\n" + "	\"name\"	TEXT DEFAULT 0\r\n" + ");";
 
 	private static final String ANSWER_TABLE = "CREATE TABLE IF NOT EXISTS \"answer\" (\r\n"
 			+ "	\"id\"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\r\n" + "	\"question_id\"	INTEGER NOT NULL,\r\n"
@@ -82,12 +82,12 @@ public class SqLiteDatabase implements MazeDatabase {
 				if (questionExistsByQuestion(conn, q.getQuestion()))
 					return false;
 
-				String sql = "INSERT INTO question(question, type, keywords) VALUES(?, ?, ?)";
+				String sql = "INSERT INTO question(question, type, name) VALUES(?, ?, ?)";
 
 				PreparedStatement pstmt = conn.prepareStatement(sql);
 				pstmt.setString(1, q.getQuestion());
 				pstmt.setInt(2, q.getType().getValue());
-				pstmt.setString(3, toCommaSeparatedValues(q.getKeywords())); // names to the items that can answer this
+				pstmt.setString(3, q.getName()); // names to the items that can answer this
 																				// question
 				pstmt.executeUpdate();
 
@@ -168,12 +168,12 @@ public class SqLiteDatabase implements MazeDatabase {
 				conn = this.openConnection();
 
 				if (questionExistsById(conn, q.getId())) {
-					String sql = "UPDATE question SET question=?, type=?, keywords=? WHERE id=?";
+					String sql = "UPDATE question SET question=?, type=?, name=? WHERE id=?";
 
 					PreparedStatement pstmt = conn.prepareStatement(sql);
 					pstmt.setString(1, q.getQuestion());
 					pstmt.setInt(2, q.getType().getValue());
-					pstmt.setString(3, toCommaSeparatedValues(q.getKeywords()));
+					pstmt.setString(3, q.getName());
 					pstmt.setInt(4, q.getId());
 
 					pstmt.executeUpdate();
@@ -267,7 +267,7 @@ public class SqLiteDatabase implements MazeDatabase {
 
 			try {
 				conn = this.openConnection();
-				String sql = "SELECT t1.id, t1.question, t1.type, t1.keywords, t2.id as aid, t2.answer, t2.correct "
+				String sql = "SELECT t1.id, t1.question, t1.type, t1.name, t2.id as aid, t2.answer, t2.correct "
 						+ "FROM \"question\" t1, \"answer\" t2 " + "WHERE t1.id = t2.question_id";
 
 				Statement stmt = conn.createStatement();
@@ -280,7 +280,7 @@ public class SqLiteDatabase implements MazeDatabase {
 					int id = rs.getInt("id");
 					String question = rs.getString("question");
 					int type = rs.getInt("type");
-					String keywords = rs.getString("keywords");
+					String name = rs.getString("name");
 					int answerId = rs.getInt("aid");
 					String answer = rs.getString("answer");
 					int correct = rs.getInt("correct");
@@ -298,13 +298,9 @@ public class SqLiteDatabase implements MazeDatabase {
 					// q.question = question;
 					q.setQuestion(question);
 					q.setType(toQuestionType(type));
-					if (keywords.length() > 0) {
-						String[] parts = keywords.split(",");
-
-						for (String part : parts) {
-							q.getKeywords().add(part);
-						}
-					}
+					
+					q.setName(name);
+				
 					q.getAnswers().add(new MazeAnswer(answerId, answer, correct != 0));
 
 				}
