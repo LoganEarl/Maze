@@ -77,12 +77,37 @@ class QuestionImporterTest {
 		QuestionImporter.getDefaultQuestions();
 	}
 	
+	
+	@Test
+	void keyItemTester() throws Exception
+	{
+		
+		String item = 		"[MULT,3,2,silver]\n" +
+				"What is the bluebird a symbol of?\n" +
+				"Wisdom\n" +
+				"Joy\n" +
+				"Happiness\n" ;
+		
+		QuestionImporter qs = QuestionImporter.parseString(item);
+		
+		assert(qs.questions.size() == 1);
+		
+		Question q = qs.questions.get(0);
+		
+		assert(q.getAnswers().size() == 3);
+		assert(q.getName().compareTo("silver") == 0);
+		
+		assert(q.isCorrect("silver"));
+		assert(!q.isCorrect("silver2"));
+		assert(!q.isCorrect("silve"));
+				
+	}
+		
 	/*
 	@Test
 	void updateSampleDatabase() throws Exception {
 		
 		DatabaseManager.createDatabaseWithDefaultQuestions("");
 	}
-	*/
-	
+	*/	
 }

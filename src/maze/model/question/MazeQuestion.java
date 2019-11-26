@@ -11,9 +11,11 @@ public class MazeQuestion implements Question {
 	private int id;
 	private String question;
 	private List<Answer> answers = new ArrayList<Answer>();
-	private List<String> keywords = new ArrayList<String>(); // list of item names that can answer question for you
+	private String name = ""; // list of item names that can answer question for you
 	private QuestionType type = maze.model.question.QuestionType.MULTIPLE;
-
+	
+	private final String MASTER_NAME = "gold";
+	
 	public MazeQuestion() {
 
 	}
@@ -45,8 +47,8 @@ public class MazeQuestion implements Question {
 		this.answers = new ArrayList<Answer>(answers);
 	}
 
-	public void setKeywords(List<String> keywords) {
-		this.keywords = keywords;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public void setType(QuestionType type) {
@@ -70,8 +72,8 @@ public class MazeQuestion implements Question {
 		return this.answers;
 	}
 
-	public List<String> getKeywords() {
-		return this.keywords;
+	public String getName() {
+		return this.name;
 	}
 
 	public int getCorrectAnswerIndex() {
@@ -95,6 +97,9 @@ public class MazeQuestion implements Question {
 	// 1. for t/f Q's valid user input: t, true, f, false
 	//
 	public boolean isCorrect(String answer) {
+		
+		boolean keyMatched = this.constructKeyItem().getName().compareToIgnoreCase(answer) == 0;
+		
 		if (this.type == QuestionType.TRUE_FALSE) {
 			// FORMAT: true/false in txt
 			String userAnswer = "false";
@@ -111,11 +116,12 @@ public class MazeQuestion implements Question {
 				return false;
 			}
 
-			return userAnswer.compareTo(this.answers.get(0).getAnswer()) == 0;
+			return userAnswer.compareTo(this.answers.get(0).getAnswer()) == 0 || keyMatched;
 		}
 
 		if (this.type == QuestionType.MULTIPLE) {
-			return (answer.compareToIgnoreCase(answers.get(getCorrectAnswerIndex()).getAnswer()) == 0);
+			return (answer.compareToIgnoreCase(answers.get(getCorrectAnswerIndex()).getAnswer()) == 0)
+					|| keyMatched;
 		}
 
 		if (this.type == QuestionType.SHORT) {
@@ -125,16 +131,15 @@ public class MazeQuestion implements Question {
 			}
 		}
 
-		return false;
+		return keyMatched;
 	}
 
 	@Override
 	public boolean isCorrect(Item keyItem) {
-
-		for (String key : keywords) {
-			if (keyItem.getName().compareToIgnoreCase(key) == 0)
-				return true;
-		}
+	
+		if (keyItem.getName().compareToIgnoreCase(this.name) == 0)
+			return true;
+		
 		return false;
 	}
 
@@ -207,6 +212,6 @@ public class MazeQuestion implements Question {
 	@Override
 	public Item constructKeyItem() {
 
-		return new MazeItem(this.keywords.size() > 0 ? this.keywords.get(0) : "gold");
+		return new MazeItem(this.name.length() > 0 ? this.name : MASTER_NAME);
 	}
 }

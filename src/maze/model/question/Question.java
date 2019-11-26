@@ -25,10 +25,12 @@ public interface Question {
 
 	List<Answer> getAnswers();
 
-	List<String> getKeywords();
-
 	QuestionType getType();
-
+	
+	void setName(String name);
+	
+	String getName();
+	
 	interface QuestionInfo {
 		// Or something to the effect of this.
 		String getPromptText();
@@ -97,14 +99,21 @@ public interface Question {
 		public List<Answer> getAnswers() {
 			return new ArrayList<Answer>();
 		}
-		@Override
-		public List<String> getKeywords() {
-			return new ArrayList<String>();
-		}
+
 		@Override
 		public void setId(int id) {
 			// TODO Auto-generated method stub
 			
+		}
+		@Override
+		public void setName(String name) {
+			
+		}
+		
+		@Override
+		public String getName() {
+			
+			return "";
 		}
     };
 }
