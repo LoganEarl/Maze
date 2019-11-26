@@ -1,26 +1,17 @@
 package maze.view;
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
 
 import maze.controller.Controller;
 import maze.controller.events.CancelDoorEvent;
 import maze.controller.events.QuestionAnsweredEvent;
 import maze.model.question.Question;
 import maze.model.question.sqlite.BooleanQuestion;
-import maze.model.question.sqlite.MultipleChoiceQuestion;
+
+import javax.swing.*;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import static maze.model.question.sqlite.BooleanQuestion.TYPE_BOOLEAN;
 import static maze.model.question.sqlite.MultipleChoiceQuestion.TYPE_MULTIPLE_CHOICE;

@@ -1,16 +1,15 @@
 package maze.controller.events;
 
-import javax.swing.SwingUtilities;
-
 import maze.controller.Controller;
 import maze.controller.GameEvent;
 import maze.model.RandomWorldBuilder;
+import maze.model.World;
 import maze.model.question.Question;
 import maze.model.question.sqlite.SQLiteQuestionDataSource;
 import maze.view.MainFrame;
 import maze.view.Panel;
-import maze.model.World;
 
+import javax.swing.*;
 import java.util.Set;
 
 public class NewGameEvent implements GameEvent {

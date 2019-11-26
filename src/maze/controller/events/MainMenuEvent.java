@@ -2,7 +2,6 @@ package maze.controller.events;
 
 import maze.controller.Controller;
 import maze.controller.GameEvent;
-import maze.model.Player;
 import maze.model.World;
 import maze.view.MainFrame;
 import maze.view.Panel;

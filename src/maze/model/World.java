@@ -99,7 +99,7 @@ public class World {
                         return true;
                 }else{
                     for(Item i:foundItems){
-                        if(exit.getQuestion().isCorrect(i) && !usedItems.contains(i)){
+                        if(i.answersQuestion(exit.getQuestion()) && !usedItems.contains(i)){
                             Set<Item> newUsedItems = new HashSet<>(usedItems);
                             newUsedItems.add(i);
                             if(canPathTo(nextRoom, exitRoom, myVisited, foundItems, newUsedItems))

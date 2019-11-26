@@ -10,27 +10,27 @@ import maze.model.World;
 import maze.view.MainFrame;
 
 public class MoveEvent implements GameEvent {
-	private Direction direction;
-	
-	public MoveEvent(Direction direction) {
-		this.direction = direction;
-	}
+    private Direction direction;
 
-	@Override
-	public void resolveTo(Controller controller, MainFrame mainFrame, World world) {
-		Player player = world.getPlayer();
-		Room room = player.getCurrentRoom();
-		Door door = room.getDoor(direction);
-		
-		player.setFacing(direction);
-		
-		if (door != null) {
-			if (door.isOpen()) {
-				player.move(direction);
-			} else if (!door.isLocked()) {
-				AccessDoorEvent event = new AccessDoorEvent(door);
-				controller.onGameEvent(event);
-			}
-		}
-	}
+    public MoveEvent(Direction direction) {
+        this.direction = direction;
+    }
+
+    @Override
+    public void resolveTo(Controller controller, MainFrame mainFrame, World world) {
+        Player player = world.getPlayer();
+        Room room = player.getCurrentRoom();
+        Door door = room.getDoor(direction);
+
+        player.setFacing(direction);
+
+        if (door != null) {
+            if (door.isOpen()) {
+                player.move(direction);
+            } else if (!door.isLocked()) {
+                AccessDoorEvent event = new AccessDoorEvent(door);
+                controller.onGameEvent(event);
+            }
+        }
+    }
 }

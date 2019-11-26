@@ -1,11 +1,11 @@
 package maze.controller.events;
 
-import maze.view.Zoom;
 import maze.controller.Controller;
 import maze.controller.GameEvent;
 import maze.model.World;
 import maze.view.GraphicsPanel;
 import maze.view.MainFrame;
+import maze.view.Zoom;
 
 public class ZoomEvent implements GameEvent {
 	Zoom zoom;

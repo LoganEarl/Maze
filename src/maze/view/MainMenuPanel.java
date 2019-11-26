@@ -1,27 +1,17 @@
 package maze.view;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
+
+import maze.controller.Controller;
+import maze.controller.GameEvent;
+import maze.controller.events.NewGameEvent;
+import maze.controller.events.QuestionManagerEvent;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-
-import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
-
-import maze.controller.Controller;
-import maze.controller.GameEvent;
-import maze.controller.events.QuestionManagerEvent;
-import maze.controller.events.NewGameEvent;
 
 public class MainMenuPanel extends JPanel {
 	private Controller controller;

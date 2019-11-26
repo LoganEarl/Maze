@@ -1,6 +1,5 @@
 package maze.model;
 
-import maze.Direction;
 import maze.model.question.SkeletonKey;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

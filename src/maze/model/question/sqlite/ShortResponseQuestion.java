@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static maze.model.question.sqlite.SQLiteQuestionDataSource.GeneralPurposeSql.*;
-import static maze.model.question.sqlite.SQLiteQuestionDataSource.GeneralPurposeSql.REPLACE_ANSWER;
 
 public class ShortResponseQuestion implements SQLiteQuestion {
     public static final String TYPE_SHORT_RESPONSE = "typeShortResponse";

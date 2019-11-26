@@ -1,10 +1,7 @@
 package maze.view;
 
-import java.awt.Color;
-import java.awt.Dimension;
-
-import javax.swing.BorderFactory;
-import javax.swing.JComponent;
+import javax.swing.*;
+import java.awt.*;
 
 public class ViewUtils {
 	public static void componentSetFont(JComponent Component, float fontSize) {

@@ -2,9 +2,9 @@ package maze.controller.events;
 
 import maze.controller.Controller;
 import maze.controller.GameEvent;
+import maze.model.World;
 import maze.view.MainFrame;
 import maze.view.Panel;
-import maze.model.World;
 
 public class QuestionManagerEvent implements GameEvent {
 	@Override

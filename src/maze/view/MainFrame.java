@@ -1,16 +1,14 @@
 package maze.view;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.KeyEvent;
-
-import javax.swing.JFrame;
-
 import maze.Direction;
 import maze.controller.Controller;
 import maze.controller.events.MoveEvent;
 import maze.controller.events.PauseMenuEvent;
 import maze.controller.events.ZoomEvent;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyEvent;
 
 public class MainFrame extends JFrame {
 	private Controller controller;
