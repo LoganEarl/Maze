@@ -65,17 +65,22 @@ public class BooleanQuestion implements SQLiteQuestion {
     @Override
     public boolean isCorrect(String answer) {
         if(answer == null)
-            return false;
+            throw new IllegalArgumentException("Answer cannot be null");
         return getCorrectAnswer().toLowerCase().equals(answer.toLowerCase().trim());
     }
 
     @Override
     public boolean isCorrect(Item key) {
+        if(key == null)
+            throw new NullPointerException("Key should not be null");
         return key.getName().equals(keyItemName);
     }
 
     @Override
     public boolean removeFromDatabase(String databaseName) {
+        if(databaseName == null || databaseName.isEmpty())
+            throw new IllegalArgumentException("database name should not be empty");
+
         boolean deletion =  DatabaseManager.executeStatement(DELETE_ANSWERS, databaseName, id) > 0;
         if(deletion)
             deletion = DatabaseManager.executeStatement(DELETE_QUESTION, databaseName, id) > 0;
@@ -84,6 +89,8 @@ public class BooleanQuestion implements SQLiteQuestion {
 
     @Override
     public boolean updateInDatabase(String databaseName) {
+        if(databaseName == null || databaseName.isEmpty())
+            throw new IllegalArgumentException("database name should not be empty");
         boolean update = DatabaseManager.executeStatement(REPLACE_QUESTION, databaseName, id, prompt, TYPE_BOOLEAN, keyItemName) > 0;
         if(update)
             update = DatabaseManager.executeStatement(REPLACE_ANSWER, databaseName, id, getCorrectAnswer(), 1) > 0;
@@ -92,6 +99,8 @@ public class BooleanQuestion implements SQLiteQuestion {
 
     @Override
     public boolean existsInDatabase(String databaseName) {
+        if(databaseName == null || databaseName.isEmpty())
+            throw new IllegalArgumentException("database name should not be empty");
         return SQLiteQuestion.existsInDatabase(id,databaseName);
     }
 }

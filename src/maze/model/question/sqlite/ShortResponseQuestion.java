@@ -70,6 +70,8 @@ public class ShortResponseQuestion implements SQLiteQuestion {
 
     @Override
     public boolean isCorrect(String answer) {
+        if(answer == null)
+            throw new IllegalArgumentException("Answer cannot be null");
         String[] answerWords = answer.split("\\W+");
         for(String keyword:keywords)
             for(String answerWord: answerWords)
@@ -80,11 +82,15 @@ public class ShortResponseQuestion implements SQLiteQuestion {
 
     @Override
     public boolean isCorrect(Item key) {
+        if(key == null)
+            throw new NullPointerException("Key should not be null");
         return key.getName().equals(keyItemName);
     }
 
     @Override
     public boolean removeFromDatabase(String databaseName) {
+        if(databaseName == null || databaseName.isEmpty())
+            throw new IllegalArgumentException("database name should not be empty");
         boolean deletion =  DatabaseManager.executeStatement(DELETE_ANSWERS, databaseName, id) > 0;
         if(deletion)
             deletion = DatabaseManager.executeStatement(DELETE_QUESTION, databaseName, id) > 0;
@@ -93,6 +99,8 @@ public class ShortResponseQuestion implements SQLiteQuestion {
 
     @Override
     public boolean updateInDatabase(String databaseName) {
+        if(databaseName == null || databaseName.isEmpty())
+            throw new IllegalArgumentException("database name should not be empty");
         boolean update = DatabaseManager.executeStatement(REPLACE_QUESTION, databaseName, id, prompt, TYPE_SHORT_RESPONSE, keyItemName) > 0;
         DatabaseManager.executeStatement(DELETE_ANSWERS, databaseName, id);
         for(String keyword: keywords)
@@ -103,6 +111,8 @@ public class ShortResponseQuestion implements SQLiteQuestion {
 
     @Override
     public boolean existsInDatabase(String databaseName) {
+        if(databaseName == null || databaseName.isEmpty())
+            throw new IllegalArgumentException("database name should not be empty");
         return SQLiteQuestion.existsInDatabase(id,databaseName);
     }
 }

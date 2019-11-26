@@ -12,6 +12,7 @@ public class DatabaseManager {
 
     private static Map<String, Connection> databaseConnections = new HashMap<>();
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void createDirectories() {
         File f = new File(DATA_DIRECTORY);
         if (!f.exists()) {
@@ -37,7 +38,7 @@ public class DatabaseManager {
     }
 
     public static void closeDatabaseConnection(String fileName){
-        String url = "jdbc:sqlite:" + DATA_DIRECTORY + fileName;
+        String url = getDatabaseConnectionURL(fileName);
         if(databaseConnections.containsKey(url)) {
             Connection c = databaseConnections.get(url);
             try {
@@ -57,7 +58,7 @@ public class DatabaseManager {
             e.printStackTrace();
         }
 
-        String url = "jdbc:sqlite:" + DATA_DIRECTORY + fileName;
+        String url = getDatabaseConnectionURL(fileName);
 
         if(databaseConnections.containsKey(url)) {
             Connection c = databaseConnections.get(url);
