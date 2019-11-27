@@ -3,22 +3,20 @@ package maze.model.question.sqlite;
 import maze.model.question.Question;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import utils.DatabaseManager;
 import utils.FileUtils;
 
 import java.io.File;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static utils.FileUtils.DATA_DIRECTORY;
 
 class SQLiteQuestionDataSourceTest {
     private static final String FILE_NAME = "testQuestions.db";
-    private static final String DATABASE_FILE = DatabaseManager.DATA_DIRECTORY + FILE_NAME;
+    private static final String DATABASE_FILE = DATA_DIRECTORY + FILE_NAME;
 
     private SQLiteQuestionDataSource dataSource;
 
     @BeforeEach
     void setUp() {
-        FileUtils.copyFile(new File(DatabaseManager.DATA_DIRECTORY, "questions.db"), new File(DATABASE_FILE));
+        FileUtils.copyFile(new File(DATA_DIRECTORY, "questions.db"), new File(DATABASE_FILE));
         dataSource = new SQLiteQuestionDataSource(FILE_NAME);
     }
 

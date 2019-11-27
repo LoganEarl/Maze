@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class DatabaseManager {
-    public static final String DATA_DIRECTORY = System.getProperty("user.dir").replace("\\", "/") + "/data/";
+import static utils.FileUtils.DATA_DIRECTORY;
 
+public class DatabaseManager {
     private static Map<String, Connection> databaseConnections = new HashMap<>();
 
     @SuppressWarnings("ResultOfMethodCallIgnored")

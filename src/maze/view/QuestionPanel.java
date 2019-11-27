@@ -1,6 +1,7 @@
 package maze.view;
 
-import maze.controller.Controller;
+import maze.controller.GameEventListener;
+import maze.controller.MazeController;
 import maze.controller.events.CancelDoorEvent;
 import maze.controller.events.QuestionAnsweredEvent;
 import maze.model.question.Question;
@@ -17,16 +18,16 @@ import static maze.model.question.sqlite.BooleanQuestion.TYPE_BOOLEAN;
 import static maze.model.question.sqlite.MultipleChoiceQuestion.TYPE_MULTIPLE_CHOICE;
 import static maze.model.question.sqlite.ShortResponseQuestion.TYPE_SHORT_RESPONSE;
 
-public class QuestionPanel extends JPanel implements ActionListener {
-	private Controller controller;
+public class QuestionPanel extends JPanel implements ActionListener, View.QuestionDetailView {
+	private GameEventListener listener;
 	private Question question;
 	private GridBagConstraints gc;
 	
 	private JTextPane textPaneQuestion = new JTextPane();
 	private JTextField textFieldAnswer = new JTextField();
-	private JLabel columnSizer[] = new JLabel[10];
+	private JLabel[] columnSizer = new JLabel[10];
 	
-	private JButton buttonAnswer[] = new JButton[4];
+	private JButton[] buttonAnswer = new JButton[4];
 	private JButton buttonSubmit = new JButton("Submit");
 	private JButton buttonUseItem = new JButton("Use Item / Just Open");
 	private JButton buttonCancel = new JButton("Cancel");
@@ -36,8 +37,8 @@ public class QuestionPanel extends JPanel implements ActionListener {
 	private Color unselectedColor = new Color(100, 100, 100);
 	private Color selectedColor = new Color(80, 180, 80);
 	
-	public QuestionPanel(Controller controller) {
-		this.controller = controller;
+	public QuestionPanel(GameEventListener listener) {
+		this.listener = listener;
 		
 		Color color = new Color(33, 33, 33);
 		setBackground(color);
@@ -173,7 +174,11 @@ public class QuestionPanel extends JPanel implements ActionListener {
 			button.addActionListener(this);
 		}
 	}
-	
+
+	public Question getQuestion() {
+		return question;
+	}
+
 	public void setQuestion(Question question) {
 		this.question = question;
 		
@@ -208,19 +213,19 @@ public class QuestionPanel extends JPanel implements ActionListener {
 	    if (buttonClicked == buttonSubmit) {
 	    	if (TYPE_SHORT_RESPONSE.equals(question.getQuestionType()) && !textFieldAnswer.getText().isEmpty()) {
 	    		QuestionAnsweredEvent event = new QuestionAnsweredEvent(question, textFieldAnswer.getText());
-	    		controller.onGameEvent(event);
+	    		listener.onGameEvent(event);
 	    	} else if (selectedButton != null) {
 	    		QuestionAnsweredEvent event = new QuestionAnsweredEvent(question, selectedButton.getText());
-	    		controller.onGameEvent(event);
+				listener.onGameEvent(event);
 	    	} else {
 	    		JOptionPane.showMessageDialog(null, "Select An Answer");
 	    	}  	
 	    } else if (buttonClicked == buttonUseItem) {
 	    	QuestionAnsweredEvent event = new QuestionAnsweredEvent(question, question.getCorrectAnswer());
-	    	controller.onGameEvent(event);
+			listener.onGameEvent(event);
 	    } else if (buttonClicked == buttonCancel) {
 	    	CancelDoorEvent event = new CancelDoorEvent();
-			controller.onGameEvent(event);
+			listener.onGameEvent(event);
 		} else {
 			for (JButton button : buttonAnswer) {
 				if (button != buttonClicked) {

@@ -11,6 +11,7 @@ import utils.FileUtils;
 import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static utils.FileUtils.DATA_DIRECTORY;
 
 class MultipleChoiceQuestionTest {
     private MultipleChoiceQuestion[] questions = new MultipleChoiceQuestion[4];
@@ -18,14 +19,14 @@ class MultipleChoiceQuestionTest {
     private String[] keyNames = {"k0", "k1", "k2", "k3"};
 
     private static final String FILE_NAME = "testQuestions.db";
-    private static final String DATABASE_FILE = DatabaseManager.DATA_DIRECTORY + FILE_NAME;
+    private static final String DATABASE_FILE = DATA_DIRECTORY + FILE_NAME;
 
     @BeforeEach
     void setUp() {
         for (int i = 0; i < questions.length; i++)
             questions[i] = new MultipleChoiceQuestion(i, answers[i], answers, "The answer is " + answers[i], keyNames[i]);
 
-        FileUtils.copyFile(new File(DatabaseManager.DATA_DIRECTORY, "questions.db"), new File(DATABASE_FILE));
+        FileUtils.copyFile(new File(DATA_DIRECTORY, "questions.db"), new File(DATABASE_FILE));
     }
 
     @AfterEach

@@ -1,12 +1,12 @@
 package maze.controller.events;
 
 import maze.controller.Controller;
+import maze.controller.MazeController;
 import maze.controller.GameEvent;
 import maze.model.Door;
 import maze.model.World;
-import maze.view.MainFrame;
 import maze.view.Panel;
-import maze.view.QuestionPanel;
+import maze.view.View;
 
 public class AccessDoorEvent implements GameEvent {
 	private Door door;
@@ -16,11 +16,10 @@ public class AccessDoorEvent implements GameEvent {
 	}
 
 	@Override
-	public void resolveTo(Controller controller, MainFrame mainFrame, World world) {
-		QuestionPanel questionPanel = mainFrame.getQuestionPanel();
-		
+	public void resolveTo(Controller controller, View view, World world) {
+		View.QuestionDetailView questionPanel = view.getQuestionDetailView();
 		questionPanel.setQuestion(door.getQuestion());
-		
-		mainFrame.switchToPanel(Panel.QUESTION);
+
+		view.switchToPanel(Panel.QUESTION);
 	}
 }

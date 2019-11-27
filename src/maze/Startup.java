@@ -1,6 +1,7 @@
 package maze;
 
 import maze.controller.Controller;
+import maze.controller.MazeController;
 import maze.view.MainFrame;
 
 import javax.swing.*;
@@ -10,9 +11,9 @@ public class Startup {
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				Controller controller = new Controller();
+				MazeController controller = new MazeController();
 				MainFrame mainFrame = new MainFrame(controller);	
-				controller.setMainFrame(mainFrame);
+				controller.setView(mainFrame);
 				
 				mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				mainFrame.setSize(1280, 900);

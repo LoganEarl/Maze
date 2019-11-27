@@ -2,11 +2,12 @@ package maze.model;
 
 import maze.Direction;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @SuppressWarnings("WeakerAccess")
-public class Player {
+public class Player implements Serializable {
     private Room currentRoom;
     private Set<Item> items;
     private Direction direction = Direction.north;

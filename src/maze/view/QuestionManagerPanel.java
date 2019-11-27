@@ -1,6 +1,7 @@
 package maze.view;
 
-import maze.controller.Controller;
+import maze.controller.GameEventListener;
+import maze.controller.MazeController;
 import maze.controller.events.MainMenuEvent;
 import maze.model.question.Question;
 
@@ -10,7 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class QuestionManagerPanel extends JPanel implements ActionListener {
-	private Controller controller;
+	private GameEventListener eventListener;
 	private Question question;
 	private GridBagConstraints gc;
 	
@@ -33,8 +34,8 @@ public class QuestionManagerPanel extends JPanel implements ActionListener {
 	private JButton buttonSave = new JButton("Save");
 	private JButton buttonCancel = new JButton("Cancel");	
 	
-	public QuestionManagerPanel(Controller controller) {
-		this.controller = controller;
+	public QuestionManagerPanel(GameEventListener eventListener) {
+		this.eventListener = eventListener;
 		
 		Color color = new Color(33, 33, 33);
 		setBackground(color);
@@ -109,7 +110,7 @@ public class QuestionManagerPanel extends JPanel implements ActionListener {
 			
 		} else if (command.equals("Cancel")) {
 			MainMenuEvent event = new MainMenuEvent();
-			controller.onGameEvent(event);
+			eventListener.onGameEvent(event);
 		} else {
 			JOptionPane.showMessageDialog(null, "Invalid Command: " + button.getText());
 		}

@@ -1,6 +1,7 @@
 package maze.view;
 
-import maze.controller.Controller;
+import maze.controller.GameEventListener;
+import maze.controller.MazeController;
 import maze.controller.GameEvent;
 import maze.controller.events.NewGameEvent;
 
@@ -10,11 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class QuestionMenuPanel extends JPanel {
-	private Controller controller;
-	
-	public QuestionMenuPanel(Controller controller) {
-		this.controller = controller;
-		
+	public QuestionMenuPanel(GameEventListener listener) {
 		Color color = new Color(50,100,100);
 		setBackground(color);
 		
@@ -33,17 +30,9 @@ public class QuestionMenuPanel extends JPanel {
 		gc.gridy = 1;
 		add(buttonLoadGame, gc);
 		
-		buttonNewGame.addActionListener(new ActionListener() {		
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				SwingUtilities.invokeLater(new Runnable() {		
-					@Override
-					public void run() {
-						GameEvent gameEvent = new NewGameEvent();
-						controller.onGameEvent(gameEvent);
-					}
-				});
-			}
-		});		
+		buttonNewGame.addActionListener(e -> SwingUtilities.invokeLater(() -> {
+			GameEvent gameEvent = new NewGameEvent();
+			listener.onGameEvent(gameEvent);
+		}));
 	}
 }

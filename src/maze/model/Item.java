@@ -2,7 +2,9 @@ package maze.model;
 
 import maze.model.question.Question;
 
-public interface Item {
+import java.io.Serializable;
+
+public interface Item extends Serializable {
     String getName();
     boolean answersQuestion(Question q);
 }

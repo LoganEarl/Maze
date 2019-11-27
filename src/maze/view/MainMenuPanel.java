@@ -1,6 +1,6 @@
 package maze.view;
 
-import maze.controller.Controller;
+import maze.controller.GameEventListener;
 import maze.controller.GameEvent;
 import maze.controller.events.NewGameEvent;
 import maze.controller.events.QuestionManagerEvent;
@@ -14,10 +14,10 @@ import java.io.File;
 import java.io.IOException;
 
 public class MainMenuPanel extends JPanel {
-	private Controller controller;
+	private GameEventListener listener;
 	
-	public MainMenuPanel(Controller controller) {
-		this.controller = controller;
+	public MainMenuPanel(GameEventListener listener) {
+		this.listener = listener;
 		
 		Color color = new Color(33 ,33, 33);
 		setBackground(color);
@@ -71,7 +71,7 @@ public class MainMenuPanel extends JPanel {
 					@Override
 					public void run() {
 						GameEvent gameEvent = new NewGameEvent();
-						controller.onGameEvent(gameEvent);
+						listener.onGameEvent(gameEvent);
 					}
 				});
 			}
@@ -118,7 +118,7 @@ public class MainMenuPanel extends JPanel {
 					@Override
 					public void run() {
 						QuestionManagerEvent event = new QuestionManagerEvent();
-						controller.onGameEvent(event);
+						listener.onGameEvent(event);
 					}
 				});
 			}

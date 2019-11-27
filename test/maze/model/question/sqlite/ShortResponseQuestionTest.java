@@ -5,16 +5,15 @@ import maze.model.question.DoorKey;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import utils.DatabaseManager;
 import utils.FileUtils;
 
 import java.io.File;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static utils.FileUtils.DATA_DIRECTORY;
 
 class ShortResponseQuestionTest {
     private static final String FILE_NAME = "testQuestions.db";
-    private static final String DATABASE_FILE = DatabaseManager.DATA_DIRECTORY + FILE_NAME;
+    private static final String DATABASE_FILE = DATA_DIRECTORY + FILE_NAME;
 
     private ShortResponseQuestion question;
     private static final String[] answers = new String[]{"key0", "key2", "key4"};
@@ -23,7 +22,7 @@ class ShortResponseQuestionTest {
     void setUp() {
         question = new ShortResponseQuestion(42, answers, "The keywords are key0, key2, and key4", "keyItem");
 
-        FileUtils.copyFile(new File(DatabaseManager.DATA_DIRECTORY, "questions.db"), new File(DATABASE_FILE));
+        FileUtils.copyFile(new File(DATA_DIRECTORY, "questions.db"), new File(DATABASE_FILE));
     }
 
     @AfterEach

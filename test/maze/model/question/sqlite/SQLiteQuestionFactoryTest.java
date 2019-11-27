@@ -14,16 +14,18 @@ import java.sql.ResultSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static utils.FileUtils.DATA_DIRECTORY;
+
 class SQLiteQuestionFactoryTest {
     private SQLiteQuestionFactory factory;
 
     private static final String FILE_NAME = "testQuestions.db";
-    private static final String DATABASE_FILE = DatabaseManager.DATA_DIRECTORY + FILE_NAME;
+    private static final String DATABASE_FILE = DATA_DIRECTORY + FILE_NAME;
 
     @BeforeEach
     void setUp() {
         factory = new SQLiteQuestionFactory();
-        FileUtils.copyFile(new File(DatabaseManager.DATA_DIRECTORY, "questions.db"), new File(DATABASE_FILE));
+        FileUtils.copyFile(new File(DATA_DIRECTORY, "questions.db"), new File(DATABASE_FILE));
     }
 
     @AfterEach

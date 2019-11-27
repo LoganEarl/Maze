@@ -13,12 +13,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static utils.FileUtils.DATA_DIRECTORY;
+
 class BooleanQuestionTest {
     private BooleanQuestion question1;
     private BooleanQuestion question2;
 
     private static final String FILE_NAME = "testQuestions.db";
-    private static final String DATABASE_FILE = DatabaseManager.DATA_DIRECTORY + FILE_NAME;
+    private static final String DATABASE_FILE = DATA_DIRECTORY + FILE_NAME;
 
 
     @BeforeEach
@@ -26,7 +28,7 @@ class BooleanQuestionTest {
         question1 = new BooleanQuestion(10, true, "The answer is true", "key10");
         question2 = new BooleanQuestion(11, false, "The answer is false", "key11");
 
-        FileUtils.copyFile(new File(DatabaseManager.DATA_DIRECTORY, "questions.db"), new File(DATABASE_FILE));
+        FileUtils.copyFile(new File(DATA_DIRECTORY, "questions.db"), new File(DATABASE_FILE));
     }
 
     @AfterEach

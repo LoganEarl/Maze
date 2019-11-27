@@ -1,18 +1,21 @@
 package maze.view;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
+import java.io.FileNotFoundException;
+
+import javax.swing.JPanel;
+
 import maze.Direction;
 import maze.model.Door;
 import maze.model.Player;
 import maze.model.Room;
 import maze.model.World;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.io.FileNotFoundException;
-
-public class GraphicsPanel extends JPanel implements MouseWheelListener {
+public class GraphicsPanel extends JPanel implements MouseWheelListener, View.MapDetailView {
     private ResourceManager resManager;
     private World world;
 
@@ -29,6 +32,7 @@ public class GraphicsPanel extends JPanel implements MouseWheelListener {
 
     public void setWorld(World world) {
         this.world = world;
+        repaint();
     }
 
     @Override
@@ -101,9 +105,8 @@ public class GraphicsPanel extends JPanel implements MouseWheelListener {
                                 for (int y = Integer.signum(room1Y - room2Y); y != room1Y - room2Y; y += Integer.signum(room1Y - room2Y)) {
                                     graphics.drawImage(resManager.getImage("Hall_Vertical.png"), posX, posY - y * curScale, null);
                                 }
-                                int sigNum = Integer.signum(room1Y - room2Y) * curScale;
-                                graphics.drawImage(getDoorImage(room, direction), posX, posY - sigNum, null);
-                                graphics.drawImage(getDoorImage(other, direction.opposite()), posX, posY - sigNum, null);
+                                graphics.drawImage(getDoorImage(room, direction), posX, posY - Integer.signum(room1Y - room2Y) * curScale, null);
+                                graphics.drawImage(getDoorImage(other, direction.opposite()), posX, posY - Integer.signum(room1Y - room2Y) * curScale, null);
                             }
                         }
                     }
@@ -128,7 +131,7 @@ public class GraphicsPanel extends JPanel implements MouseWheelListener {
 
             if (door.isOpen()) {
                 key += "_Open";
-            } else if (door.isLocked()) {
+            } else if (door.isLocked()){
                 key += "_Locked";
             } else {
                 key += "_Closed";
@@ -142,7 +145,7 @@ public class GraphicsPanel extends JPanel implements MouseWheelListener {
         return resManager.getImage(key);
     }
 
-    public void zoomGraphics(Zoom zoom) {
+    public void zoomTo(Zoom zoom) {
         if (zoom == Zoom.in) {
             resManager.adjustScale(64);
         } else {
