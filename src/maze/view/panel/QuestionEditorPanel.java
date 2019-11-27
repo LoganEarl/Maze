@@ -182,11 +182,13 @@ public class QuestionEditorPanel extends Panel implements ResultProvider, Action
 		
 		questionTypeChanged();
 		
-		DefaultTableModel model = (DefaultTableModel) tableAnswers.getModel();
-		for (Answer answer : question.getAnswers()) {
-			answerAdd(model, answer.getAnswer());
-			if (answer.getCorrect()) {
-				answerSetCorrect(model, tableAnswers.getRowCount() - 1);
+		if (question != null) {
+			DefaultTableModel model = (DefaultTableModel) tableAnswers.getModel();
+			for (Answer answer : question.getAnswers()) {
+				answerAdd(model, answer.getAnswer());
+				if (answer.getCorrect()) {
+					answerSetCorrect(model, tableAnswers.getRowCount() - 1);
+				}
 			}
 		}
 		
