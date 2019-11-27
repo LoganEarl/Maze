@@ -1,5 +1,6 @@
-package maze.view;
+package maze.view.panel;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -8,27 +9,27 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 import maze.controller.Controller;
-import maze.controller.events.CancelDoorEvent;
 import maze.controller.events.QuestionAnsweredEvent;
+import maze.controller.events.SwitchPanelEvent;
 import maze.model.question.Question;
 import maze.model.question.QuestionType;
+import maze.view.Panel;
+import maze.view.PanelType;
+import maze.view.ViewUtils;
 
-public class QuestionPanel extends JPanel implements ActionListener {
+public class QuestionPanel extends Panel implements ActionListener {
 	private Controller controller;
 	private Question question;
 	private GridBagConstraints gc;
 	
 	private JTextPane textPaneQuestion = new JTextPane();
 	private JTextField textFieldAnswer = new JTextField();
-	private JLabel columnSizer[] = new JLabel[10];
 	
 	private JButton buttonAnswer[] = new JButton[4];
 	private JButton buttonSubmit = new JButton("Submit");
@@ -36,9 +37,6 @@ public class QuestionPanel extends JPanel implements ActionListener {
 	private JButton buttonCancel = new JButton("Cancel");
 	
 	private JButton selectedButton;
-	
-	private Color unselectedColor = new Color(100, 100, 100);
-	private Color selectedColor = new Color(80, 180, 80);
 	
 	public QuestionPanel(Controller controller) {
 		this.controller = controller;
@@ -51,66 +49,40 @@ public class QuestionPanel extends JPanel implements ActionListener {
 		gc.anchor = GridBagConstraints.NORTH;
 		gc.insets = new Insets(20, 0, 20, 0);	
 		
-		SizeColumns();
-		
 		for (int i = 0; i < buttonAnswer.length; i++) {
 			buttonAnswer[i] = new JButton("");
 		}
 		
-		placeMainComponents();
-		initializeMainComponents();
-		
-		placeAnswerButtonComponents();
-		initializeAnswerButtonComponents();
+		SizeColumns();
+		insertAllComponents();
+		initializeAllComponents();
+	}
+	
+	@Override
+	public PanelType getPanelType() {
+		return PanelType.QUESTION;
 	}
 	
 	private void SizeColumns() {
-		for (int i = 0; i < columnSizer.length; i++) {
-			columnSizer[i] = new JLabel("");
-			gc.gridy = 0;
-			gc.gridx = i;
-			gc.gridheight = 1;
-			gc.gridwidth = 1;
-			ViewUtils.componentSetSize(columnSizer[i], 100, 1);
-			add(columnSizer[i], gc);
+		for (int i = 0; i < 11; i++) {
+			ViewUtils.insertComponent(this, gc, new JLabel(""), i, 0, 1, 1, 100, 1);
 		}
 	}
 	
-	private void placeMainComponents() {
-		gc.gridy = 0;
-		gc.gridx = 0;
-		gc.gridheight = 1;
-		gc.gridwidth = 11;
-		add(textPaneQuestion, gc);
-		
-		gc.gridy = 1;
-		gc.gridx = 0;
-		gc.gridheight = 2;
-		gc.gridwidth = 11;
-		add(textFieldAnswer, gc);
-		
-		gc.gridy = 3;
-		gc.gridx = 0;
-		gc.gridheight = 1;
-		gc.gridwidth = 3;
-		add(buttonSubmit, gc);
-		
-		gc.gridy = 3;
-		gc.gridx = 4;
-		gc.gridheight = 1;
-		gc.gridwidth = 3;
-		add(buttonUseItem, gc);
-		
-		gc.gridy = 3;
-		gc.gridx = 8;
-		gc.gridheight = 1;
-		gc.gridwidth = 3;
-		add(buttonCancel, gc);
+	private void insertAllComponents() {
+		ViewUtils.insertComponent(this, gc, textPaneQuestion, 		0, 0, 11, 1, 1100, 200);
+		ViewUtils.insertComponent(this, gc, textFieldAnswer, 		0, 1, 11, 2, 1100, 200);	
+		ViewUtils.insertComponent(this, gc, buttonAnswer[0], 		0, 1,  5, 1,  500, 100);
+		ViewUtils.insertComponent(this, gc, buttonAnswer[1], 		6, 1,  5, 1,  500, 100);
+		ViewUtils.insertComponent(this, gc, buttonAnswer[2], 		0, 2,  5, 1,  500, 100);
+		ViewUtils.insertComponent(this, gc, buttonAnswer[3], 		6, 2,  5, 1,  500, 100);	
+		ViewUtils.insertComponent(this, gc, buttonSubmit, 			0, 3,  3, 1,  300, 100);
+		ViewUtils.insertComponent(this, gc, buttonUseItem, 			4, 3,  3, 1,  300, 100);
+		ViewUtils.insertComponent(this, gc, buttonCancel, 			8, 3,  3, 1,  300, 100);
 	}
 	
-	private void initializeMainComponents() {
-		ViewUtils.componentColorBorder(textPaneQuestion, unselectedColor);
-		ViewUtils.componentSetSize(textPaneQuestion, 1100, 200);
+	private void initializeAllComponents() {
+		ViewUtils.componentColorBorder(textPaneQuestion, ViewUtils.unselectedColor);
 		SimpleAttributeSet attributes = new SimpleAttributeSet();
 		StyleConstants.setAlignment(attributes, StyleConstants.ALIGN_CENTER);
 		StyleConstants.setSpaceAbove(attributes, 20);
@@ -119,62 +91,18 @@ public class QuestionPanel extends JPanel implements ActionListener {
 		textPaneQuestion.setParagraphAttributes(attributes, true);
 		textPaneQuestion.setEditable(false);
 
-		ViewUtils.componentColorBorder(textFieldAnswer, unselectedColor);
-		ViewUtils.componentSetSize(textFieldAnswer, 1100, 300);
+		ViewUtils.componentColorBorder(textFieldAnswer, ViewUtils.unselectedColor);
+		textFieldAnswer.setHorizontalAlignment(JTextField.CENTER);
 		ViewUtils.componentSetFont(textFieldAnswer, 36);
 		
-		ViewUtils.componentColorBorder(buttonSubmit, unselectedColor);
-		ViewUtils.componentSetSize(buttonSubmit, 300, 100);
-		ViewUtils.componentSetFont(buttonSubmit, 24);
-		buttonSubmit.setFocusPainted(false);
-		buttonSubmit.addActionListener(this);
-		
-		ViewUtils.componentColorBorder(buttonUseItem, unselectedColor);
-		ViewUtils.componentSetSize(buttonUseItem, 300, 100);
-		ViewUtils.componentSetFont(buttonUseItem, 24);
-		buttonUseItem.setFocusPainted(false);
-		buttonUseItem.addActionListener(this);
-
-		ViewUtils.componentColorBorder(buttonCancel, unselectedColor);
-		ViewUtils.componentSetSize(buttonCancel, 300, 100);
-		ViewUtils.componentSetFont(buttonCancel, 24);
-		buttonCancel.setFocusPainted(false);
-		buttonCancel.addActionListener(this);
-	}
-	
-	private void placeAnswerButtonComponents() {
-		gc.gridy = 1;
-		gc.gridx = 0;
-		gc.gridheight = 1;
-		gc.gridwidth = 5;
-		add(buttonAnswer[0], gc);
-		
-		gc.gridy = 1;
-		gc.gridx = 6;
-		gc.gridheight = 1;
-		gc.gridwidth = 5;
-		add(buttonAnswer[1], gc);
-		
-		gc.gridy = 2;
-		gc.gridx = 0;
-		gc.gridheight = 1;
-		gc.gridwidth = 5;
-		add(buttonAnswer[2], gc);
-		
-		gc.gridy = 2;
-		gc.gridx = 6;
-		gc.gridheight = 1;
-		gc.gridwidth = 5;
-		add(buttonAnswer[3], gc);
-	}
-	
-	private void initializeAnswerButtonComponents() {
-		for (JButton button : buttonAnswer) {
-			ViewUtils.componentColorBorder(button, unselectedColor);
-			ViewUtils.componentSetSize(button, 500, 100);
-			ViewUtils.componentSetFont(button, 24);
-			button.setFocusPainted(false);
-			button.addActionListener(this);
+		for (Component component : getComponents()) {
+			if (component instanceof JButton) {
+				JButton button = (JButton) component;			
+				button.setFocusPainted(false);
+				ViewUtils.componentSetFont(button, 24);
+				ViewUtils.componentColorBorder(button, ViewUtils.unselectedColor);
+				button.addActionListener(this);
+			}
 		}
 	}
 	
@@ -186,7 +114,7 @@ public class QuestionPanel extends JPanel implements ActionListener {
 		selectedButton = null;
 		for (JButton button : buttonAnswer) {
 			button.setVisible(false);
-			ViewUtils.componentColorBorder(button, unselectedColor);
+			ViewUtils.componentColorBorder(button, ViewUtils.unselectedColor);
 		}
 
 		if (question.getType() == QuestionType.MULTIPLE) {
@@ -216,21 +144,19 @@ public class QuestionPanel extends JPanel implements ActionListener {
 	    	} else if (selectedButton != null) {
 	    		QuestionAnsweredEvent event = new QuestionAnsweredEvent(question, selectedButton.getText());
 	    		controller.onGameEvent(event);
-	    	} else {
-	    		JOptionPane.showMessageDialog(null, "Select An Answer");
 	    	}  	
 	    } else if (buttonClicked == buttonUseItem) {
 	    	QuestionAnsweredEvent event = new QuestionAnsweredEvent(question, question.getCorrectAnswer());
 	    	controller.onGameEvent(event);
 	    } else if (buttonClicked == buttonCancel) {
-	    	CancelDoorEvent event = new CancelDoorEvent();
+	    	SwitchPanelEvent event = new SwitchPanelEvent(PanelType.GRAPHICS);
 			controller.onGameEvent(event);
 		} else {
 			for (JButton button : buttonAnswer) {
 				if (button != buttonClicked) {
-					ViewUtils.componentColorBorder(button, unselectedColor);
+					ViewUtils.componentColorBorder(button, ViewUtils.unselectedColor);
 				} else {
-					ViewUtils.componentColorBorder(button, selectedColor);
+					ViewUtils.componentColorBorder(button, ViewUtils.selectedColor);
 					selectedButton = button;
 				}
 			}

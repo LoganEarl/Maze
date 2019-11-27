@@ -1,8 +1,9 @@
 package maze.controller;
 
 import maze.model.World;
-import maze.view.GraphicsPanel;
 import maze.view.MainFrame;
+import maze.view.PanelType;
+import maze.view.panel.GraphicsPanel;
 
 public class Controller implements GameEventListener {
 	private MainFrame mainFrame;
@@ -16,11 +17,14 @@ public class Controller implements GameEventListener {
 		this.world = world;
 	}
 	
+	public World getWorld() {
+		return world;
+	}
+	
 	@Override
 	public void onGameEvent(GameEvent gameEvent) {
 		gameEvent.resolveTo(this, mainFrame, world);
-		GraphicsPanel graphicsPanel = mainFrame.getGraphicsPanel();
-		graphicsPanel.setWorld(this.world);
+		GraphicsPanel graphicsPanel = (GraphicsPanel) mainFrame.getPanel(PanelType.GRAPHICS);
 		graphicsPanel.repaint();
 	}
 }

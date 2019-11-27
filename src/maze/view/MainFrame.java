@@ -3,35 +3,40 @@ package maze.view;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
+import java.util.LinkedList;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import maze.Direction;
 import maze.Zoom;
 import maze.controller.Controller;
 import maze.controller.events.MoveEvent;
-import maze.controller.events.PauseMenuEvent;
+import maze.controller.events.SwitchPanelEvent;
 import maze.controller.events.ZoomEvent;
+import maze.view.panel.GraphicsPanel;
+import maze.view.panel.LoadingPanel;
+import maze.view.panel.MainMenuPanel;
+import maze.view.panel.QuestionEditorPanel;
+import maze.view.panel.QuestionMenuPanel;
+import maze.view.panel.QuestionPanel;
+import maze.view.panel.QuestionSelectorPanel;
 
-public class MainFrame extends JFrame {
+public class MainFrame extends JFrame implements ResultPrompter {
 	private Controller controller;
-	private MainMenuPanel mainMenuPanel;
-	private LoadingPanel loadingPanel;
-	private GraphicsPanel graphicsPanel;
-	private QuestionPanel questionPanel;
-	private QuestionMenuPanel questionMenuPanel;
-	private QuestionManagerPanel questionManagerPanel;
+	private LinkedList<Panel> panels = new LinkedList<>();
 
 	public MainFrame(Controller controller) {
 		super("DAbuggers Maze");
 		this.controller = controller;
-
-		mainMenuPanel = new MainMenuPanel(controller);
-		loadingPanel = new LoadingPanel();
-		graphicsPanel = new GraphicsPanel();
-		questionPanel = new QuestionPanel(controller);
-		questionMenuPanel = new QuestionMenuPanel(controller);
-		questionManagerPanel = new QuestionManagerPanel(controller);
+		
+		panels.add(new MainMenuPanel(controller));
+		panels.add(new LoadingPanel());
+		panels.add(new GraphicsPanel(controller));
+		panels.add(new QuestionPanel(controller));
+		panels.add(new QuestionMenuPanel(controller));
+		panels.add(new QuestionSelectorPanel(controller));
+		panels.add(new QuestionEditorPanel(controller));
 
 		setLayout(new GridBagLayout());
 		GridBagConstraints gc = new GridBagConstraints();
@@ -41,20 +46,50 @@ public class MainFrame extends JFrame {
 		gc.weightx = 1;
 		gc.weighty = 1;
 		gc.fill = GridBagConstraints.BOTH;
-
-		add(mainMenuPanel, gc);
-		add(loadingPanel, gc);
-		add(graphicsPanel, gc);
-		add(questionPanel, gc);
-		add(questionMenuPanel, gc);
-		add(questionManagerPanel, gc);
 		
-		switchToPanel(Panel.MAINMENU);
+		for (JPanel panel : panels) {
+			add(panel, gc);
+		}
+		
+		switchToPanel(PanelType.MAIN_MENU);
 
 		bindKeys();
 	}
 	
+	public JPanel getPanel(PanelType panelType) {
+		JPanel returnPanel = null;		
+		for (Panel panel : panels) {
+			if (panel.getPanelType() == panelType) {
+				returnPanel = panel;
+			}
+		}
+		return returnPanel;
+	}
+
+
+	public void switchToPanel(PanelType panelType) {
+		for (Panel panel : panels) {
+			panel.setVisible(panel.getPanelType() == panelType);
+		}
+	}
+
+	@Override
+	public void promptForResult(Class<? extends ResultProvider> resultProvider, ResultReceiver resultReceiver, Object object) {
+		for (Panel panel : panels) {
+			if (panel.getClass() == resultProvider) {
+				if (panel instanceof ResultProvider) {
+					switchToPanel(panel.getPanelType());
+					ResultProvider rp = (ResultProvider) panel;
+					rp.getResult(resultReceiver, object);
+					break;
+				}
+			}
+		}	
+	}
+	
 	public void bindKeys() {
+		GraphicsPanel graphicsPanel = (GraphicsPanel) getPanel(PanelType.GRAPHICS);
+		
 		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_W, "MoveNorth", (e) -> {
 			MoveEvent moveEvent = new MoveEvent(Direction.north);
 			controller.onGameEvent(moveEvent);
@@ -76,7 +111,7 @@ public class MainFrame extends JFrame {
 		});
 
 		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_ESCAPE, "PauseMenu", (e) -> {
-			PauseMenuEvent event = new PauseMenuEvent();
+			SwitchPanelEvent event = new SwitchPanelEvent(PanelType.MAIN_MENU);
 			controller.onGameEvent(event);
 		});
 		
@@ -90,22 +125,4 @@ public class MainFrame extends JFrame {
 			controller.onGameEvent(event);
 		});
 	}
-
-	public GraphicsPanel getGraphicsPanel() {
-		return graphicsPanel;
-	}
-	
-	public QuestionPanel getQuestionPanel() {
-		return questionPanel;
-	}
-
-	public void switchToPanel(Panel panel) {
-		mainMenuPanel.setVisible(panel == Panel.MAINMENU);
-		loadingPanel.setVisible(panel == Panel.LOADING);
-		graphicsPanel.setVisible(panel == Panel.GRAPHICS);
-		questionPanel.setVisible(panel == Panel.QUESTION);
-		questionMenuPanel.setVisible(panel == Panel.QUESTION_MENU);
-		questionManagerPanel.setVisible(panel == Panel.QUESTION_MANAGER);
-	}
-
 }

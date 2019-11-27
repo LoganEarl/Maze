@@ -12,7 +12,7 @@ public class QuestionImporter {
 
 	public List<Question> questions = new ArrayList<Question>();
 
-	public QuestionImporter(String FileName) throws FileNotFoundException {
+	public QuestionImporter(String FileName) throws Exception {
 
 		Scanner scanner = new Scanner(new File(FileName));
 
@@ -21,8 +21,24 @@ public class QuestionImporter {
 
 	private QuestionImporter() {
 	}
+	
+	void checkIllegalTokens(String line) throws Exception {
+		String [] tokens = {
+			"[MULT,",
+			"[SH,",
+			"[TF,"
+		};
+		
+		for(String t: tokens) {
+			int idx = line.indexOf(t);
+			
+			if(idx != -1 && idx > 0) {
+				throw new Exception("Illegal line: " + t);
+			}
+		}
+	}
 
-	public void parse(Scanner scanner) {
+	public void parse(Scanner scanner) throws Exception {
 
 		List<String> lines = new ArrayList<String>();
 
@@ -41,12 +57,18 @@ public class QuestionImporter {
 		int readAnswerCount = -1; // -1 means we are not reading
 		QuestionHeader header = null;
 		MazeQuestion question = null;
+		
+		int lineIdx = -1;
 
 		for (String line : lines) {
+			
+			lineIdx++; // indicator so we can look at previous lines.
 
 			if (line.startsWith("#")) {
 				continue;
 			}
+			
+			checkIllegalTokens(line);
 
 			if (isNextLineQuestion) {
 				// question.question = line;
@@ -54,7 +76,16 @@ public class QuestionImporter {
 				isNextLineQuestion = false;
 				continue;
 			} else if (readAnswerCount > 0) {
+				
+				if (line.startsWith("[")) {
+					throw new Exception("Unexpected question start: " + line + ". Prev: " + lines.get(lineIdx - 1));
+				}
+				
 				MazeAnswer answer = new MazeAnswer(answerId++, line, false);
+				
+				if(answer.getAnswer().length() < 1) {
+					throw new Exception("Short answer '" + answer.getAnswer() + "' for Q:" + question.getQuestion());
+				}
 
 				// Current size of the answer list is an index for the next quest. So it is OK
 				// to compare the correct index to it.
@@ -73,8 +104,7 @@ public class QuestionImporter {
 					readAnswerCount = -1;
 				} else
 					continue;
-			} else // reset and start looking for []
-			{
+			} else { // reset and start looking for []
 				question = null;
 				header = null;
 				isNextLineQuestion = false;
@@ -82,6 +112,10 @@ public class QuestionImporter {
 			}
 
 			if (line.startsWith("[")) {
+				
+				if( question != null ) {
+					throw new Exception("Unexpected question start: " + line + ". Prev: " + lines.get(lineIdx - 1));
+				}
 
 				header = QuestionHeader.parse(line);
 
@@ -114,7 +148,7 @@ public class QuestionImporter {
 		return questions;
 	}
 
-	public static QuestionImporter parseString(String questions) {
+	public static QuestionImporter parseString(String questions) throws Exception {
 		QuestionImporter db = new QuestionImporter();
 
 		Scanner scanner = new Scanner(questions);
@@ -124,7 +158,7 @@ public class QuestionImporter {
 		return db;
 	}
 
-	public static QuestionImporter getDefaultQuestions() {
+	public static QuestionImporter getDefaultQuestions() throws Exception {
 		return parseString(DefaultQuestions.QUESTIONS);
 	}
 
@@ -226,7 +260,7 @@ class DefaultQuestions
 		"true\n" +		
 		
 		"[TF,1,0]\n" +
-		"The 'D' in D-Day stands for'Dooms-day'" +
+		"The 'D' in D-Day stands for'Dooms-day'\n" +
 		"false\n" +
 		
 		"[TF,1,0]\n" +
@@ -265,7 +299,7 @@ class DefaultQuestions
 		"[MULT,3,0]\n" +
 		"What was a Puffing Billy?\n" +
 		"Steam Train\n" +
-		"Steam Engine" +
+		"Steam Engine\n" +
 		"Steam Boat\n" +
 		
 		"[MULT,3,2]\n" +
@@ -283,9 +317,8 @@ class DefaultQuestions
 		"[MULT,3,2]\n" +
 		"Where were cats once the most honored?\n" +
 		"Greece\n" +
-		"China" +
-		"Egypt" +
-		
+		"China\n" +
+		"Egypt\n" +		
 		
 		
 		"[MULT,3,0]\n" +
@@ -343,13 +376,13 @@ class DefaultQuestions
 		"James Gosling\n" +
 		
 		"[MULT,3,0]\n" +
-		"What was Twitterâ€™s original name?\n" +
+		"What was Twitter’s original name?\n" +
 		"twttr\n" +
 		"twit\n" +
 		"twtr\n" +
 		
 		"[MULT,3,0]\n" +
-		"What was Twitterâ€™s original name?\n" +
+		"What was Twitter’s original name?\n" +
 		"twttr\n" +
 		"twit\n" +
 		"twtr\n" +

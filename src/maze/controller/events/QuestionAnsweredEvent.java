@@ -9,7 +9,7 @@ import maze.model.Room;
 import maze.model.World;
 import maze.model.question.Question;
 import maze.view.MainFrame;
-import maze.view.Panel;
+import maze.view.PanelType;
 
 public class QuestionAnsweredEvent implements GameEvent {
 	private Question question;
@@ -33,6 +33,6 @@ public class QuestionAnsweredEvent implements GameEvent {
 			door.lock();
 		}
 		
-		mainFrame.switchToPanel(Panel.GRAPHICS);
+		mainFrame.switchToPanel(PanelType.GRAPHICS);
 	}
 }

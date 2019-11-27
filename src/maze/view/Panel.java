@@ -1,11 +1,7 @@
 package maze.view;
 
-public enum Panel {
-	MAINMENU,
-	PAUSEMENU,
-	LOADING,
-	GRAPHICS,
-	QUESTION,
-	QUESTION_MENU,
-	QUESTION_MANAGER,
+import javax.swing.JPanel;
+
+public abstract class Panel extends JPanel {
+	public abstract PanelType getPanelType();
 }

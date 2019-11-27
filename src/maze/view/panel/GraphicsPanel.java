@@ -1,48 +1,47 @@
-package maze.view;
+package maze.view.panel;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.io.FileNotFoundException;
-
-import javax.swing.JPanel;
 
 import maze.Direction;
 import maze.Zoom;
+import maze.controller.Controller;
 import maze.model.Door;
 import maze.model.Player;
 import maze.model.Room;
 import maze.model.World;
+import maze.view.Panel;
+import maze.view.PanelType;
+import maze.view.ResourceManager;
+import maze.view.ViewUtils;
 
-public class GraphicsPanel extends JPanel implements MouseWheelListener {
+public class GraphicsPanel extends Panel implements MouseWheelListener {
 	private ResourceManager resManager;
-	private World world;
-
-	public GraphicsPanel() {
-		super();
-		try {
-			resManager = new ResourceManager();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		
+	private Controller controller;
+	public GraphicsPanel(Controller controller) {
+		this.controller = controller;
+		setBackground(ViewUtils.backgroundColor);
+		resManager = new ResourceManager();
 		this.addMouseWheelListener(this);
 	}
-
-	public void setWorld(World world) {
-		this.world = world;
+	
+	@Override
+	public PanelType getPanelType() {
+		return PanelType.GRAPHICS;
 	}
-
+	
 	@Override
 	protected void paintComponent(Graphics g) {
 		draw(g);
 	}
 
 	public void draw(Graphics graphics) {
+		World world = controller.getWorld();
+
 		graphics.clearRect(0, 0, getWidth(), getHeight());
-		graphics.setColor(new Color(33, 33, 33));
+		graphics.setColor(ViewUtils.backgroundColor);
 		graphics.fillRect(0, 0, getWidth(), getHeight());
 		
 		if (world != null) {			
@@ -52,25 +51,12 @@ public class GraphicsPanel extends JPanel implements MouseWheelListener {
 			int centerY = this.getHeight() / 2;
 
 			Room curRoom = player.getCurrentRoom();
-			int curScale = resManager.getScale();
-			
-//			System.out.println("Player: X:" + curRoom.getXCoordinate() + ", Y:" + curRoom.getYCoordinate());
-//			
-//			Door temp = curRoom.getDoor(Direction.north);
-//			if (temp != null) System.out.println("Door North: X:" + temp.getOtherRoom(curRoom).getXCoordinate() + ", Y:" + temp.getOtherRoom(curRoom).getYCoordinate());
-//			temp = curRoom.getDoor(Direction.south);
-//			if (temp != null) System.out.println("Door South: X:" + temp.getOtherRoom(curRoom).getXCoordinate() + ", Y:" + temp.getOtherRoom(curRoom).getYCoordinate());
-//			temp = curRoom.getDoor(Direction.east);
-//			if (temp != null) System.out.println("Door East: X:" + temp.getOtherRoom(curRoom).getXCoordinate() + ", Y:" + temp.getOtherRoom(curRoom).getYCoordinate());
-//			temp = curRoom.getDoor(Direction.west);
-//			if (temp != null) System.out.println("Door West: X:" + temp.getOtherRoom(curRoom).getXCoordinate() + ", Y:" + temp.getOtherRoom(curRoom).getYCoordinate());			
+			int curScale = resManager.getScale();	
 
 			if (world != null) {
 				for (Room room : world.getAllRooms()) {
 					int posX = (int) (centerX + (room.getXCoordinate() - curRoom.getXCoordinate() - 0.5) * curScale);
 					int posY = (int) (centerY + (room.getYCoordinate() - curRoom.getYCoordinate() - 0.5) * curScale);
-					
-					//System.out.println("X:" + room.getXCoordinate() + ", Y:" + room.getYCoordinate());
 					
 					if (room == world.getEntryRoom()) {
 						graphics.drawImage(resManager.getImage("Entry.png"), posX, posY, null);
@@ -117,8 +103,6 @@ public class GraphicsPanel extends JPanel implements MouseWheelListener {
 			int posX = centerX - curScale / 2;
 			int posY = centerY - curScale / 2;
 			graphics.drawImage(resManager.getImage("Player_" + player.getFacing().name() + "_stand.png"), posX, posY, null);
-			
-			// graphics.drawImage(getFog(), this.getWidth() / 2 - scale * 11 / 2, this.getHeight() / 2 - scale * 11 / 2, null);
 		}
 	}
 
