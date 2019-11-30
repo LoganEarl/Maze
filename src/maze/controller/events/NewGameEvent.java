@@ -1,30 +1,32 @@
 package maze.controller.events;
 
 import maze.controller.Controller;
-import maze.controller.MazeController;
 import maze.controller.GameEvent;
 import maze.model.RandomWorldBuilder;
-import maze.model.World;
 import maze.model.question.Question;
 import maze.model.question.sqlite.SQLiteQuestionDataSource;
-import maze.view.Panel;
+import maze.view.PanelType;
+import maze.model.World;
 import maze.view.View;
 
 import java.util.Set;
 
 public class NewGameEvent implements GameEvent {
 	@Override
-	public void resolveTo(Controller controller, View view, World world) {
-		view.switchToPanel(Panel.LOADING);
+    public void resolveTo(Controller controller, View view, World world) {
+        view.switchToPanel(PanelType.LOADING);
 
 		SQLiteQuestionDataSource questionDataSource = new SQLiteQuestionDataSource("questions.db");
 		Set<Question> questions = questionDataSource.getAllQuestions();
+        int seed = (int) (Math.random() * ((1000 - 1) + 1)) + 1;
 		World.Builder worldBuilder = new RandomWorldBuilder(12, questions,1,
-				((int) (Math.random() * 1000) + 1));
+                seed);
 		world = worldBuilder.build();
 
 		controller.setWorld(world);
 		
-	    view.switchToPanel(Panel.GRAPHICS);
+		System.out.println("New World Seed: " + seed);
+
+        view.switchToPanel(PanelType.GRAPHICS);
 	}
 }

@@ -1,10 +1,9 @@
 package maze.controller.events;
 
 import maze.controller.Controller;
-import maze.controller.MazeController;
 import maze.controller.GameEvent;
 import maze.model.World;
-import maze.view.Panel;
+import maze.view.PanelType;
 import maze.view.View;
 import utils.ObjectPersister;
 
@@ -13,7 +12,7 @@ import static utils.FileUtils.DATA_DIRECTORY;
 public class LoadGameEvent implements GameEvent {
     private int loadSlotNumber;
 
-    public LoadGameEvent(int loadSlotNumber) {
+    LoadGameEvent(int loadSlotNumber) {
         this.loadSlotNumber = loadSlotNumber;
     }
 
@@ -23,7 +22,7 @@ public class LoadGameEvent implements GameEvent {
         World loaded = persister.loadObject(SaveGameEvent.getSaveFileName(loadSlotNumber));
         if(loaded != null){
             controller.setWorld(loaded);
-            view.switchToPanel(Panel.GRAPHICS);
+            view.switchToPanel(PanelType.GRAPHICS);
         }
     }
 }

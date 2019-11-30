@@ -4,9 +4,8 @@ import maze.controller.Controller;
 import maze.controller.GameEventListener;
 import maze.model.StubbedWorldBuilder;
 import maze.model.World;
-import maze.view.Panel;
-import maze.view.View;
-import maze.view.Zoom;
+import maze.model.question.QuestionDataSource;
+import maze.view.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,9 +20,8 @@ import static utils.FileUtils.DATA_DIRECTORY;
 
 class LoadGameEventTest implements View, Controller {
     private LoadGameEvent event;
-    private World myWorld;
     private World assignedWorld;
-    private List<Panel> panelsCalled;
+    private List<PanelType> panelsCalled;
 
     @BeforeEach
     void setUp() {
@@ -46,7 +44,7 @@ class LoadGameEventTest implements View, Controller {
         event.resolveTo(this, this, null);
         assert assignedWorld != null;
         assert new File(DATA_DIRECTORY, SaveGameEvent.getSaveFileName(-2)).exists();
-        assert panelsCalled.size() == 1 && panelsCalled.get(0) == Panel.GRAPHICS;
+        assert panelsCalled.size() == 1 && panelsCalled.get(0) == PanelType.GRAPHICS;
     }
 
     @Override
@@ -64,7 +62,7 @@ class LoadGameEventTest implements View, Controller {
     }
 
     @Override
-    public void switchToPanel(Panel panel) {
+    public void switchToPanel(PanelType panel) {
         panelsCalled.add(panel);
     }
 
@@ -76,5 +74,25 @@ class LoadGameEventTest implements View, Controller {
     @Override
     public MapDetailView getMapDetailView() {
         return null;
+    }
+
+    @Override
+    public World getWorld() {
+        return null;
+    }
+
+    @Override
+    public View getView() {
+        return null;
+    }
+
+    @Override
+    public QuestionDataSource getDataSource() {
+        return null;
+    }
+
+    @Override
+    public void promptForResult(Class<? extends ResultProvider> resultProvider, ResultReceiver resultProcessor, Object object) {
+
     }
 }

@@ -59,6 +59,32 @@ public class SQLiteQuestionDataSource implements QuestionDataSource {
     }
 
     @Override
+    public void update(Question q) {
+        if(!(q instanceof SQLiteQuestion))
+            throw new IllegalArgumentException("Use of unsupported type of question");
+        ((SQLiteQuestion)q).updateInDatabase(databaseFileName);
+    }
+
+    @Override
+    public void delete(Question q) {
+        if(!(q instanceof SQLiteQuestion))
+            throw new IllegalArgumentException("Use of unsupported type of question");
+        ((SQLiteQuestion)q).removeFromDatabase(databaseFileName);
+    }
+
+    @Override
+    public boolean exists(Question q) {
+        if(!(q instanceof SQLiteQuestion))
+            throw new IllegalArgumentException("Use of unsupported type of question");
+        return ((SQLiteQuestion)q).existsInDatabase(databaseFileName);
+    }
+
+    @Override
+    public int getNextQuestionID() {
+        return SQLiteQuestion.getNextQuestionID(databaseFileName);
+    }
+
+    @Override
     public java.util.Iterator<Question> iterator() {
         return new Iterator(getAllQuestions());
     }

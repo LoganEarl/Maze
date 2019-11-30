@@ -13,7 +13,7 @@ public class ResourceManager {
 
 	private int scale = 256;
 
-	public ResourceManager() throws FileNotFoundException {
+	public ResourceManager() {
 		unscaledImages = new HashMap<>();
 		File dir = new File("res/game/");
 		File[] dirList = dir.listFiles();
@@ -31,7 +31,7 @@ public class ResourceManager {
 			}
 			scaleAllImages();
 		} catch (Exception ex) {
-			
+			ex.printStackTrace();
 		}
 	}
 
@@ -48,8 +48,8 @@ public class ResourceManager {
 	
 	public void adjustScale(int amount) {
 		int newScale = scale + amount;
-		if (newScale > 640) {
-			newScale = 640;
+		if (newScale > 512) {
+			newScale = 512;
 		}
 		if (newScale < 64) {
 			newScale = 64;

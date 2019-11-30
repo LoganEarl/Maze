@@ -1,10 +1,9 @@
 package maze.controller.events;
 
 import maze.controller.Controller;
-import maze.controller.MazeController;
 import maze.controller.GameEvent;
 import maze.model.World;
-import maze.view.Panel;
+import maze.view.PanelType;
 import maze.view.View;
 import utils.ObjectPersister;
 
@@ -22,7 +21,7 @@ public class SaveGameEvent implements GameEvent {
         ObjectPersister<World> persister = new ObjectPersister<>(DATA_DIRECTORY);
         boolean success = persister.saveObject(world, getSaveFileName(saveSlotNumber));
         if(!success) System.out.println("Failed to save world of slot " + saveSlotNumber);
-        view.switchToPanel(Panel.GRAPHICS);
+        view.switchToPanel(PanelType.GRAPHICS);
     }
 
     static String getSaveFileName(int saveSlotNumber){

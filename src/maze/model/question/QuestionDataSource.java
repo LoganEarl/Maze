@@ -5,6 +5,10 @@ import java.util.Set;
 
 public interface QuestionDataSource extends Iterable<Question>{
     Set<Question> getAllQuestions();
+    int getNextQuestionID();
+    void update(Question q);
+    void delete(Question q);
+    boolean exists(Question q);
 
     class Iterator implements java.util.Iterator<Question> {
         private Question[] questions;

@@ -20,7 +20,7 @@ public class MultipleChoiceQuestion implements SQLiteQuestion {
     private String prompt;
     private String keyItemName;
 
-    public MultipleChoiceQuestion(int id, String correctAnswer, String[] possibleAnswers, String prompt, String keyItemName) {
+    MultipleChoiceQuestion(int id, String correctAnswer, String[] possibleAnswers, String prompt, String keyItemName) {
         this.id = id;
         this.correctAnswer = correctAnswer;
         this.possibleAnswers = possibleAnswers;

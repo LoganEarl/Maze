@@ -47,7 +47,7 @@ class ShortResponseQuestionTest {
 
     @Test
     void getPossibleAnswers() {
-        assert question.getPossibleAnswers().length == 0;
+        assert question.getPossibleAnswers() == answers;
     }
 
     @Test

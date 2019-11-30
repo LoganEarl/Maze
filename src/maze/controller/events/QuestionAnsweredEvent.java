@@ -2,14 +2,13 @@ package maze.controller.events;
 
 import maze.Direction;
 import maze.controller.Controller;
-import maze.controller.MazeController;
 import maze.controller.GameEvent;
 import maze.model.Door;
 import maze.model.Player;
 import maze.model.Room;
 import maze.model.World;
 import maze.model.question.Question;
-import maze.view.Panel;
+import maze.view.PanelType;
 import maze.view.View;
 
 public class QuestionAnsweredEvent implements GameEvent {
@@ -34,6 +33,6 @@ public class QuestionAnsweredEvent implements GameEvent {
 			door.lock();
 		}
 
-		view.switchToPanel(Panel.GRAPHICS);
+		view.switchToPanel(PanelType.GRAPHICS);
 	}
 }

@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.fail;
 import static utils.FileUtils.DATA_DIRECTORY;
 
 class SQLiteQuestionFactoryTest {
@@ -38,33 +39,33 @@ class SQLiteQuestionFactoryTest {
         Set<Integer> allIDs = new LinkedHashSet<>();
         Connection c = DatabaseManager.getDatabaseConnection(FILE_NAME);
         PreparedStatement getSQL;
-        if (c != null) {
-            try {
-                getSQL = c.prepareStatement(SQLiteQuestionDataSource.GeneralPurposeSql.GET_ALL_QUESTION_IDS);
-                ResultSet questionEntries = getSQL.executeQuery();
-                while (questionEntries.next()) {
-                    allIDs.add(questionEntries.getInt(1));
-                }
-                getSQL.close();
-
-                for (Integer i : allIDs) {
-                    getSQL = c.prepareStatement(SQLiteQuestionDataSource.GeneralPurposeSql.GET_QUESTION);
-                    getSQL.setInt(1, i);
-                    questionEntries = getSQL.executeQuery();
-
-                    Question testParsed = factory.parseQuestion(questionEntries);
-                    String expectedQuestionType = questionEntries.getString(QuestionTable.COLUMN_TYPE);
-
-                    assert(testParsed.getQuestionType().equals(expectedQuestionType));
-                    assert !ShortResponseQuestion.TYPE_SHORT_RESPONSE.equals(expectedQuestionType) || testParsed instanceof ShortResponseQuestion;
-                    assert !MultipleChoiceQuestion.TYPE_MULTIPLE_CHOICE.equals(expectedQuestionType) || testParsed instanceof MultipleChoiceQuestion;
-                    assert !BooleanQuestion.TYPE_BOOLEAN.equals(expectedQuestionType) || testParsed instanceof BooleanQuestion;
-
-                    getSQL.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+        if (c != null) try {
+            getSQL = c.prepareStatement(SQLiteQuestionDataSource.GeneralPurposeSql.GET_ALL_QUESTION_IDS);
+            ResultSet questionEntries = getSQL.executeQuery();
+            while (questionEntries.next()) {
+                allIDs.add(questionEntries.getInt(1));
             }
+            getSQL.close();
+            questionEntries.close();
+
+            for (Integer i : allIDs) {
+                getSQL = c.prepareStatement(SQLiteQuestionDataSource.GeneralPurposeSql.GET_QUESTION);
+                getSQL.setInt(1, i);
+                questionEntries = getSQL.executeQuery();
+
+                String expectedQuestionType = questionEntries.getString(QuestionTable.COLUMN_TYPE);
+                Question testParsed = factory.parseQuestion(questionEntries);
+
+                assert (testParsed.getQuestionType().equals(expectedQuestionType));
+                assert !ShortResponseQuestion.TYPE_SHORT_RESPONSE.equals(expectedQuestionType) || testParsed instanceof ShortResponseQuestion;
+                assert !MultipleChoiceQuestion.TYPE_MULTIPLE_CHOICE.equals(expectedQuestionType) || testParsed instanceof MultipleChoiceQuestion;
+                assert !BooleanQuestion.TYPE_BOOLEAN.equals(expectedQuestionType) || testParsed instanceof BooleanQuestion;
+
+            }
+            getSQL.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
         }
         DatabaseManager.closeDatabaseConnection(FILE_NAME);
     }

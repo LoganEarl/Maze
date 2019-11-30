@@ -3,8 +3,8 @@ package maze.view;
 import maze.model.World;
 import maze.model.question.Question;
 
-public interface View {
-    void switchToPanel(Panel panel);
+public interface View extends ResultPrompter {
+    void switchToPanel(PanelType panel);
     QuestionDetailView getQuestionDetailView();
     MapDetailView getMapDetailView();
 

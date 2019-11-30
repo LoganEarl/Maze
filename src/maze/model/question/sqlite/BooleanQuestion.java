@@ -18,7 +18,7 @@ public class BooleanQuestion implements SQLiteQuestion {
     private String prompt;
     private String keyItemName;
 
-    public BooleanQuestion(int id, boolean correctAnswer, String prompt, String keyItemName) {
+    BooleanQuestion(int id, boolean correctAnswer, String prompt, String keyItemName) {
         this.id = id;
         this.correctAnswer = correctAnswer;
         this.prompt = prompt;
