@@ -1,6 +1,7 @@
 package maze.model;
 
 import maze.Direction;
+import maze.model.question.StubbedDoorItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,6 +23,9 @@ class RoomTest {
         Door testDoor = testRoom1.setRoomConnection(Direction.east,testRoom2, Direction.west, questions[0]);
         assert(testRoom1.hasDoor(Direction.east));
         assert(testRoom1.getDoor((Direction.east)) == testDoor);
+        assert(testDoor.getKeyItem() == null);
+        testDoor.setKeyItem(new StubbedDoorItem("key0"));
+        assert(new StubbedDoorItem("key0").equals(testDoor.getKeyItem()));
         assert(testRoom2.getDoor((Direction.west)) == testDoor);
         assert(testDoor.getQuestion() == questions[0]);
     }

@@ -18,14 +18,10 @@ class ObjectPersisterTest {
     void setup(){
         persister = new ObjectPersister<>(DATA_DIRECTORY);
     }
-
-    @SuppressWarnings("ResultOfMethodCallIgnored")
+    
     @AfterEach
     void tearDown(){
-        File f = new File(DATA_DIRECTORY + fileName);
-        try {
-            f.delete();
-        }catch(Exception ignored){}
+        FileUtils.deleteFile(new File(DATA_DIRECTORY + fileName));
     }
 
     @Test

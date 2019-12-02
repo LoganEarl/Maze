@@ -26,6 +26,10 @@ public class Door implements Serializable {
         this.keyItem = keyItem;
     }
 
+    void setKeyItem(Item key){
+        this.keyItem = key;
+    }
+
     public Room getOtherRoom(Room sourceRoom) {
         return connectedRooms.otherItem(sourceRoom);
     }

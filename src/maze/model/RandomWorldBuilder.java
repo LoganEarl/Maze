@@ -63,7 +63,8 @@ public class RandomWorldBuilder implements World.Builder {
         int numKeys = mainItemableDoors.size()/3;
         for(int i = 0; i <= numKeys - 1; i++){
             int doorIndex = (i * 3);
-            Item key = mainItemableDoors.get(doorIndex).getKeyItem();
+            Item key = mainItemableDoors.get(doorIndex).getQuestion().constructKeyItem();
+            mainItemableDoors.get(doorIndex).setKeyItem(key);
             Set<TempRoom> possibleRooms = roomsAccessibleBeforeDoor.get(mainItemableDoors.get(doorIndex));
             possibleRooms.toArray(new TempRoom[0])[rnd.nextInt(possibleRooms.size())].addItem(key);
         }
