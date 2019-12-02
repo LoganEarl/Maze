@@ -59,24 +59,44 @@ public class SQLiteQuestionDataSource implements QuestionDataSource {
     }
 
     @Override
+    public Question getQuestionWithID(int questionID) {
+        Connection c = DatabaseManager.getDatabaseConnection(databaseFileName);
+        PreparedStatement getSQL;
+        Question toReturn = null;
+        if (c != null) {
+            try {
+                getSQL = c.prepareStatement(GeneralPurposeSql.GET_QUESTION);
+                getSQL.setInt(1, questionID);
+                ResultSet questionEntries = getSQL.executeQuery();
+                if (questionEntries.next())
+                    toReturn = factory.parseQuestion(questionEntries);
+                getSQL.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return toReturn;
+    }
+
+    @Override
     public void update(Question q) {
-        if(!(q instanceof SQLiteQuestion))
+        if (!(q instanceof SQLiteQuestion))
             throw new IllegalArgumentException("Use of unsupported type of question");
-        ((SQLiteQuestion)q).updateInDatabase(databaseFileName);
+        ((SQLiteQuestion) q).updateInDatabase(databaseFileName);
     }
 
     @Override
     public void delete(Question q) {
-        if(!(q instanceof SQLiteQuestion))
+        if (!(q instanceof SQLiteQuestion))
             throw new IllegalArgumentException("Use of unsupported type of question");
-        ((SQLiteQuestion)q).removeFromDatabase(databaseFileName);
+        ((SQLiteQuestion) q).removeFromDatabase(databaseFileName);
     }
 
     @Override
     public boolean exists(Question q) {
-        if(!(q instanceof SQLiteQuestion))
+        if (!(q instanceof SQLiteQuestion))
             throw new IllegalArgumentException("Use of unsupported type of question");
-        return ((SQLiteQuestion)q).existsInDatabase(databaseFileName);
+        return ((SQLiteQuestion) q).existsInDatabase(databaseFileName);
     }
 
     @Override

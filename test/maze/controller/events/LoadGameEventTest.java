@@ -1,10 +1,12 @@
 package maze.controller.events;
 
+import maze.Direction;
 import maze.controller.Controller;
 import maze.controller.GameEventListener;
 import maze.model.StubbedWorldBuilder;
 import maze.model.World;
 import maze.model.question.QuestionDataSource;
+import maze.model.question.StubbedDataSource;
 import maze.view.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,6 +47,7 @@ class LoadGameEventTest implements View, Controller {
         assert assignedWorld != null;
         assert new File(DATA_DIRECTORY, SaveGameEvent.getSaveFileName(-2)).exists();
         assert panelsCalled.size() == 1 && panelsCalled.get(0) == PanelType.GRAPHICS;
+        assert assignedWorld.getEntryRoom().getDoor(Direction.north).getQuestion() != null;
     }
 
     @Override
@@ -88,7 +91,7 @@ class LoadGameEventTest implements View, Controller {
 
     @Override
     public QuestionDataSource getDataSource() {
-        return null;
+        return new StubbedDataSource();
     }
 
     @Override

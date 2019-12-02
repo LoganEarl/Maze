@@ -23,6 +23,14 @@ public class World implements Serializable {
         this.seed = seed;
     }
 
+    public Set<Door> getAllDoors(){
+        Set<Room> allRooms = getAllRooms();
+        Set<Door> allDoors = new HashSet<>();
+        for(Room r: allRooms)
+            allDoors.addAll(r.getDoors());
+        return allDoors;
+    }
+
     public Set<Room> getAllRooms(){
         Set<Room> visited = new HashSet<>();
         LinkedList<Room> toExplore = new LinkedList<>();

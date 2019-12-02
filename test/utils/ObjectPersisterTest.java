@@ -18,7 +18,7 @@ class ObjectPersisterTest {
     void setup(){
         persister = new ObjectPersister<>(DATA_DIRECTORY);
     }
-    
+
     @AfterEach
     void tearDown(){
         FileUtils.deleteFile(new File(DATA_DIRECTORY + fileName));

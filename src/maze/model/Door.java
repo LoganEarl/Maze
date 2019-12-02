@@ -1,8 +1,11 @@
 package maze.model;
 
 import maze.model.question.Question;
+import maze.model.question.QuestionDataSource;
 import utils.Pair;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
@@ -66,7 +69,7 @@ public class Door implements Serializable {
         return this.keyItem;
     }
 
-    public void refreshQuestionFromStorage() {
-
+    public void refreshQuestionFromStorage(QuestionDataSource dataSource) {
+        this.question = dataSource.getQuestionWithID(questionId);
     }
 }
