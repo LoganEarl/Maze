@@ -68,8 +68,7 @@ public class SQLiteQuestionDataSource implements QuestionDataSource {
                 getSQL = c.prepareStatement(GeneralPurposeSql.GET_QUESTION);
                 getSQL.setInt(1, questionID);
                 ResultSet questionEntries = getSQL.executeQuery();
-                if (questionEntries.next())
-                    toReturn = factory.parseQuestion(questionEntries);
+                toReturn = factory.parseQuestion(questionEntries);
                 getSQL.close();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -97,6 +96,26 @@ public class SQLiteQuestionDataSource implements QuestionDataSource {
         if (!(q instanceof SQLiteQuestion))
             throw new IllegalArgumentException("Use of unsupported type of question");
         return ((SQLiteQuestion) q).existsInDatabase(databaseFileName);
+    }
+
+    @Override
+    public boolean exists(String itemName) {
+        Connection c = DatabaseManager.getDatabaseConnection(databaseFileName);
+        PreparedStatement getSQL;
+        boolean toReturn = false;
+        if (c != null) {
+            try {
+                getSQL = c.prepareStatement(GeneralPurposeSql.GET_ITEM);
+                getSQL.setString(1, itemName);
+                ResultSet questionEntries = getSQL.executeQuery();
+                toReturn = questionEntries.next();
+                getSQL.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+                toReturn = false;
+            }
+        }
+        return toReturn;
     }
 
     @Override
@@ -133,5 +152,8 @@ public class SQLiteQuestionDataSource implements QuestionDataSource {
         static final String GET_MAX_QUESTION_ID = String.format(Locale.US,
                 "SELECT MAX(%s) as %s FROM %s",
                 QuestionTable.COLUMN_ID, QuestionTable.COLUMN_ID, QuestionTable.TABLE_NAME);
+        static final String GET_ITEM = String.format(Locale.US,
+                "SELECT * FROM %s WHERE %s=?",
+                QuestionTable.TABLE_NAME, QuestionTable.COLUMN_ITEM_NAME);
     }
 }

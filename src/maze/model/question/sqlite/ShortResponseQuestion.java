@@ -7,7 +7,9 @@ import utils.DatabaseManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static maze.model.question.sqlite.SQLiteQuestionDataSource.GeneralPurposeSql.*;
 
@@ -113,5 +115,25 @@ public class ShortResponseQuestion implements SQLiteQuestion {
         if (databaseName == null || databaseName.isEmpty())
             throw new IllegalArgumentException("database name should not be empty");
         return SQLiteQuestion.existsInDatabase(id, databaseName);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        ShortResponseQuestion that = (ShortResponseQuestion) o;
+        return id == that.id &&
+                Arrays.equals(keywords, that.keywords) &&
+                prompt.equals(that.prompt) &&
+                keyItemName.equals(that.keyItemName);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(id, prompt, keyItemName);
+        result = 31 * result + Arrays.hashCode(keywords);
+        return result;
     }
 }

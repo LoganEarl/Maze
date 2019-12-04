@@ -6,6 +6,7 @@ import utils.DatabaseManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
 
 import static maze.model.question.sqlite.SQLiteQuestionDataSource.GeneralPurposeSql.*;
 
@@ -92,8 +93,11 @@ public class BooleanQuestion implements SQLiteQuestion {
         if(databaseName == null || databaseName.isEmpty())
             throw new IllegalArgumentException("database name should not be empty");
         boolean update = DatabaseManager.executeStatement(REPLACE_QUESTION, databaseName, id, prompt, TYPE_BOOLEAN, keyItemName) > 0;
-        if(update)
+
+        if(update) {
+            DatabaseManager.executeStatement(DELETE_ANSWERS, databaseName, id);
             update = DatabaseManager.executeStatement(REPLACE_ANSWER, databaseName, id, getCorrectAnswer(), 1) > 0;
+        }
         return update;
     }
 
@@ -102,5 +106,23 @@ public class BooleanQuestion implements SQLiteQuestion {
         if(databaseName == null || databaseName.isEmpty())
             throw new IllegalArgumentException("database name should not be empty");
         return SQLiteQuestion.existsInDatabase(id,databaseName);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        BooleanQuestion that = (BooleanQuestion) o;
+        return id == that.id &&
+                correctAnswer == that.correctAnswer &&
+                prompt.equals(that.prompt) &&
+                keyItemName.equals(that.keyItemName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, correctAnswer, prompt, keyItemName);
     }
 }

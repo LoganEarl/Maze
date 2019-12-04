@@ -8,7 +8,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerTest {
@@ -31,10 +30,10 @@ class PlayerTest {
     void move() {
         testPlayer.getCurrentRoom().getDoor(Direction.north).lock();
         if ((testPlayer.move(Direction.north)))
-            fail();
+            assert false;
         testPlayer.getCurrentRoom().getDoor(Direction.north).open();
         if(!testPlayer.move(Direction.north))
-            fail();
+            assert false;
         Room starterRoom = testWorld.getEntryRoom();
         assert(testPlayer.getCurrentRoom() == starterRoom.getDoor(Direction.north).getOtherRoom(starterRoom));
     }

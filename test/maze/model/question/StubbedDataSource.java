@@ -25,6 +25,11 @@ public class StubbedDataSource implements QuestionDataSource {
     }
 
     @Override
+    public boolean exists(String itemName) {
+        return false;
+    }
+
+    @Override
     public void update(Question q) {
         //do nothing
     }

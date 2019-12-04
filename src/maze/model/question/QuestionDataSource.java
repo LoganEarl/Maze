@@ -10,6 +10,7 @@ public interface QuestionDataSource extends Iterable<Question>{
     void update(Question q);
     void delete(Question q);
     boolean exists(Question q);
+    boolean exists(String itemName);
 
     class Iterator implements java.util.Iterator<Question> {
         private Question[] questions;
