@@ -15,11 +15,15 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 import maze.controller.GameEventListener;
-import maze.controller.events.QuestionAnsweredEvent;
+import maze.controller.events.ResultEvent;
 import maze.controller.events.SwitchPanelEvent;
+import maze.model.Item;
 import maze.model.question.Question;
 import maze.view.Panel;
 import maze.view.PanelType;
+import maze.view.ResultGeneric;
+import maze.view.ResultProvider;
+import maze.view.ResultReceiver;
 import maze.view.View;
 import maze.view.ViewUtils;
 
@@ -27,8 +31,9 @@ import static maze.model.question.sqlite.BooleanQuestion.TYPE_BOOLEAN;
 import static maze.model.question.sqlite.MultipleChoiceQuestion.TYPE_MULTIPLE_CHOICE;
 import static maze.model.question.sqlite.ShortResponseQuestion.TYPE_SHORT_RESPONSE;
 
-public class QuestionPanel extends Panel implements ActionListener, View.QuestionDetailView {
+public class QuestionPanel extends Panel implements ActionListener, ResultProvider, ResultReceiver, View.QuestionDetailView {
 	private GameEventListener listener;
+	private ResultReceiver resultReceiver;
 	private Question question;
 	private GridBagConstraints gc;
 	
@@ -37,7 +42,7 @@ public class QuestionPanel extends Panel implements ActionListener, View.Questio
 
 	private JButton[] buttonAnswer = new JButton[4];
 	private JButton buttonSubmit = new JButton("Submit");
-	private JButton buttonUseItem = new JButton("Use Item / Just Open");
+	private JButton buttonUseItem = new JButton("Use Item");
 	private JButton buttonCancel = new JButton("Cancel");
 	
 	private JButton selectedButton;
@@ -70,7 +75,7 @@ public class QuestionPanel extends Panel implements ActionListener, View.Questio
 	}
 	
 	private void insertAllComponents() {
-		ViewUtils.insertComponent(this, gc, textPaneQuestion, 		0, 0, 11, 1, 1100, 200);
+		ViewUtils.insertComponent(this, gc, textPaneQuestion, 		0, 0, 11, 1, 1100, 250);
 		ViewUtils.insertComponent(this, gc, textFieldAnswer, 		0, 1, 11, 2, 1100, 200);	
 		ViewUtils.insertComponent(this, gc, buttonAnswer[0], 		0, 1,  5, 1,  500, 100);
 		ViewUtils.insertComponent(this, gc, buttonAnswer[1], 		6, 1,  5, 1,  500, 100);
@@ -148,14 +153,12 @@ public class QuestionPanel extends Panel implements ActionListener, View.Questio
 
 	    if (buttonClicked == buttonSubmit) {
 	    	if (question.getQuestionType().equals(TYPE_SHORT_RESPONSE) && !textFieldAnswer.getText().isEmpty()) {
-	    		QuestionAnsweredEvent event = new QuestionAnsweredEvent(question, textFieldAnswer.getText());
-	    		listener.onGameEvent(event);
+	    		resultReceiver.processResult(textFieldAnswer.getText());
 	    	} else if (selectedButton != null) {
-	    		QuestionAnsweredEvent event = new QuestionAnsweredEvent(question, selectedButton.getText());
-	    		listener.onGameEvent(event);
+	    		resultReceiver.processResult(selectedButton.getText());
 	    	}  	
 	    } else if (buttonClicked == buttonUseItem) {
-	    	QuestionAnsweredEvent event = new QuestionAnsweredEvent(question, question.getCorrectAnswer());
+	    	ResultEvent event = new ResultEvent(ItemSelectorPanel.class, this, question);
 	    	listener.onGameEvent(event);
 	    } else if (buttonClicked == buttonCancel) {
 	    	SwitchPanelEvent event = new SwitchPanelEvent(PanelType.GRAPHICS);
@@ -170,5 +173,30 @@ public class QuestionPanel extends Panel implements ActionListener, View.Questio
 				}
 			}
 	    }	
+	}
+
+	@Override
+	public void processResult(Object object) {
+		if (object instanceof Item) {
+			Item item = (Item) object;
+			if (item.answersQuestion(question)) {
+				resultReceiver.processResult(item);
+			} else {
+				resultReceiver.processResult(null);
+			}
+		} else if (object instanceof ResultGeneric) {
+	    	SwitchPanelEvent event = new SwitchPanelEvent(PanelType.QUESTION);
+			listener.onGameEvent(event);
+		}
+	}
+
+	@Override
+	public void getResult(ResultReceiver resultReceiver, Object object) {
+		this.resultReceiver = resultReceiver;
+		
+		if (object instanceof Question) {
+			Question question = (Question) object;
+			setQuestion(question);
+		}
 	}
 }

@@ -1,7 +1,6 @@
 package maze.view.panel;
 import maze.model.question.Question;
 import maze.model.question.QuestionDataSource;
-import maze.model.question.sqlite.SQLiteQuestionDataSource;
 import maze.view.Panel;
 import maze.view.*;
 

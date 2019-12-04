@@ -1,10 +1,10 @@
 package maze.view;
 
-import maze.model.World;
 import maze.model.question.Question;
 
 public interface View extends ResultPrompter {
     void switchToPanel(PanelType panel);
+    void promptForResult(Class<? extends ResultProvider> resultProvider, ResultReceiver resultProcessor, Object object);
     QuestionDetailView getQuestionDetailView();
     MapDetailView getMapDetailView();
 
@@ -15,6 +15,5 @@ public interface View extends ResultPrompter {
 
     interface MapDetailView {
         void zoomTo(Zoom zoom);
-        void setWorld(World world);
     }
 }

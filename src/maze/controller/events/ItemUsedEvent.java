@@ -2,23 +2,21 @@ package maze.controller.events;
 
 import maze.controller.Controller;
 import maze.controller.GameEvent;
+import maze.model.Item;
+import maze.model.Player;
 import maze.model.World;
 import maze.view.View;
-import maze.view.Zoom;
 
-public class ZoomEvent implements GameEvent {
-	Zoom zoom;
+public class ItemUsedEvent implements GameEvent {
+	private Item item;
 	
-	public ZoomEvent(Zoom zoom) {
-		this.zoom = zoom;
+	public ItemUsedEvent(Item item) {
+		this.item = item;
 	}
 
 	@Override
 	public void resolveTo(Controller controller, View view, World world) {
-		View.MapDetailView gp = view.getMapDetailView();
-		if (gp != null) {
-			gp.zoomTo(zoom);
-		}
+		Player player = world.getPlayer();
+		player.removeItem(item);
 	}
-
 }

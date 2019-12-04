@@ -19,8 +19,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-import maze.controller.Controller;
 import maze.model.question.Question;
+import maze.model.question.QuestionDataSource;
 import maze.model.question.sqlite.QuestionFactory;
 import maze.view.Panel;
 import maze.view.PanelType;
@@ -33,7 +33,7 @@ import static maze.model.question.sqlite.MultipleChoiceQuestion.TYPE_MULTIPLE_CH
 import static maze.model.question.sqlite.ShortResponseQuestion.TYPE_SHORT_RESPONSE;
 
 public class QuestionEditorPanel extends Panel implements ResultProvider, ActionListener {
-    private Controller controller;
+	private QuestionDataSource dataSource;
     private ResultReceiver resultReceiver;
     private Question question;
     private String questionType = TYPE_MULTIPLE_CHOICE;
@@ -57,10 +57,10 @@ public class QuestionEditorPanel extends Panel implements ResultProvider, Action
     private JButton buttonSave = new JButton("Save");
     private JButton buttonCancel = new JButton("Cancel");
 
-    public QuestionEditorPanel(Controller controller) {
+    public QuestionEditorPanel(QuestionDataSource dataSource) {
         super(PanelType.QUESTION_EDITOR);
 
-        this.controller = controller;
+        this.dataSource = dataSource;
         setBackground(ViewUtils.backgroundColor);
 
         setLayout(new GridBagLayout());
@@ -147,8 +147,11 @@ public class QuestionEditorPanel extends Panel implements ResultProvider, Action
     @Override
     public void getResult(ResultReceiver resultReceiver, Object object) {
         this.resultReceiver = resultReceiver;
-        if(object instanceof Question)
+        if(object instanceof Question) {
             this.question = (Question)object;
+        } else {
+        	this.question = null;
+        }
         reloadQuestion();
     }
 
@@ -316,7 +319,7 @@ public class QuestionEditorPanel extends Panel implements ResultProvider, Action
     }
 
     private void answerSetCorrect(DefaultTableModel model, int index) {
-        if (index >= 0) {
+        if (questionType != TYPE_SHORT_RESPONSE && index >= 0) {
             for (int i = 0; i < model.getRowCount(); i++) {
                 if (i == index) {
                     model.setValueAt("Yes", i, 1);
@@ -400,7 +403,7 @@ public class QuestionEditorPanel extends Panel implements ResultProvider, Action
                 answers.add((String) tableAnswers.getValueAt(i, 0));
             }
 
-            int nextId = controller.getDataSource().getNextQuestionID();
+            int nextId = dataSource.getNextQuestionID();
             QuestionFactory factory = new QuestionFactory();
 
             Question q;
@@ -424,8 +427,6 @@ public class QuestionEditorPanel extends Panel implements ResultProvider, Action
             }
 
             resultReceiver.processResult(q);
-            question = null;
-            resultReceiver.processResult(null); //this seemed to be the way to make it close when you save
         }
 
         revalidate();

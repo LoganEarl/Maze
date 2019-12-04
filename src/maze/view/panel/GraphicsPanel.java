@@ -6,6 +6,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import maze.Direction;
+import maze.controller.Controller;
 import maze.view.*;
 import maze.model.Door;
 import maze.model.Player;
@@ -13,11 +14,12 @@ import maze.model.Room;
 import maze.model.World;
 
 public class GraphicsPanel extends Panel implements View.MapDetailView, MouseWheelListener {
+	private Controller controller;
     private ResourceManager resManager;
-    private World drawnWorld = null;
 
-    public GraphicsPanel() {
+    public GraphicsPanel(Controller controller) {
         super(PanelType.GRAPHICS);
+        this.controller = controller;
 
         setBackground(ViewUtils.backgroundColor);
         resManager = new ResourceManager();
@@ -30,6 +32,7 @@ public class GraphicsPanel extends Panel implements View.MapDetailView, MouseWhe
     }
 
     private void draw(Graphics graphics) {
+    	World drawnWorld = controller.getWorld();
 
         graphics.clearRect(0, 0, getWidth(), getHeight());
         graphics.setColor(ViewUtils.backgroundColor);
@@ -58,12 +61,16 @@ public class GraphicsPanel extends Panel implements View.MapDetailView, MouseWhe
                 graphics.drawImage(resManager.getImage("Columns.png"), posX, posY, null);
 
                 for (Direction direction : Direction.values()) {
-                    graphics.drawImage(getDoorImage(room, direction), posX, posY, null);
+                    graphics.drawImage(getDoorImage(room, player, direction), posX, posY, null);
 
                     if (room.hasDoor(direction)) {
                         Door door = room.getDoor(direction);
                         Room other = door.getOtherRoom(room);
-
+                        
+						if (room.getItems().size() > 0) {
+							graphics.drawImage(resManager.getImage("Sack.png"), posX, posY, null);
+						}
+						
                         int room1X = room.getXCoordinate();
                         int room2X = other.getXCoordinate();
                         int room1Y = room.getYCoordinate();
@@ -73,16 +80,16 @@ public class GraphicsPanel extends Panel implements View.MapDetailView, MouseWhe
                             for (int x = Integer.signum(room1X - room2X); x != room1X - room2X; x += Integer.signum(room1X - room2X)) {
                                 graphics.drawImage(resManager.getImage("Hall_Horizontal.png"), posX - x * curScale, posY, null);
                             }
-                            graphics.drawImage(getDoorImage(room, direction), posX - (room1X - room2X + 1) * curScale, posY, null);
-                            graphics.drawImage(getDoorImage(other, direction.opposite()), posX - Integer.signum(room1X - room2X) * curScale, posY, null);
+                            graphics.drawImage(getDoorImage(room, player, direction), posX - (room1X - room2X + 1) * curScale, posY, null);
+                            graphics.drawImage(getDoorImage(other, player, direction.opposite()), posX - Integer.signum(room1X - room2X) * curScale, posY, null);
                         }
 
                         if (Math.abs(room1Y - room2Y) > 1 && direction == Direction.north) {
                             for (int y = Integer.signum(room1Y - room2Y); y != room1Y - room2Y; y += Integer.signum(room1Y - room2Y)) {
                                 graphics.drawImage(resManager.getImage("Hall_Vertical.png"), posX, posY - y * curScale, null);
                             }
-                            graphics.drawImage(getDoorImage(room, direction), posX, posY - Integer.signum(room1Y - room2Y) * curScale, null);
-                            graphics.drawImage(getDoorImage(other, direction.opposite()), posX, posY - Integer.signum(room1Y - room2Y) * curScale, null);
+                            graphics.drawImage(getDoorImage(room, player, direction), posX, posY - Integer.signum(room1Y - room2Y) * curScale, null);
+                            graphics.drawImage(getDoorImage(other, player, direction.opposite()), posX, posY - Integer.signum(room1Y - room2Y) * curScale, null);
                         }
                     }
                 }
@@ -95,7 +102,7 @@ public class GraphicsPanel extends Panel implements View.MapDetailView, MouseWhe
         }
     }
 
-    private Image getDoorImage(Room room, Direction direction) {
+    private Image getDoorImage(Room room, Player player, Direction direction) {
         String key = direction.name();
 
         if (room.hasDoor(direction)) {
@@ -104,8 +111,12 @@ public class GraphicsPanel extends Panel implements View.MapDetailView, MouseWhe
 
             if (door.isOpen()) {
                 key += "_Open";
-            } else if (door.isLocked()) {
+            } else if (door.getKeyItem() != null && player.hasItem(door.getKeyItem())) {
+            	key += "_Star";
+            } else if (door.isLocked() && door.getKeyItem() != null) {
                 key += "_Locked";
+            } else if (door.isLocked()) {
+            	key += "_Blocked";
             } else {
                 key += "_Closed";
             }
@@ -124,11 +135,6 @@ public class GraphicsPanel extends Panel implements View.MapDetailView, MouseWhe
         } else {
             resManager.adjustScale(-64);
         }
-    }
-
-    @Override
-    public void setWorld(World world) {
-        this.drawnWorld = world;
     }
 
     @Override

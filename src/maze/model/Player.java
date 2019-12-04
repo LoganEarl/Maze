@@ -56,4 +56,15 @@ public class Player implements Serializable {
     public void removeItem(Item item) {
         items.remove(item);
     }
+    
+    public boolean hasItem(Item item) {
+    	if (item != null) {
+	    	for (Item i : items) {
+	    		if (i == item) {
+	    			return true;
+	    		}
+	    	}
+    	}
+    	return false;
+    }
 }

@@ -9,7 +9,7 @@ public class Startup {
 	public static void main(String[] args) {	
 		SwingUtilities.invokeLater(() -> {
 			MazeController controller = new MazeController();
-			MainFrame mainFrame = new MainFrame(controller,controller);
+			MainFrame mainFrame = new MainFrame(controller);
 			controller.setView(mainFrame);
 
 			mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

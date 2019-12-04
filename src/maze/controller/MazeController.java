@@ -45,9 +45,5 @@ public class MazeController implements GameEventListener, Controller {
 	@Override
 	public void onGameEvent(GameEvent gameEvent) {
 		gameEvent.resolveTo(this, view, world);
-		View.MapDetailView mapView = view.getMapDetailView();
-		if(mapView != null)
-			mapView.setWorld(world);
-
 	}
 }

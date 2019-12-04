@@ -14,9 +14,13 @@ import maze.controller.GameEventListener;
 import maze.controller.events.MoveEvent;
 import maze.controller.events.SwitchPanelEvent;
 import maze.controller.events.ZoomEvent;
+import maze.model.question.QuestionDataSource;
 import maze.view.panel.GraphicsPanel;
+import maze.view.panel.InventoryPanel;
+import maze.view.panel.ItemSelectorPanel;
 import maze.view.panel.LoadingPanel;
 import maze.view.panel.MainMenuPanel;
+import maze.view.panel.MessagePanel;
 import maze.view.panel.QuestionEditorPanel;
 import maze.view.panel.QuestionMenuPanel;
 import maze.view.panel.QuestionPanel;
@@ -24,20 +28,25 @@ import maze.view.panel.QuestionSelectorPanel;
 
 public class MainFrame extends JFrame implements View {
 	private GameEventListener listener;
+	private QuestionDataSource dataSource;
 	private Map<PanelType, Panel> panels = new LinkedHashMap<>();
 
-	public MainFrame(GameEventListener listener, Controller controller) {
+	public MainFrame(Controller controller) {
 		super("DAbuggers Maze");
-		this.listener = listener;
+		this.listener = controller.getEventListener();
+		this.dataSource = controller.getDataSource();
 		
 		panels.put(PanelType.MAIN_MENU, new MainMenuPanel(listener));
 		panels.put(PanelType.LOADING, new LoadingPanel());
-		panels.put(PanelType.GRAPHICS, new GraphicsPanel());
+		panels.put(PanelType.GRAPHICS, new GraphicsPanel(controller));
 		panels.put(PanelType.QUESTION, new QuestionPanel(listener));
-		panels.put(PanelType.QUESTION_MENU, new QuestionMenuPanel(listener, controller.getDataSource()));
-		panels.put(PanelType.QUESTION_SELECTOR, new QuestionSelectorPanel(controller.getDataSource()));
-		panels.put(PanelType.QUESTION_EDITOR, new QuestionEditorPanel(controller));
-
+		panels.put(PanelType.QUESTION_MENU, new QuestionMenuPanel(listener, dataSource));
+		panels.put(PanelType.QUESTION_SELECTOR, new QuestionSelectorPanel(dataSource));
+		panels.put(PanelType.QUESTION_EDITOR, new QuestionEditorPanel(dataSource));
+		panels.put(PanelType.INVENTORY, new InventoryPanel(controller));
+		panels.put(PanelType.ITEM_SELECTOR, new ItemSelectorPanel(controller));
+		panels.put(PanelType.MESSAGE, new MessagePanel());
+		
 		setLayout(new GridBagLayout());
 		GridBagConstraints gc = new GridBagConstraints();
 
@@ -56,7 +65,7 @@ public class MainFrame extends JFrame implements View {
 		bindKeys();
 	}
 	
-	public JPanel getPanel(PanelType panelType) {
+	public Panel getPanel(PanelType panelType) {
 		return panels.get(panelType);
 	}
 
@@ -72,8 +81,9 @@ public class MainFrame extends JFrame implements View {
 
 	public void switchToPanel(PanelType panelType) {
 		for (Panel panel : panels.values()) {
-			panel.setVisible(panel.getPanelType() == panelType);
+			panel.setVisible(false);
 		}
+		getPanel(panelType).display();
 	}
 
 	@Override
@@ -129,6 +139,11 @@ public class MainFrame extends JFrame implements View {
 		
 		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_SUBTRACT, "ZoomOut", (e) -> {
 			ZoomEvent event = new ZoomEvent(Zoom.out);
+			listener.onGameEvent(event);
+		});
+		
+		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_I, "ShowInventory", (e) -> {
+			SwitchPanelEvent event = new SwitchPanelEvent(PanelType.INVENTORY);
 			listener.onGameEvent(event);
 		});
 	}

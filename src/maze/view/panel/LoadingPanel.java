@@ -25,7 +25,6 @@ public class LoadingPanel extends Panel {
 		gc.gridx = 0;
 		gc.weightx = 1;
 		gc.weighty = 1;
-		//gc.fill = GridBagConstraints.BOTH;
 		add(loadingLabel, gc);		
 	}
 }

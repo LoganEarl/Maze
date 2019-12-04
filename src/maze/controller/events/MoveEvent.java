@@ -1,10 +1,12 @@
 package maze.controller.events;
 
+import java.util.Set;
+
 import maze.Direction;
 import maze.controller.Controller;
-import maze.controller.MazeController;
 import maze.controller.GameEvent;
 import maze.model.Door;
+import maze.model.Item;
 import maze.model.Player;
 import maze.model.Room;
 import maze.model.World;
@@ -28,7 +30,13 @@ public class MoveEvent implements GameEvent {
         if (door != null) {
             if (door.isOpen()) {
                 player.move(direction);
-            } else if (!door.isLocked()) {
+                room = player.getCurrentRoom();
+                Set<Item> items = room.getItems();
+                for (Item item : items) {
+                	player.addItem(item);
+                }
+                items.clear();
+            } else {
                 AccessDoorEvent event = new AccessDoorEvent(door);
                 controller.getEventListener().onGameEvent(event);
             }

@@ -23,7 +23,8 @@ public class QuestionMenuPanel extends Panel implements ResultReceiver, ActionLi
 		NEW_QUESTION,
 		EDIT_QUESTION,
 		DELETE_QUESTION,
-		SAVE_EDIT_QUESTION
+		SAVE_EDIT_QUESTION,
+		COMPLETE
 	}
 
 	private JButton buttonNew  = new JButton("Add New");
@@ -98,15 +99,22 @@ public class QuestionMenuPanel extends Panel implements ResultReceiver, ActionLi
 			if (object instanceof Question) {
 				Question question = (Question) object;
 				if (resultStep == ResultStep.NEW_QUESTION) {
+					resultStep = ResultStep.COMPLETE;
 					dataSource.update(question);
 				} else if (resultStep == ResultStep.EDIT_QUESTION) {
 					resultStep = ResultStep.SAVE_EDIT_QUESTION;
 			    	ResultEvent event = new ResultEvent(QuestionEditorPanel.class, this, question);
 			    	listener.onGameEvent(event);
 				} else if (resultStep == ResultStep.DELETE_QUESTION) {
+					resultStep = ResultStep.COMPLETE;
 					dataSource.delete(question);
 				} else if (resultStep == ResultStep.SAVE_EDIT_QUESTION) {
+					resultStep = ResultStep.COMPLETE;
 					dataSource.update(question);
+				}
+				if (resultStep == ResultStep.COMPLETE) {
+					SwitchPanelEvent event = new SwitchPanelEvent(PanelType.QUESTION_MENU);
+					listener.onGameEvent(event);
 				}
 			}
 		} else {
