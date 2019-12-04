@@ -8,6 +8,9 @@ import maze.model.Player;
 import maze.model.World;
 import maze.model.question.Question;
 import maze.view.Panel;
+import utils.ResultGeneric;
+import utils.ResultProvider;
+import utils.ResultReceiver;
 import maze.view.*;
 
 import javax.swing.*;

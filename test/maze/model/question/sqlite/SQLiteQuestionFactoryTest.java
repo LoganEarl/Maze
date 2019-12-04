@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.fail;
 import static utils.FileUtils.DATA_DIRECTORY;
 

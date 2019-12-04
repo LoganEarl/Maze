@@ -12,7 +12,7 @@ import static utils.FileUtils.DATA_DIRECTORY;
 public class SaveGameEvent implements GameEvent {
     private int saveSlotNumber;
 
-    public SaveGameEvent(int saveSlotNumber){
+    public SaveGameEvent(int saveSlotNumber) {
         this.saveSlotNumber = saveSlotNumber;
     }
 

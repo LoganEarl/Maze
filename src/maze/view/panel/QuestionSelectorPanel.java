@@ -2,6 +2,8 @@ package maze.view.panel;
 import maze.model.question.Question;
 import maze.model.question.QuestionDataSource;
 import maze.view.Panel;
+import utils.ResultProvider;
+import utils.ResultReceiver;
 import maze.view.*;
 
 import javax.swing.*;

@@ -7,9 +7,4 @@ public class StubbedMapDetailView implements View.MapDetailView {
     public void zoomTo(Zoom zoom) {
         //do nothing
     }
-
-    @Override
-    public void setWorld(World world) {
-        //do nothing
-    }
 }

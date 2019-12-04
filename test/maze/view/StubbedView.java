@@ -1,11 +1,9 @@
 package maze.view;
 
-public class StubbedView implements View {
-    @Override
-    public QuestionDetailView getQuestionDetailView() {
-        return new StubbedQuestionDetailView();
-    }
+import utils.ResultProvider;
+import utils.ResultReceiver;
 
+public class StubbedView implements View {
     @Override
     public MapDetailView getMapDetailView() {
         return new StubbedMapDetailView();

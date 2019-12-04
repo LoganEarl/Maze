@@ -25,6 +25,8 @@ import maze.view.panel.QuestionEditorPanel;
 import maze.view.panel.QuestionMenuPanel;
 import maze.view.panel.QuestionPanel;
 import maze.view.panel.QuestionSelectorPanel;
+import utils.ResultProvider;
+import utils.ResultReceiver;
 
 public class MainFrame extends JFrame implements View {
 	private GameEventListener listener;
@@ -64,15 +66,6 @@ public class MainFrame extends JFrame implements View {
 
 		bindKeys();
 	}
-	
-	public Panel getPanel(PanelType panelType) {
-		return panels.get(panelType);
-	}
-
-	@Override
-	public QuestionDetailView getQuestionDetailView() {
-		return (QuestionDetailView) panels.get(PanelType.QUESTION);
-	}
 
 	@Override
 	public MapDetailView getMapDetailView() {
@@ -83,7 +76,7 @@ public class MainFrame extends JFrame implements View {
 		for (Panel panel : panels.values()) {
 			panel.setVisible(false);
 		}
-		getPanel(panelType).display();
+		panels.get(panelType).display();
 	}
 
 	@Override
@@ -101,7 +94,7 @@ public class MainFrame extends JFrame implements View {
 	}
 	
 	private void bindKeys() {
-		GraphicsPanel graphicsPanel = (GraphicsPanel) getPanel(PanelType.GRAPHICS);
+		GraphicsPanel graphicsPanel = (GraphicsPanel) panels.get(PanelType.GRAPHICS);
 		
 		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_W, "MoveNorth", (e) -> {
 			MoveEvent moveEvent = new MoveEvent(Direction.north);

@@ -21,17 +21,17 @@ import maze.model.Item;
 import maze.model.question.Question;
 import maze.view.Panel;
 import maze.view.PanelType;
-import maze.view.ResultGeneric;
-import maze.view.ResultProvider;
-import maze.view.ResultReceiver;
 import maze.view.View;
 import maze.view.ViewUtils;
+import utils.ResultGeneric;
+import utils.ResultProvider;
+import utils.ResultReceiver;
 
 import static maze.model.question.sqlite.BooleanQuestion.TYPE_BOOLEAN;
 import static maze.model.question.sqlite.MultipleChoiceQuestion.TYPE_MULTIPLE_CHOICE;
 import static maze.model.question.sqlite.ShortResponseQuestion.TYPE_SHORT_RESPONSE;
 
-public class QuestionPanel extends Panel implements ActionListener, ResultProvider, ResultReceiver, View.QuestionDetailView {
+public class QuestionPanel extends Panel implements ActionListener, ResultProvider, ResultReceiver {
 	private GameEventListener listener;
 	private ResultReceiver resultReceiver;
 	private Question question;
@@ -111,12 +111,7 @@ public class QuestionPanel extends Panel implements ActionListener, ResultProvid
 		}
 	}
 
-	@Override
-	public Question getQuestion() {
-		return question;
-	}
-
-	public void setQuestion(Question question) {
+	private void setQuestion(Question question) {
 		this.question = question;
 		
 		textPaneQuestion.setText(question.getPrompt());

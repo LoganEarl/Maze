@@ -1,4 +1,4 @@
-package maze.view;
+package utils;
 
 public enum ResultGeneric {
 	ACCEPT,

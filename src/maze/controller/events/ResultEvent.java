@@ -3,9 +3,9 @@ package maze.controller.events;
 import maze.controller.Controller;
 import maze.controller.GameEvent;
 import maze.model.World;
-import maze.view.ResultProvider;
-import maze.view.ResultReceiver;
 import maze.view.View;
+import utils.ResultProvider;
+import utils.ResultReceiver;
 
 public class ResultEvent implements GameEvent {
 	private Class<? extends ResultProvider> resultProvider;

@@ -24,9 +24,9 @@ import maze.model.question.QuestionDataSource;
 import maze.model.question.sqlite.QuestionFactory;
 import maze.view.Panel;
 import maze.view.PanelType;
-import maze.view.ResultProvider;
-import maze.view.ResultReceiver;
 import maze.view.ViewUtils;
+import utils.ResultProvider;
+import utils.ResultReceiver;
 
 import static maze.model.question.sqlite.BooleanQuestion.*;
 import static maze.model.question.sqlite.MultipleChoiceQuestion.TYPE_MULTIPLE_CHOICE;

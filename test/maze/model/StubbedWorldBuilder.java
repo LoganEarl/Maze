@@ -4,6 +4,7 @@ import maze.model.question.Question;
 import maze.model.question.TestingQuestions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -16,7 +17,7 @@ public class StubbedWorldBuilder implements World.Builder {
     private List<Question> questions;
 
     public StubbedWorldBuilder() {
-        this.questions = new ArrayList<>(List.of(TestingQuestions.questions));
+        this.questions = new ArrayList<>(Arrays.asList(TestingQuestions.questions));
         entryRoom = new Room(-1, 0);
         exitRoom = new Room(1, 0);
     }

@@ -1,6 +1,9 @@
 package maze.view.panel;
 
 import maze.view.Panel;
+import utils.ResultGeneric;
+import utils.ResultProvider;
+import utils.ResultReceiver;
 import maze.view.*;
 
 import javax.swing.*;

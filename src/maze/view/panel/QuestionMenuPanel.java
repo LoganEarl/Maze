@@ -6,8 +6,8 @@ import maze.model.question.Question;
 import maze.model.question.QuestionDataSource;
 import maze.view.Panel;
 import maze.view.PanelType;
-import maze.view.ResultReceiver;
 import maze.view.ViewUtils;
+import utils.ResultReceiver;
 
 import javax.swing.*;
 import java.awt.*;

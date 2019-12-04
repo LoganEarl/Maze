@@ -19,8 +19,8 @@ public class NewGameEvent implements GameEvent {
 		SQLiteQuestionDataSource questionDataSource = new SQLiteQuestionDataSource("questions.db");
 		Set<Question> questions = questionDataSource.getAllQuestions();
         int seed = (int) (Math.random() * ((1000 - 1) + 1)) + 1;
-		World.Builder worldBuilder = new RandomWorldBuilder(12, questions,1,
-                seed);
+		seed = 98;
+		World.Builder worldBuilder = new RandomWorldBuilder(12, questions, 4, seed);
 		world = worldBuilder.build();
 
 		controller.setWorld(world);

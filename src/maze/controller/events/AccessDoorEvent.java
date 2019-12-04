@@ -7,10 +7,10 @@ import maze.model.Item;
 import maze.model.World;
 import maze.model.question.Question;
 import maze.view.PanelType;
-import maze.view.ResultReceiver;
 import maze.view.View;
 import maze.view.panel.ItemSelectorPanel;
 import maze.view.panel.QuestionPanel;
+import utils.ResultReceiver;
 
 public class AccessDoorEvent implements GameEvent, ResultReceiver {
 	private Controller controller;
@@ -27,10 +27,6 @@ public class AccessDoorEvent implements GameEvent, ResultReceiver {
 		this.view = view;
 		
 		if (!door.isLocked()) {
-//			View.QuestionDetailView questionPanel = view.getQuestionDetailView();
-//			questionPanel.setQuestion(door.getQuestion());
-//			view.switchToPanel(PanelType.QUESTION);
-			
 			GameEvent event = new ResultEvent(QuestionPanel.class, this, door.getQuestion());
 			controller.getEventListener().onGameEvent(event);
 		} else {

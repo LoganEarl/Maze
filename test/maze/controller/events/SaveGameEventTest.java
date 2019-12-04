@@ -8,6 +8,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import utils.FileUtils;
+import utils.ResultProvider;
+import utils.ResultReceiver;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -42,11 +44,6 @@ class SaveGameEventTest implements View {
     @Override
     public void switchToPanel(PanelType panel) {
         panelsCalled.add(panel);
-    }
-
-    @Override
-    public QuestionDetailView getQuestionDetailView() {
-        return null;
     }
 
     @Override

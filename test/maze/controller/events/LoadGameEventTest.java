@@ -13,6 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import utils.FileUtils;
 import utils.ObjectPersister;
+import utils.ResultProvider;
+import utils.ResultReceiver;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -67,11 +69,6 @@ class LoadGameEventTest implements View, Controller {
     @Override
     public void switchToPanel(PanelType panel) {
         panelsCalled.add(panel);
-    }
-
-    @Override
-    public QuestionDetailView getQuestionDetailView() {
-        return null;
     }
 
     @Override
