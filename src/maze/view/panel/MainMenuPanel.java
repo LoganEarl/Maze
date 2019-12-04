@@ -16,8 +16,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
-import maze.controller.Controller;
 import maze.controller.GameEvent;
+import maze.controller.GameEventListener;
 import maze.controller.events.SwitchPanelEvent;
 import maze.view.Panel;
 import maze.view.PanelType;
@@ -25,15 +25,16 @@ import maze.view.ViewUtils;
 import maze.controller.events.NewGameEvent;
 
 public class MainMenuPanel extends Panel implements ActionListener {
-	private Controller controller;
+	private GameEventListener listener;
 	private GridBagConstraints gc;
 	
 	private JButton buttonNewGame = new JButton("New Game");
 	private JButton buttonLoadGame = new JButton("Load Game");
 	private JButton buttonManageQuestions = new JButton("Manage Questions");
 	
-	public MainMenuPanel(Controller controller) {
-		this.controller = controller;
+	public MainMenuPanel(GameEventListener listener) {
+		super(PanelType.MAIN_MENU);
+		this.listener = listener;
 		setBackground(ViewUtils.backgroundColor);
 		
 		setLayout(new GridBagLayout());
@@ -42,11 +43,6 @@ public class MainMenuPanel extends Panel implements ActionListener {
 		
 		insertAllComponents();
 		initializeAllComponents();
-	}
-	
-	@Override
-	public PanelType getPanelType() {
-		return PanelType.MAIN_MENU;
 	}
 	
 	@Override
@@ -95,12 +91,12 @@ public class MainMenuPanel extends Panel implements ActionListener {
 
 	    if (buttonClicked == buttonNewGame) {
 	    	GameEvent gameEvent = new NewGameEvent();
-			controller.onGameEvent(gameEvent);
+			listener.onGameEvent(gameEvent);
 	    } else if (buttonClicked == buttonLoadGame) {
 	    	JOptionPane.showMessageDialog(null, "TODO");
 		} else if (buttonClicked == buttonManageQuestions) {
 			SwitchPanelEvent event = new SwitchPanelEvent(PanelType.QUESTION_MENU);
-			controller.onGameEvent(event);
+			listener.onGameEvent(event);
 		} else {
 			JOptionPane.showMessageDialog(null, "Invalid Command: " + buttonClicked.getText());
 	    }		

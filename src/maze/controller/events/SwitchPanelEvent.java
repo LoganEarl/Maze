@@ -3,8 +3,8 @@ package maze.controller.events;
 import maze.controller.Controller;
 import maze.controller.GameEvent;
 import maze.model.World;
-import maze.view.MainFrame;
 import maze.view.PanelType;
+import maze.view.View;
 
 public class SwitchPanelEvent implements GameEvent {
 	private PanelType panelType;
@@ -14,7 +14,7 @@ public class SwitchPanelEvent implements GameEvent {
 	}
 	
 	@Override
-	public void resolveTo(Controller controller, MainFrame mainFrame, World world) {
-		mainFrame.switchToPanel(panelType);	
+	public void resolveTo(Controller controller, View view, World world) {
+		view.switchToPanel(panelType);
 	}
 }

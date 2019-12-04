@@ -1,51 +1,37 @@
 package maze.view.panel;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import maze.model.question.Question;
+import maze.model.question.QuestionDataSource;
+import maze.view.Panel;
+import maze.view.*;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-
-import maze.controller.Controller;
-import maze.model.question.Question;
-import maze.model.question.SqLiteDatabase;
-import maze.view.Panel;
-import maze.view.PanelType;
-import maze.view.ResultProvider;
-import maze.view.ResultReceiver;
-import maze.view.ViewUtils;
-
 public class QuestionSelectorPanel extends Panel implements ResultProvider, ActionListener, KeyListener {
-	private Controller controller;
 	private GridBagConstraints gc;
 	private ResultReceiver resultReceiver;
 	private List<Question> questions;
+	private QuestionDataSource dataSource;
 
-	private JLabel labelHeading = new JLabel("Select A Question");
-	private JLabel labelSearch = new JLabel("Search:");
 	private JTextField textFieldSearch = new JTextField("");
 	private JScrollPane scrollPane;
 	private JTable tableQuestions;
 	private JButton buttonContinue  = new JButton("Continue");
 	private JButton buttonCancel  = new JButton("Cancel");
 	
-	public QuestionSelectorPanel(Controller controller) {
-		this.controller = controller;
+	public QuestionSelectorPanel(QuestionDataSource dataSource) {
+		super(PanelType.QUESTION_SELECTOR);
 		setBackground(ViewUtils.backgroundColor);
-		
+
+		this.dataSource = dataSource;
+
 		buttonContinue.setFocusPainted(false);
 		buttonCancel.setFocusPainted(false);
 
@@ -56,8 +42,10 @@ public class QuestionSelectorPanel extends Panel implements ResultProvider, Acti
 		ViewUtils.insertComponent(this, gc, new JLabel(""),		0, 0, 1, 1,  90,  10);
 		ViewUtils.insertComponent(this, gc, new JLabel(""),		1, 0, 1, 1, 280,  10);
 		ViewUtils.insertComponent(this, gc, new JLabel(""),		2, 0, 1, 1, 390,  10);
-		
+
+		JLabel labelHeading = new JLabel("Select A Question");
 		ViewUtils.insertComponent(this, gc, labelHeading,		0, 0, 3, 1, 800,  60);
+		JLabel labelSearch = new JLabel("Search:");
 		ViewUtils.insertComponent(this, gc, labelSearch,		0, 1, 1, 1,  90,  40);
 		ViewUtils.insertComponent(this, gc, textFieldSearch,	1, 1, 2, 1, 690,  40);
 		ViewUtils.insertComponent(this, gc, buttonContinue, 	0, 3, 2, 1, 390,  80);
@@ -85,33 +73,27 @@ public class QuestionSelectorPanel extends Panel implements ResultProvider, Acti
 	}
 	
 	@Override
-	public PanelType getPanelType() {
-		return PanelType.QUESTION_SELECTOR;
-	}
-	
-	@Override
 	public void getResult(ResultReceiver resultReceiver, Object object) {
 		reloadQuestions();
 		this.resultReceiver = resultReceiver;	
 	}
 	
-	public void reloadQuestions() {
+	private void reloadQuestions() {
 		if (scrollPane != null) remove(scrollPane);
 		
-		SqLiteDatabase db = new SqLiteDatabase("data/mazedb.sqlite3");
-		questions = db.readAllRecords();
-		
+		questions = new ArrayList<>(dataSource.getAllQuestions());
+
 		String[] columnNames = {"Question"};
 		
 		LinkedList<String> filteredList = new LinkedList<>();
 		
 		for (Question question : questions) {
-			if (textFieldSearch.getText() == null || textFieldSearch.getText().equals("") || question.getQuestion().contains(textFieldSearch.getText())) {
-				filteredList.addLast(question.getQuestion());
+			if (textFieldSearch.getText() == null || textFieldSearch.getText().equals("") || question.getPrompt().contains(textFieldSearch.getText())) {
+				filteredList.addLast(question.getPrompt());
 			}
 		}
 
-		String arrQuestions[][] = new String[filteredList.size()][1];
+		String[][] arrQuestions = new String[filteredList.size()][1];
 		for (int i = 0; i < filteredList.size(); i++) {
 			arrQuestions[i][0] = "" + filteredList.get(i);
 		}
@@ -139,7 +121,7 @@ public class QuestionSelectorPanel extends Panel implements ResultProvider, Acti
 		    	if (selected >= 0) {
 		    		String questionText = (String) tableQuestions.getValueAt(selected, 0);
 		    		for (Question question : questions) {
-		    			if (question.getQuestion().contentEquals(questionText)) {
+		    			if (question.getPrompt().contentEquals(questionText)) {
 		    				toProcess = question;
 		    			}
 		    		}

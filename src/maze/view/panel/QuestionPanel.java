@@ -14,32 +14,42 @@ import javax.swing.JTextPane;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
-import maze.controller.Controller;
-import maze.controller.events.QuestionAnsweredEvent;
+import maze.controller.GameEventListener;
+import maze.controller.events.ResultEvent;
 import maze.controller.events.SwitchPanelEvent;
+import maze.model.Item;
 import maze.model.question.Question;
-import maze.model.question.QuestionType;
 import maze.view.Panel;
 import maze.view.PanelType;
+import maze.view.ResultGeneric;
+import maze.view.ResultProvider;
+import maze.view.ResultReceiver;
+import maze.view.View;
 import maze.view.ViewUtils;
 
-public class QuestionPanel extends Panel implements ActionListener {
-	private Controller controller;
+import static maze.model.question.sqlite.BooleanQuestion.TYPE_BOOLEAN;
+import static maze.model.question.sqlite.MultipleChoiceQuestion.TYPE_MULTIPLE_CHOICE;
+import static maze.model.question.sqlite.ShortResponseQuestion.TYPE_SHORT_RESPONSE;
+
+public class QuestionPanel extends Panel implements ActionListener, ResultProvider, ResultReceiver, View.QuestionDetailView {
+	private GameEventListener listener;
+	private ResultReceiver resultReceiver;
 	private Question question;
 	private GridBagConstraints gc;
 	
 	private JTextPane textPaneQuestion = new JTextPane();
 	private JTextField textFieldAnswer = new JTextField();
-	
-	private JButton buttonAnswer[] = new JButton[4];
+
+	private JButton[] buttonAnswer = new JButton[4];
 	private JButton buttonSubmit = new JButton("Submit");
-	private JButton buttonUseItem = new JButton("Use Item / Just Open");
+	private JButton buttonUseItem = new JButton("Use Item");
 	private JButton buttonCancel = new JButton("Cancel");
 	
 	private JButton selectedButton;
 	
-	public QuestionPanel(Controller controller) {
-		this.controller = controller;
+	public QuestionPanel(GameEventListener listener) {
+		super(PanelType.QUESTION);
+		this.listener = listener;
 		
 		Color color = new Color(33, 33, 33);
 		setBackground(color);
@@ -58,11 +68,6 @@ public class QuestionPanel extends Panel implements ActionListener {
 		initializeAllComponents();
 	}
 	
-	@Override
-	public PanelType getPanelType() {
-		return PanelType.QUESTION;
-	}
-	
 	private void SizeColumns() {
 		for (int i = 0; i < 11; i++) {
 			ViewUtils.insertComponent(this, gc, new JLabel(""), i, 0, 1, 1, 100, 1);
@@ -70,7 +75,7 @@ public class QuestionPanel extends Panel implements ActionListener {
 	}
 	
 	private void insertAllComponents() {
-		ViewUtils.insertComponent(this, gc, textPaneQuestion, 		0, 0, 11, 1, 1100, 200);
+		ViewUtils.insertComponent(this, gc, textPaneQuestion, 		0, 0, 11, 1, 1100, 250);
 		ViewUtils.insertComponent(this, gc, textFieldAnswer, 		0, 1, 11, 2, 1100, 200);	
 		ViewUtils.insertComponent(this, gc, buttonAnswer[0], 		0, 1,  5, 1,  500, 100);
 		ViewUtils.insertComponent(this, gc, buttonAnswer[1], 		6, 1,  5, 1,  500, 100);
@@ -105,11 +110,16 @@ public class QuestionPanel extends Panel implements ActionListener {
 			}
 		}
 	}
-	
+
+	@Override
+	public Question getQuestion() {
+		return question;
+	}
+
 	public void setQuestion(Question question) {
 		this.question = question;
 		
-		textPaneQuestion.setText(question.getQuestion());
+		textPaneQuestion.setText(question.getPrompt());
 		textFieldAnswer.setVisible(false);
 		selectedButton = null;
 		for (JButton button : buttonAnswer) {
@@ -117,19 +127,23 @@ public class QuestionPanel extends Panel implements ActionListener {
 			ViewUtils.componentColorBorder(button, ViewUtils.unselectedColor);
 		}
 
-		if (question.getType() == QuestionType.MULTIPLE) {
-			for (int i = 0; i < question.getAnswers().size(); i++) {
-				buttonAnswer[i].setText(question.getAnswers().get(i).getAnswer());
-				buttonAnswer[i].setVisible(true);
-			}
-		} else if (question.getType() == QuestionType.TRUE_FALSE) {
-			buttonAnswer[0].setText("True");
-			buttonAnswer[1].setText("False");
-			buttonAnswer[0].setVisible(true);
-			buttonAnswer[1].setVisible(true);
-		} else if (question.getType() == QuestionType.SHORT) {
-			textFieldAnswer.setVisible(true);
-			textFieldAnswer.setText("");
+		switch (question.getQuestionType()) {
+			case TYPE_MULTIPLE_CHOICE:
+				for (int i = 0; i < question.getPossibleAnswers().length; i++) {
+					buttonAnswer[i].setText(question.getPossibleAnswers()[i]);
+					buttonAnswer[i].setVisible(true);
+				}
+				break;
+			case TYPE_BOOLEAN:
+				buttonAnswer[0].setText("True");
+				buttonAnswer[1].setText("False");
+				buttonAnswer[0].setVisible(true);
+				buttonAnswer[1].setVisible(true);
+				break;
+			case TYPE_SHORT_RESPONSE:
+				textFieldAnswer.setVisible(true);
+				textFieldAnswer.setText("");
+				break;
 		}
 	}
 
@@ -138,19 +152,17 @@ public class QuestionPanel extends Panel implements ActionListener {
 	    JButton buttonClicked = ((JButton) e.getSource());
 
 	    if (buttonClicked == buttonSubmit) {
-	    	if (question.getType() == QuestionType.SHORT && !textFieldAnswer.getText().isEmpty()) {
-	    		QuestionAnsweredEvent event = new QuestionAnsweredEvent(question, textFieldAnswer.getText());
-	    		controller.onGameEvent(event);
+	    	if (question.getQuestionType().equals(TYPE_SHORT_RESPONSE) && !textFieldAnswer.getText().isEmpty()) {
+	    		resultReceiver.processResult(textFieldAnswer.getText());
 	    	} else if (selectedButton != null) {
-	    		QuestionAnsweredEvent event = new QuestionAnsweredEvent(question, selectedButton.getText());
-	    		controller.onGameEvent(event);
+	    		resultReceiver.processResult(selectedButton.getText());
 	    	}  	
 	    } else if (buttonClicked == buttonUseItem) {
-	    	QuestionAnsweredEvent event = new QuestionAnsweredEvent(question, question.getCorrectAnswer());
-	    	controller.onGameEvent(event);
+	    	ResultEvent event = new ResultEvent(ItemSelectorPanel.class, this, question);
+	    	listener.onGameEvent(event);
 	    } else if (buttonClicked == buttonCancel) {
 	    	SwitchPanelEvent event = new SwitchPanelEvent(PanelType.GRAPHICS);
-			controller.onGameEvent(event);
+			listener.onGameEvent(event);
 		} else {
 			for (JButton button : buttonAnswer) {
 				if (button != buttonClicked) {
@@ -161,5 +173,30 @@ public class QuestionPanel extends Panel implements ActionListener {
 				}
 			}
 	    }	
+	}
+
+	@Override
+	public void processResult(Object object) {
+		if (object instanceof Item) {
+			Item item = (Item) object;
+			if (item.answersQuestion(question)) {
+				resultReceiver.processResult(item);
+			} else {
+				resultReceiver.processResult(null);
+			}
+		} else if (object instanceof ResultGeneric) {
+	    	SwitchPanelEvent event = new SwitchPanelEvent(PanelType.QUESTION);
+			listener.onGameEvent(event);
+		}
+	}
+
+	@Override
+	public void getResult(ResultReceiver resultReceiver, Object object) {
+		this.resultReceiver = resultReceiver;
+		
+		if (object instanceof Question) {
+			Question question = (Question) object;
+			setQuestion(question);
+		}
 	}
 }

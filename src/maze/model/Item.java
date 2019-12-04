@@ -1,14 +1,10 @@
 package maze.model;
 
-public interface Item {
-    String getName();
+import maze.model.question.Question;
 
-    //skeleton keys are special cases that can open any door.
-    class SkeletonKey implements Item {
-        public static final String ITEM_NAME = "Skeleton Key";
-        @Override
-        public String getName() {
-            return ITEM_NAME;
-        }
-    }
+import java.io.Serializable;
+
+public interface Item extends Serializable {
+    String getName();
+    boolean answersQuestion(Question q);
 }

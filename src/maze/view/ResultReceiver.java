@@ -1,5 +1,5 @@
 package maze.view;
 
 public interface ResultReceiver {
-	public void processResult(Object object);
+	void processResult(Object object);
 }

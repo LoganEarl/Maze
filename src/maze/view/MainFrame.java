@@ -3,41 +3,50 @@ package maze.view;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
-import java.util.LinkedList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import maze.Direction;
-import maze.Zoom;
 import maze.controller.Controller;
+import maze.controller.GameEventListener;
 import maze.controller.events.MoveEvent;
 import maze.controller.events.SwitchPanelEvent;
 import maze.controller.events.ZoomEvent;
+import maze.model.question.QuestionDataSource;
 import maze.view.panel.GraphicsPanel;
+import maze.view.panel.InventoryPanel;
+import maze.view.panel.ItemSelectorPanel;
 import maze.view.panel.LoadingPanel;
 import maze.view.panel.MainMenuPanel;
+import maze.view.panel.MessagePanel;
 import maze.view.panel.QuestionEditorPanel;
 import maze.view.panel.QuestionMenuPanel;
 import maze.view.panel.QuestionPanel;
 import maze.view.panel.QuestionSelectorPanel;
 
-public class MainFrame extends JFrame implements ResultPrompter {
-	private Controller controller;
-	private LinkedList<Panel> panels = new LinkedList<>();
+public class MainFrame extends JFrame implements View {
+	private GameEventListener listener;
+	private QuestionDataSource dataSource;
+	private Map<PanelType, Panel> panels = new LinkedHashMap<>();
 
 	public MainFrame(Controller controller) {
 		super("DAbuggers Maze");
-		this.controller = controller;
+		this.listener = controller.getEventListener();
+		this.dataSource = controller.getDataSource();
 		
-		panels.add(new MainMenuPanel(controller));
-		panels.add(new LoadingPanel());
-		panels.add(new GraphicsPanel(controller));
-		panels.add(new QuestionPanel(controller));
-		panels.add(new QuestionMenuPanel(controller));
-		panels.add(new QuestionSelectorPanel(controller));
-		panels.add(new QuestionEditorPanel(controller));
-
+		panels.put(PanelType.MAIN_MENU, new MainMenuPanel(listener));
+		panels.put(PanelType.LOADING, new LoadingPanel());
+		panels.put(PanelType.GRAPHICS, new GraphicsPanel(controller));
+		panels.put(PanelType.QUESTION, new QuestionPanel(listener));
+		panels.put(PanelType.QUESTION_MENU, new QuestionMenuPanel(listener, dataSource));
+		panels.put(PanelType.QUESTION_SELECTOR, new QuestionSelectorPanel(dataSource));
+		panels.put(PanelType.QUESTION_EDITOR, new QuestionEditorPanel(dataSource));
+		panels.put(PanelType.INVENTORY, new InventoryPanel(controller));
+		panels.put(PanelType.ITEM_SELECTOR, new ItemSelectorPanel(controller));
+		panels.put(PanelType.MESSAGE, new MessagePanel());
+		
 		setLayout(new GridBagLayout());
 		GridBagConstraints gc = new GridBagConstraints();
 
@@ -47,7 +56,7 @@ public class MainFrame extends JFrame implements ResultPrompter {
 		gc.weighty = 1;
 		gc.fill = GridBagConstraints.BOTH;
 		
-		for (JPanel panel : panels) {
+		for (JPanel panel : panels.values()) {
 			add(panel, gc);
 		}
 		
@@ -56,26 +65,30 @@ public class MainFrame extends JFrame implements ResultPrompter {
 		bindKeys();
 	}
 	
-	public JPanel getPanel(PanelType panelType) {
-		JPanel returnPanel = null;		
-		for (Panel panel : panels) {
-			if (panel.getPanelType() == panelType) {
-				returnPanel = panel;
-			}
-		}
-		return returnPanel;
+	public Panel getPanel(PanelType panelType) {
+		return panels.get(panelType);
 	}
 
+	@Override
+	public QuestionDetailView getQuestionDetailView() {
+		return (QuestionDetailView) panels.get(PanelType.QUESTION);
+	}
+
+	@Override
+	public MapDetailView getMapDetailView() {
+		return (GraphicsPanel) panels.get(PanelType.GRAPHICS);
+	}
 
 	public void switchToPanel(PanelType panelType) {
-		for (Panel panel : panels) {
-			panel.setVisible(panel.getPanelType() == panelType);
+		for (Panel panel : panels.values()) {
+			panel.setVisible(false);
 		}
+		getPanel(panelType).display();
 	}
 
 	@Override
 	public void promptForResult(Class<? extends ResultProvider> resultProvider, ResultReceiver resultReceiver, Object object) {
-		for (Panel panel : panels) {
+		for (Panel panel : panels.values()) {
 			if (panel.getClass() == resultProvider) {
 				if (panel instanceof ResultProvider) {
 					switchToPanel(panel.getPanelType());
@@ -84,45 +97,54 @@ public class MainFrame extends JFrame implements ResultPrompter {
 					break;
 				}
 			}
-		}	
+		}
 	}
 	
-	public void bindKeys() {
+	private void bindKeys() {
 		GraphicsPanel graphicsPanel = (GraphicsPanel) getPanel(PanelType.GRAPHICS);
 		
 		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_W, "MoveNorth", (e) -> {
 			MoveEvent moveEvent = new MoveEvent(Direction.north);
-			controller.onGameEvent(moveEvent);
+			listener.onGameEvent(moveEvent);
+			SwingUtilities.invokeLater(graphicsPanel::repaint);
 		});
 
 		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_A, "MoveWest", (e) -> {
 			MoveEvent moveEvent = new MoveEvent(Direction.west);
-			controller.onGameEvent(moveEvent);
+			listener.onGameEvent(moveEvent);
+			SwingUtilities.invokeLater(graphicsPanel::repaint);
 		});
 
 		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_S, "MoveSouth", (e) -> {
 			MoveEvent moveEvent = new MoveEvent(Direction.south);
-			controller.onGameEvent(moveEvent);
+			listener.onGameEvent(moveEvent);
+			SwingUtilities.invokeLater(graphicsPanel::repaint);
 		});
 
 		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_D, "MoveEast", (e) -> {
 			MoveEvent moveEvent = new MoveEvent(Direction.east);
-			controller.onGameEvent(moveEvent);
+			listener.onGameEvent(moveEvent);
+			SwingUtilities.invokeLater(graphicsPanel::repaint);
 		});
 
 		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_ESCAPE, "PauseMenu", (e) -> {
 			SwitchPanelEvent event = new SwitchPanelEvent(PanelType.MAIN_MENU);
-			controller.onGameEvent(event);
+			listener.onGameEvent(event);
 		});
 		
 		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_ADD, "ZoomIn", (e) -> {
 			ZoomEvent event = new ZoomEvent(Zoom.in);
-			controller.onGameEvent(event);
+			listener.onGameEvent(event);
 		});
 		
 		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_SUBTRACT, "ZoomOut", (e) -> {
 			ZoomEvent event = new ZoomEvent(Zoom.out);
-			controller.onGameEvent(event);
+			listener.onGameEvent(event);
+		});
+		
+		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_I, "ShowInventory", (e) -> {
+			SwitchPanelEvent event = new SwitchPanelEvent(PanelType.INVENTORY);
+			listener.onGameEvent(event);
 		});
 	}
 }

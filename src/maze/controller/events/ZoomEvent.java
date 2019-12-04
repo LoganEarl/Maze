@@ -1,12 +1,10 @@
 package maze.controller.events;
 
-import maze.Zoom;
 import maze.controller.Controller;
 import maze.controller.GameEvent;
 import maze.model.World;
-import maze.view.MainFrame;
-import maze.view.PanelType;
-import maze.view.panel.GraphicsPanel;
+import maze.view.View;
+import maze.view.Zoom;
 
 public class ZoomEvent implements GameEvent {
 	Zoom zoom;
@@ -16,10 +14,10 @@ public class ZoomEvent implements GameEvent {
 	}
 
 	@Override
-	public void resolveTo(Controller controller, MainFrame mainFrame, World world) {
-		GraphicsPanel gp = (GraphicsPanel) mainFrame.getPanel(PanelType.GRAPHICS);
+	public void resolveTo(Controller controller, View view, World world) {
+		View.MapDetailView gp = view.getMapDetailView();
 		if (gp != null) {
-			gp.zoomGraphics(zoom);
+			gp.zoomTo(zoom);
 		}
 	}
 

@@ -3,5 +3,17 @@ package maze.view;
 import javax.swing.JPanel;
 
 public abstract class Panel extends JPanel {
-	public abstract PanelType getPanelType();
+	private PanelType panelType;
+	
+	protected Panel(PanelType type){
+		this.panelType = type;
+	}
+
+	final PanelType getPanelType(){
+		return this.panelType;
+	}
+	
+	public void display() {
+		setVisible(true);
+	}
 }

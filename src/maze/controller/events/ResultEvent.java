@@ -3,9 +3,9 @@ package maze.controller.events;
 import maze.controller.Controller;
 import maze.controller.GameEvent;
 import maze.model.World;
-import maze.view.MainFrame;
 import maze.view.ResultProvider;
 import maze.view.ResultReceiver;
+import maze.view.View;
 
 public class ResultEvent implements GameEvent {
 	private Class<? extends ResultProvider> resultProvider;
@@ -19,8 +19,8 @@ public class ResultEvent implements GameEvent {
 	}
 
 	@Override
-	public void resolveTo(Controller controller, MainFrame mainFrame, World world) {
-		mainFrame.promptForResult(resultProvider, resultReceiver, object);
+	public void resolveTo(Controller controller, View view, World world) {
+		view.promptForResult(resultProvider, resultReceiver, object);
 	}
 
 }

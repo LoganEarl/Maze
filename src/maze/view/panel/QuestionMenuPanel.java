@@ -1,45 +1,42 @@
 package maze.view.panel;
-import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
-
-import maze.controller.Controller;
+import maze.controller.GameEventListener;
 import maze.controller.events.ResultEvent;
 import maze.controller.events.SwitchPanelEvent;
 import maze.model.question.Question;
-import maze.model.question.SqLiteDatabase;
+import maze.model.question.QuestionDataSource;
 import maze.view.Panel;
 import maze.view.PanelType;
 import maze.view.ResultReceiver;
 import maze.view.ViewUtils;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 public class QuestionMenuPanel extends Panel implements ResultReceiver, ActionListener {
-	private Controller controller;
+	private GameEventListener listener;
+	private QuestionDataSource dataSource;
 	private ResultStep resultStep;
 	
 	private enum ResultStep {
 		NEW_QUESTION,
 		EDIT_QUESTION,
 		DELETE_QUESTION,
-		SAVE_EDIT_QUESTION
+		SAVE_EDIT_QUESTION,
+		COMPLETE
 	}
+
+	private JButton buttonNew  = new JButton("Add New");
+	private JButton buttonEdit  = new JButton("Edit Existing");
+	private JButton buttonDelete  = new JButton("Delete Existing");
+	private JButton buttonCancel  = new JButton("Cancel");
 	
-	JLabel labelHeading = new JLabel("Question Manager Menu");
-	JButton buttonNew  = new JButton("Add New");
-	JButton buttonEdit  = new JButton("Edit Existing");
-	JButton buttonDelete  = new JButton("Delete Existing");
-	JButton buttonCancel  = new JButton("Cancel");
-	
-	public QuestionMenuPanel(Controller controller) {
-		this.controller = controller;
+	public QuestionMenuPanel(GameEventListener listener, QuestionDataSource dataSource) {
+		super(PanelType.QUESTION_MENU);
+		this.listener = listener;
+		this.dataSource = dataSource;
+
 		setBackground(ViewUtils.backgroundColor);
 		
 		buttonNew.setFocusPainted(false);
@@ -49,7 +46,8 @@ public class QuestionMenuPanel extends Panel implements ResultReceiver, ActionLi
 		setLayout(new GridBagLayout());
 		GridBagConstraints gc = new GridBagConstraints();
 		gc.insets = new Insets(20, 0, 20, 0);
-		
+
+		JLabel labelHeading = new JLabel("Question Manager Menu");
 		ViewUtils.insertComponent(this, gc, labelHeading,	0, 0, 1, 1, 800, 80);
 		ViewUtils.insertComponent(this, gc, buttonNew, 		0, 1, 1, 1, 400, 80);
 		ViewUtils.insertComponent(this, gc, buttonEdit, 	0, 2, 1, 1, 400, 80);
@@ -72,29 +70,24 @@ public class QuestionMenuPanel extends Panel implements ResultReceiver, ActionLi
 	}
 	
 	@Override
-	public PanelType getPanelType() {
-		return PanelType.QUESTION_MENU;
-	}
-	
-	@Override
 	public void actionPerformed(ActionEvent e) {
 	    JButton buttonClicked = ((JButton) e.getSource());
 	    
 	    if (buttonClicked == buttonNew) {
 	    	resultStep = ResultStep.NEW_QUESTION;
 	    	ResultEvent event = new ResultEvent(QuestionEditorPanel.class, this, null);
-	    	controller.onGameEvent(event);
+	    	listener.onGameEvent(event);
 	    } else if (buttonClicked == buttonEdit) {
 	    	resultStep = ResultStep.EDIT_QUESTION;
 	    	ResultEvent event = new ResultEvent(QuestionSelectorPanel.class, this, null);
-	    	controller.onGameEvent(event);
+	    	listener.onGameEvent(event);
 	    } else if (buttonClicked == buttonDelete) {
 	    	resultStep = ResultStep.DELETE_QUESTION;
 	    	ResultEvent event = new ResultEvent(QuestionSelectorPanel.class, this, null);
-	    	controller.onGameEvent(event);
+	    	listener.onGameEvent(event);
 		} else if (buttonClicked == buttonCancel) {
 			SwitchPanelEvent event = new SwitchPanelEvent(PanelType.MAIN_MENU);
-			controller.onGameEvent(event);
+			listener.onGameEvent(event);
 		} else {
 			JOptionPane.showMessageDialog(null, "Invalid Command: " + buttonClicked.getText());
 	    }		
@@ -104,23 +97,29 @@ public class QuestionMenuPanel extends Panel implements ResultReceiver, ActionLi
 	public void processResult(Object object) {
 		if (object != null) {
 			if (object instanceof Question) {
-				SqLiteDatabase db = new SqLiteDatabase("data/mazedb.sqlite3");
 				Question question = (Question) object;
 				if (resultStep == ResultStep.NEW_QUESTION) {
-					db.insert(question);
+					resultStep = ResultStep.COMPLETE;
+					dataSource.update(question);
 				} else if (resultStep == ResultStep.EDIT_QUESTION) {
 					resultStep = ResultStep.SAVE_EDIT_QUESTION;
 			    	ResultEvent event = new ResultEvent(QuestionEditorPanel.class, this, question);
-			    	controller.onGameEvent(event);
+			    	listener.onGameEvent(event);
 				} else if (resultStep == ResultStep.DELETE_QUESTION) {
-					db.delete(question.getId());
+					resultStep = ResultStep.COMPLETE;
+					dataSource.delete(question);
 				} else if (resultStep == ResultStep.SAVE_EDIT_QUESTION) {
-					db.update(question);
+					resultStep = ResultStep.COMPLETE;
+					dataSource.update(question);
+				}
+				if (resultStep == ResultStep.COMPLETE) {
+					SwitchPanelEvent event = new SwitchPanelEvent(PanelType.QUESTION_MENU);
+					listener.onGameEvent(event);
 				}
 			}
 		} else {
 			SwitchPanelEvent event = new SwitchPanelEvent(PanelType.QUESTION_MENU);
-			controller.onGameEvent(event);
+			listener.onGameEvent(event);
 		}	
 	}
 }

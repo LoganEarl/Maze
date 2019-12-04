@@ -1,36 +1,45 @@
 package maze.controller.events;
 
+import java.util.Set;
+
 import maze.Direction;
 import maze.controller.Controller;
 import maze.controller.GameEvent;
 import maze.model.Door;
+import maze.model.Item;
 import maze.model.Player;
 import maze.model.Room;
 import maze.model.World;
-import maze.view.MainFrame;
+import maze.view.View;
 
 public class MoveEvent implements GameEvent {
-	private Direction direction;
-	
-	public MoveEvent(Direction direction) {
-		this.direction = direction;
-	}
+    private Direction direction;
 
-	@Override
-	public void resolveTo(Controller controller, MainFrame mainFrame, World world) {
-		Player player = world.getPlayer();
-		Room room = player.getCurrentRoom();
-		Door door = room.getDoor(direction);
-		
-		player.setFacing(direction);
-		
-		if (door != null) {
-			if (door.isOpen()) {
-				player.move(direction);
-			} else if (!door.isLocked()) {
-				AccessDoorEvent event = new AccessDoorEvent(door);
-				controller.onGameEvent(event);
-			}
-		}
-	}
+    public MoveEvent(Direction direction) {
+        this.direction = direction;
+    }
+
+    @Override
+    public void resolveTo(Controller controller, View view, World world) {
+        Player player = world.getPlayer();
+        Room room = player.getCurrentRoom();
+        Door door = room.getDoor(direction);
+
+        player.setFacing(direction);
+
+        if (door != null) {
+            if (door.isOpen()) {
+                player.move(direction);
+                room = player.getCurrentRoom();
+                Set<Item> items = room.getItems();
+                for (Item item : items) {
+                	player.addItem(item);
+                }
+                items.clear();
+            } else {
+                AccessDoorEvent event = new AccessDoorEvent(door);
+                controller.getEventListener().onGameEvent(event);
+            }
+        }
+    }
 }

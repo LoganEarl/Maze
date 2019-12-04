@@ -2,6 +2,7 @@ package maze.model;
 
 import maze.Direction;
 import maze.model.question.Question;
+import maze.model.question.SkeletonKey;
 import utils.Pair;
 
 import java.util.*;
@@ -14,30 +15,26 @@ public class RandomWorldBuilder implements World.Builder {
     private List<Question> questions;
     private int maxCorridorLength;
 
-    public RandomWorldBuilder(int numRooms, List<Question> questions, int maxCorridorLength, long randomSeed) {
-        if(questions.size() < numRooms * 1.5)
+    public RandomWorldBuilder(int numRooms, Set<Question> questions, int maxCorridorLength, long randomSeed) {
+        if(numRooms < 2)
+            throw new IllegalArgumentException("Need at least 2 rooms");
+        if(questions == null || questions.size() < numRooms * 1.5)
             throw new IllegalArgumentException("Not enough questions");
+        if(maxCorridorLength < 0)
+            throw new IllegalArgumentException("Corridor length must be greater than or equal to 0");
         rnd = new Random(randomSeed);
 
 
         this.numRooms = numRooms;
-        this.questions = questions;
+        this.questions = new ArrayList<>(questions);
         this.maxCorridorLength = maxCorridorLength;
-    }
-
-    private void probeRandom(){
-        for(int i = 0; i < 5; i++)
-            System.out.println(rnd.nextInt(10));
-        System.out.print("\n\n");
     }
 
     @Override
     public World build() {
         //phase 1 generate rooms
         Map<Point, TempRoom> rooms = new LinkedHashMap<>();
-        probeRandom();
         generateRooms(numRooms, new Point(0, 0), null, rooms, new LinkedHashSet<>());
-        probeRandom();
 
         //phase 2 make start and end
         TempRoom startRoom, endRoom;
@@ -50,17 +47,14 @@ public class RandomWorldBuilder implements World.Builder {
         //phase 3 mark side rooms
         List<Direction> mainRoute = Algorithms.aStar(startRoom, endRoom);
         List<Door> mainItemableDoors = new ArrayList<>();
-        Set<TempRoom> sideRooms = new HashSet<>(rooms.values());
         Map<Door, Set<TempRoom>> roomsAccessibleBeforeDoor = new LinkedHashMap<>();
         TempRoom mainPathWalker = startRoom;
-        sideRooms.remove(startRoom);
 
         for(Direction d: mainRoute){
             Door door = mainPathWalker.getDoor(d);
             mainPathWalker.isOnMainRoute = true;
             roomsAccessibleBeforeDoor.put(door,filterNonMainRouteOnly(Algorithms.floodFill(mainPathWalker,d)));
             mainPathWalker = (TempRoom)door.getOtherRoom(mainPathWalker);
-            sideRooms.remove(mainPathWalker);
             if(roomsAccessibleBeforeDoor.get(door).size() > 0)
                 mainItemableDoors.add(door);
         }
@@ -69,7 +63,8 @@ public class RandomWorldBuilder implements World.Builder {
         int numKeys = mainItemableDoors.size()/3;
         for(int i = 0; i <= numKeys - 1; i++){
             int doorIndex = (i * 3);
-            Item key = mainItemableDoors.get(doorIndex).getKeyItem();
+            Item key = mainItemableDoors.get(doorIndex).getQuestion().constructKeyItem();
+            mainItemableDoors.get(doorIndex).setKeyItem(key);
             Set<TempRoom> possibleRooms = roomsAccessibleBeforeDoor.get(mainItemableDoors.get(doorIndex));
             possibleRooms.toArray(new TempRoom[0])[rnd.nextInt(possibleRooms.size())].addItem(key);
         }
@@ -80,7 +75,7 @@ public class RandomWorldBuilder implements World.Builder {
         for(int i = 0; i < numSkeletonKeys; i++){
             TempRoom cur = possibleRooms.toArray(new TempRoom[0])[rnd.nextInt(possibleRooms.size())];
             possibleRooms.remove(cur);
-            cur.addItem(new Item.SkeletonKey());
+            cur.addItem(new SkeletonKey());
         }
 
         return new World(startRoom, endRoom);
@@ -189,8 +184,7 @@ public class RandomWorldBuilder implements World.Builder {
                     }
                     walker = walker.getAdjacent(direction);
                 } while (roomDistance <= maxCorridor);
-            }else
-                roomDistance = 0;
+            }
 
             if (roomDistance > 0)
                 potentialDirections.put(direction, roomDistance);
@@ -252,13 +246,9 @@ public class RandomWorldBuilder implements World.Builder {
         private int x;
         private int y;
 
-        public Point(int x, int y) {
+        Point(int x, int y) {
             this.x = x;
             this.y = y;
-        }
-
-        private double distanceTo(Point p){
-            return Math.sqrt(Math.pow(x-p.x,2) + Math.pow(y-p.y,2));
         }
 
         private Point getAdjacent(Direction d) {

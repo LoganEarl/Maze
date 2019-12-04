@@ -3,10 +3,12 @@ package maze.model;
 import maze.Direction;
 import maze.model.question.Question;
 import utils.Pair;
+
+import java.io.Serializable;
 import java.util.*;
 
 @SuppressWarnings("WeakerAccess")
-public class Room implements Iterable<Door>{
+public class Room implements Iterable<Door>, Serializable {
     private int xCoordinate;
     private int yCoordinate;
     private Set<Item> items;
@@ -21,9 +23,11 @@ public class Room implements Iterable<Door>{
         doors = new HashMap<>();
     }
 
-    //makes a new connection between this room and another room. Will not overwrite existing door connections
+    //makes a new connection between this room and another room. Will not overwrite existing door connections. Does it without a key item
     Door setRoomConnection(Direction entryDirection, Room targetRoom, Direction exitDirection, Question question) throws IllegalArgumentException{
-        Door newDoor = new Door(new Pair<>(this, targetRoom), question, question.constructKeyItem());
+        if(doors.containsKey(entryDirection) || targetRoom.doors.containsKey(exitDirection))
+            throw new IllegalArgumentException("There is already a room connection using those exists");
+        Door newDoor = new Door(new Pair<>(this, targetRoom), question, null);
         doors.put(entryDirection, newDoor);
         targetRoom.doors.put(exitDirection, newDoor);
         return newDoor;
