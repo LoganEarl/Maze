@@ -13,7 +13,7 @@ import static utils.FileUtils.DATA_DIRECTORY;
 public class LoadGameEvent implements GameEvent {
     private int loadSlotNumber;
 
-    LoadGameEvent(int loadSlotNumber) {
+    public LoadGameEvent(int loadSlotNumber) {
         this.loadSlotNumber = loadSlotNumber;
     }
 

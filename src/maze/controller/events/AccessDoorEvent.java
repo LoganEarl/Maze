@@ -14,7 +14,6 @@ import utils.ResultReceiver;
 
 public class AccessDoorEvent implements GameEvent, ResultReceiver {
 	private Controller controller;
-	private View view;
 	private Door door;
 	
 	AccessDoorEvent(Door door) {
@@ -24,7 +23,6 @@ public class AccessDoorEvent implements GameEvent, ResultReceiver {
 	@Override
 	public void resolveTo(Controller controller, View view, World world) {
 		this.controller = controller;
-		this.view = view;
 		
 		if (!door.isLocked()) {
 			GameEvent event = new ResultEvent(QuestionPanel.class, this, door.getQuestion());
@@ -55,6 +53,12 @@ public class AccessDoorEvent implements GameEvent, ResultReceiver {
 			controller.getEventListener().onGameEvent(event);
 		}
 		
-		view.switchToPanel(PanelType.GRAPHICS);
+		if (controller.getWorld().currentRouteExists()) {
+			GameEvent event = new SwitchPanelEvent(PanelType.GRAPHICS);
+			controller.getEventListener().onGameEvent(event);
+		} else {
+			GameEvent event = new SwitchPanelEvent(PanelType.GAME_OVER);
+			controller.getEventListener().onGameEvent(event);
+		}
 	}
 }

@@ -22,15 +22,19 @@ import maze.controller.events.SwitchPanelEvent;
 import maze.view.Panel;
 import maze.view.PanelType;
 import maze.view.ViewUtils;
+import utils.ResultReceiver;
+import maze.controller.events.LoadGameEvent;
 import maze.controller.events.NewGameEvent;
+import maze.controller.events.ResultEvent;
 
-public class MainMenuPanel extends Panel implements ActionListener {
+public class MainMenuPanel extends Panel implements ResultReceiver, ActionListener {
 	private GameEventListener listener;
 	private GridBagConstraints gc;
 	
 	private JButton buttonNewGame = new JButton("New Game");
 	private JButton buttonLoadGame = new JButton("Load Game");
 	private JButton buttonManageQuestions = new JButton("Manage Questions");
+	private JButton buttonMasterKey = new JButton("Master Key: Off");
 	
 	public MainMenuPanel(GameEventListener listener) {
 		super(PanelType.MAIN_MENU);
@@ -39,7 +43,7 @@ public class MainMenuPanel extends Panel implements ActionListener {
 		
 		setLayout(new GridBagLayout());
 		gc = new GridBagConstraints();
-		gc.insets = new Insets(20, 0, 20, 0);
+		gc.insets = new Insets(15, 0, 15, 0);
 		
 		insertAllComponents();
 		initializeAllComponents();
@@ -71,6 +75,7 @@ public class MainMenuPanel extends Panel implements ActionListener {
 		ViewUtils.insertComponent(this, gc, buttonNewGame, 			1, 1, 1, 1, 400,  80);
 		ViewUtils.insertComponent(this, gc, buttonLoadGame, 		1, 2, 1, 1, 400,  80);
 		ViewUtils.insertComponent(this, gc, buttonManageQuestions, 	1, 3, 1, 1, 400,  80);
+		ViewUtils.insertComponent(this, gc, buttonMasterKey, 		1, 4, 1, 1, 400,  80);
 	}
 	
 	private void initializeAllComponents() {
@@ -90,15 +95,33 @@ public class MainMenuPanel extends Panel implements ActionListener {
 	    JButton buttonClicked = ((JButton) e.getSource());
 
 	    if (buttonClicked == buttonNewGame) {
-	    	GameEvent gameEvent = new NewGameEvent();
+	    	GameEvent gameEvent = new NewGameEvent(buttonMasterKey.getText().contains("On"));
 			listener.onGameEvent(gameEvent);
 	    } else if (buttonClicked == buttonLoadGame) {
-	    	JOptionPane.showMessageDialog(null, "TODO");
+	    	GameEvent gameEvent = new ResultEvent(SaveSelectorPanel.class, this, LoadGameEvent.class);
+	    	listener.onGameEvent(gameEvent);
 		} else if (buttonClicked == buttonManageQuestions) {
 			SwitchPanelEvent event = new SwitchPanelEvent(PanelType.QUESTION_MENU);
 			listener.onGameEvent(event);
+		} else if (buttonClicked == buttonMasterKey) {
+			if (buttonMasterKey.getText().contains("Off")) {
+				buttonMasterKey.setText("Master Key: On");
+			} else {
+				buttonMasterKey.setText("Master Key: Off");
+			}
 		} else {
 			JOptionPane.showMessageDialog(null, "Invalid Command: " + buttonClicked.getText());
 	    }		
+	}
+
+	@Override
+	public void processResult(Object object) {
+		if (object instanceof GameEvent) {
+			GameEvent gameEvent = (GameEvent) object;
+			listener.onGameEvent(gameEvent);
+		} else {
+			SwitchPanelEvent event = new SwitchPanelEvent(PanelType.MAIN_MENU);
+			listener.onGameEvent(event);
+		}
 	}
 }

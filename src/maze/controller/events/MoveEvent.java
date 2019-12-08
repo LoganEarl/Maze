@@ -10,6 +10,7 @@ import maze.model.Item;
 import maze.model.Player;
 import maze.model.Room;
 import maze.model.World;
+import maze.view.PanelType;
 import maze.view.View;
 
 public class MoveEvent implements GameEvent {
@@ -37,9 +38,14 @@ public class MoveEvent implements GameEvent {
                 }
                 items.clear();
             } else {
-                AccessDoorEvent event = new AccessDoorEvent(door);
+                GameEvent event = new AccessDoorEvent(door);
                 controller.getEventListener().onGameEvent(event);
             }
+        }
+        
+        if (world.getExitRoom() == room) {
+        	GameEvent event = new SwitchPanelEvent(PanelType.GAME_WON);
+        	controller.getEventListener().onGameEvent(event);
         }
     }
 }

@@ -1,5 +1,6 @@
 package maze.view;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
@@ -15,16 +16,20 @@ import maze.controller.events.MoveEvent;
 import maze.controller.events.SwitchPanelEvent;
 import maze.controller.events.ZoomEvent;
 import maze.model.question.QuestionDataSource;
+import maze.view.panel.GameOverPanel;
+import maze.view.panel.GameWonPanel;
 import maze.view.panel.GraphicsPanel;
 import maze.view.panel.InventoryPanel;
 import maze.view.panel.ItemSelectorPanel;
 import maze.view.panel.LoadingPanel;
 import maze.view.panel.MainMenuPanel;
 import maze.view.panel.MessagePanel;
+import maze.view.panel.PauseMenuPanel;
 import maze.view.panel.QuestionEditorPanel;
 import maze.view.panel.QuestionMenuPanel;
 import maze.view.panel.QuestionPanel;
 import maze.view.panel.QuestionSelectorPanel;
+import maze.view.panel.SaveSelectorPanel;
 import utils.ResultProvider;
 import utils.ResultReceiver;
 
@@ -48,6 +53,13 @@ public class MainFrame extends JFrame implements View {
 		panels.put(PanelType.INVENTORY, new InventoryPanel(controller));
 		panels.put(PanelType.ITEM_SELECTOR, new ItemSelectorPanel(controller));
 		panels.put(PanelType.MESSAGE, new MessagePanel());
+		panels.put(PanelType.PAUSE_MENU, new PauseMenuPanel(listener));
+		panels.put(PanelType.SAVE_SELECTOR, new SaveSelectorPanel());
+		panels.put(PanelType.GAME_OVER, new GameOverPanel(listener));
+		panels.put(PanelType.GAME_WON, new GameWonPanel(listener));
+		
+		setSize(1280, 900);
+		setMinimumSize(new Dimension(1280, 900));
 		
 		setLayout(new GridBagLayout());
 		GridBagConstraints gc = new GridBagConstraints();
@@ -121,7 +133,7 @@ public class MainFrame extends JFrame implements View {
 		});
 
 		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_ESCAPE, "PauseMenu", (e) -> {
-			SwitchPanelEvent event = new SwitchPanelEvent(PanelType.MAIN_MENU);
+			SwitchPanelEvent event = new SwitchPanelEvent(PanelType.PAUSE_MENU);
 			listener.onGameEvent(event);
 		});
 		

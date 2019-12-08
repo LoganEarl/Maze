@@ -5,6 +5,7 @@ import maze.controller.GameEvent;
 import maze.model.Item;
 import maze.model.Player;
 import maze.model.World;
+import maze.model.question.MasterKey;
 import maze.view.View;
 
 public class ItemUsedEvent implements GameEvent {
@@ -17,6 +18,8 @@ public class ItemUsedEvent implements GameEvent {
 	@Override
 	public void resolveTo(Controller controller, View view, World world) {
 		Player player = world.getPlayer();
-		player.removeItem(item);
+		if (!(item instanceof MasterKey)) {
+			player.removeItem(item);
+		}
 	}
 }

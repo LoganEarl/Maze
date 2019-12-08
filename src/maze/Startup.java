@@ -13,7 +13,6 @@ public class Startup {
 			controller.setView(mainFrame);
 
 			mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			mainFrame.setSize(1280, 900);
 			mainFrame.setVisible(true);
 		});
 	}

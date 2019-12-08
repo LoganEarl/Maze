@@ -24,7 +24,7 @@ public class SaveGameEvent implements GameEvent {
         view.switchToPanel(PanelType.GRAPHICS);
     }
 
-    static String getSaveFileName(int saveSlotNumber){
+    public static String getSaveFileName(int saveSlotNumber){
         return "Slot" + saveSlotNumber + ".world";
     }
 }

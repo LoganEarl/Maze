@@ -76,11 +76,11 @@ public class QuestionSelectorPanel extends Panel implements ResultProvider, Acti
 	
 	@Override
 	public void getResult(ResultReceiver resultReceiver, Object object) {
-		reloadQuestions();
+		reloadQuestion();
 		this.resultReceiver = resultReceiver;	
 	}
 	
-	private void reloadQuestions() {
+	private void reloadQuestion() {
 		if (scrollPane != null) remove(scrollPane);
 		
 		questions = new ArrayList<>(dataSource.getAllQuestions());
@@ -147,6 +147,6 @@ public class QuestionSelectorPanel extends Panel implements ResultProvider, Acti
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		reloadQuestions();
+		reloadQuestion();
 	}
 }

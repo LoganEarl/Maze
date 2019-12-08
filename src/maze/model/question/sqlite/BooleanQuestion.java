@@ -56,7 +56,7 @@ public class BooleanQuestion implements SQLiteQuestion {
     @Override
     public String[] getPossibleAnswers() {
         return new String[]{TEXT_TRUE, TEXT_FALSE};
-    }
+    }    
 
     @Override
     public Item constructKeyItem() {

@@ -41,21 +41,39 @@ public class QuestionEditorPanel extends Panel implements ResultProvider, Action
 
     private JLabel labelQuestionType = new JLabel("Question Type");
     private JLabel labelQuestion = new JLabel("Question");
+    private JLabel labelItem = new JLabel("Associated Item");
     private JLabel labelAnswers = new JLabel("Answers");
 
-    private JComboBox<String> comboBoxQuestionType = new JComboBox<>();
+    private JComboBox<ComboItem> comboBoxQuestionType = new JComboBox<>();
     private JTextPane textFieldQuestion = new JTextPane();
+    private JTextPane textFieldItem = new JTextPane();
     private JTable tableAnswers = new JTable(new DefaultTableModel(new Object[]{"Answer", "Correct"}, 0));
     private JScrollPane scrollAnswers = new JScrollPane(tableAnswers);
 
     private JButton buttonAdd = new JButton("Add");
     private JButton buttonEdit = new JButton("Edit");
     private JButton buttonDelete = new JButton("Delete");
-    private JButton buttonMoveUp = new JButton("Move Up");
-    private JButton buttonMoveDown = new JButton("Move Down");
     private JButton buttonSetCorrect = new JButton("Set Correct");
     private JButton buttonSave = new JButton("Save");
     private JButton buttonCancel = new JButton("Cancel");
+    
+    private class ComboItem {
+    	private String value;
+    	private String toString;
+    	
+    	private ComboItem(String value, String toString) {
+    		this.value = value;
+    		this.toString = toString;
+    	}
+    	
+    	public String getValue() {
+    		return value;
+    	}
+    	
+    	public String toString() {
+    		return toString;
+    	}
+    }
 
     public QuestionEditorPanel(QuestionDataSource dataSource) {
         super(PanelType.QUESTION_EDITOR);
@@ -73,24 +91,25 @@ public class QuestionEditorPanel extends Panel implements ResultProvider, Action
     }
 
     private void insertAllComponents() {
-        ViewUtils.insertComponent(this, gc, labelQuestion, 0, 0, 1, 1, 600, 30);
-        ViewUtils.insertComponent(this, gc, textFieldQuestion, 0, 1, 1, 1, 600, 200);
-        ViewUtils.insertComponent(this, gc, new JLabel(""), 0, 2, 1, 1, 600, 40);
-        ViewUtils.insertComponent(this, gc, labelAnswers, 0, 3, 1, 1, 600, 30);
-        ViewUtils.insertComponent(this, gc, scrollAnswers, 0, 4, 1, 3, 600, 200);
-        ViewUtils.insertComponent(this, gc, new JLabel(""), 0, 7, 1, 1, 600, 40);
-        ViewUtils.insertComponent(this, gc, buttonSave, 0, 8, 1, 1, 600, 75);
+        ViewUtils.insertComponent(this, gc, labelQuestion, 			0,  0, 1, 1, 600, 30);
+        ViewUtils.insertComponent(this, gc, textFieldQuestion, 		0,  1, 1, 4, 600, 200);
+        ViewUtils.insertComponent(this, gc, new JLabel(""), 		0,  5, 1, 1, 600, 40);
+        ViewUtils.insertComponent(this, gc, labelAnswers, 			0,  6, 1, 1, 600, 30);
+        ViewUtils.insertComponent(this, gc, scrollAnswers, 			0,  7, 1, 3, 600, 200);
+        ViewUtils.insertComponent(this, gc, new JLabel(""), 		0, 10, 1, 1, 600, 40);
+        ViewUtils.insertComponent(this, gc, buttonSave, 			0, 11, 1, 1, 600, 75);
 
-        ViewUtils.insertComponent(this, gc, labelQuestionType, 1, 0, 2, 1, 400, 30);
-        ViewUtils.insertComponent(this, gc, comboBoxQuestionType, 1, 1, 2, 1, 400, 50);
-        ViewUtils.insertComponent(this, gc, buttonAdd, 1, 4, 1, 1, 180, 50);
-        ViewUtils.insertComponent(this, gc, buttonEdit, 1, 5, 1, 1, 180, 50);
-        ViewUtils.insertComponent(this, gc, buttonDelete, 1, 6, 1, 1, 180, 50);
-        ViewUtils.insertComponent(this, gc, buttonCancel, 1, 8, 2, 1, 400, 75);
+        ViewUtils.insertComponent(this, gc, labelQuestionType, 		1,  0, 2, 1, 400, 30);
+        ViewUtils.insertComponent(this, gc, comboBoxQuestionType, 	1,  1, 2, 1, 400, 50);
+        ViewUtils.insertComponent(this, gc, new JLabel(""), 		1,  2, 2, 1, 400, 10);
+        ViewUtils.insertComponent(this, gc, labelItem, 				1,  3, 2, 1, 400, 30);
+        ViewUtils.insertComponent(this, gc, textFieldItem, 			1,  4, 2, 1, 400, 50);
+        ViewUtils.insertComponent(this, gc, buttonAdd, 				1,  7, 1, 1, 180, 75);
+        ViewUtils.insertComponent(this, gc, buttonDelete, 			1,  8, 1, 1, 180, 75);
+        ViewUtils.insertComponent(this, gc, buttonCancel, 			1, 11, 2, 1, 400, 75);
 
-        ViewUtils.insertComponent(this, gc, buttonMoveUp, 2, 4, 1, 1, 180, 50);
-        ViewUtils.insertComponent(this, gc, buttonMoveDown, 2, 5, 1, 1, 180, 50);
-        ViewUtils.insertComponent(this, gc, buttonSetCorrect, 2, 6, 1, 1, 180, 50);
+        ViewUtils.insertComponent(this, gc, buttonEdit, 			2,  7, 1, 1, 180, 75);
+        ViewUtils.insertComponent(this, gc, buttonSetCorrect, 		2,  8, 1, 1, 180, 75);
     }
 
     private void initializeAllComponents() {
@@ -104,19 +123,19 @@ public class QuestionEditorPanel extends Panel implements ResultProvider, Action
                 ViewUtils.componentColorBorder(button, ViewUtils.blueColor);
                 button.addActionListener(this);
             }
+            if (component instanceof JLabel) {
+            	JLabel label = (JLabel) component;
+            	label.setForeground(ViewUtils.blueColor);
+            }
         }
-
-        //labelQuestion
 
         ViewUtils.componentColorBorder(textFieldQuestion, ViewUtils.blueColor);
         ViewUtils.componentColorBorder(comboBoxQuestionType, ViewUtils.blueColor);
+        ViewUtils.componentColorBorder(textFieldItem, ViewUtils.blueColor);
         ViewUtils.componentColorBorder(scrollAnswers, ViewUtils.blueColor);
 
-        labelQuestion.setForeground(ViewUtils.blueColor);
-        labelQuestionType.setForeground(ViewUtils.blueColor);
-        labelAnswers.setForeground(ViewUtils.blueColor);
-
         textFieldQuestion.setForeground(ViewUtils.blackColor);
+        textFieldItem.setForeground(ViewUtils.blackColor);
         comboBoxQuestionType.setForeground(ViewUtils.blackColor);
 
         ViewUtils.componentSetFont(tableAnswers, 24);
@@ -131,17 +150,17 @@ public class QuestionEditorPanel extends Panel implements ResultProvider, Action
         comboBoxQuestionType.addActionListener(e -> {
             int selected = comboBoxQuestionType.getSelectedIndex();
             if (selected >= 0) {
-                if (!questionType.equals(comboBoxQuestionType.getItemAt(selected))) {
-                    questionType = comboBoxQuestionType.getItemAt(selected);
+                if (!questionType.equals(comboBoxQuestionType.getItemAt(selected).getValue())) {
+                    questionType = comboBoxQuestionType.getItemAt(selected).getValue();
                     resetInputValidation();
                     questionTypeChanged();
                 }
             }
         });
 
-        comboBoxQuestionType.addItem(TYPE_MULTIPLE_CHOICE);
-        comboBoxQuestionType.addItem(TYPE_BOOLEAN);
-        comboBoxQuestionType.addItem(TYPE_SHORT_RESPONSE);
+        comboBoxQuestionType.addItem(new ComboItem(TYPE_MULTIPLE_CHOICE, "Multiple Choice"));
+        comboBoxQuestionType.addItem(new ComboItem(TYPE_BOOLEAN, "True False"));
+        comboBoxQuestionType.addItem(new ComboItem(TYPE_SHORT_RESPONSE, "Short Answer"));
     }
 
     @Override
@@ -158,13 +177,15 @@ public class QuestionEditorPanel extends Panel implements ResultProvider, Action
     private void reloadQuestion() {
         if (question == null) {
             textFieldQuestion.setText("");
+            textFieldItem.setText("");
             comboBoxQuestionType.setSelectedIndex(0);
             comboBoxQuestionType.setEnabled(true);
             questionType = TYPE_MULTIPLE_CHOICE;
         } else {
             textFieldQuestion.setText(question.getPrompt());
+            textFieldItem.setText(question.constructKeyItem().getName());
             for (int i = 0; i < comboBoxQuestionType.getItemCount(); i++) {
-                if (comboBoxQuestionType.getItemAt(i).equals(question.getQuestionType())) {
+                if (comboBoxQuestionType.getItemAt(i).getValue().equals(question.getQuestionType())) {
                     comboBoxQuestionType.setSelectedIndex(i);
                 }
             }
@@ -203,8 +224,6 @@ public class QuestionEditorPanel extends Panel implements ResultProvider, Action
                 buttonAdd.setEnabled(true);
                 buttonEdit.setEnabled(true);
                 buttonDelete.setEnabled(true);
-                buttonMoveUp.setEnabled(true);
-                buttonMoveDown.setEnabled(true);
                 buttonSetCorrect.setEnabled(true);
                 break;
             }
@@ -221,8 +240,6 @@ public class QuestionEditorPanel extends Panel implements ResultProvider, Action
                 buttonAdd.setEnabled(false);
                 buttonEdit.setEnabled(false);
                 buttonDelete.setEnabled(false);
-                buttonMoveUp.setEnabled(false);
-                buttonMoveDown.setEnabled(false);
                 buttonSetCorrect.setEnabled(true);
                 break;
             }
@@ -233,8 +250,6 @@ public class QuestionEditorPanel extends Panel implements ResultProvider, Action
                 buttonAdd.setEnabled(true);
                 buttonEdit.setEnabled(true);
                 buttonDelete.setEnabled(true);
-                buttonMoveUp.setEnabled(false);
-                buttonMoveDown.setEnabled(false);
                 buttonSetCorrect.setEnabled(false);
                 break;
             }
@@ -256,10 +271,6 @@ public class QuestionEditorPanel extends Panel implements ResultProvider, Action
                 answerEdit(model, selected);
             } else if (button == buttonDelete) {
                 answerDelete(model, selected);
-            } else if (button == buttonMoveUp) {
-                answerMoveUp(model, selected);
-            } else if (button == buttonMoveDown) {
-                answerMoveDown(model, selected);
             } else if (button == buttonSetCorrect) {
                 answerSetCorrect(model, selected);
             } else if (button == buttonSave) {
@@ -304,20 +315,6 @@ public class QuestionEditorPanel extends Panel implements ResultProvider, Action
         }
     }
 
-    private void answerMoveUp(DefaultTableModel model, int index) {
-        if (index > 0 && index < tableAnswers.getRowCount()) {
-            model.moveRow(index, index, index - 1);
-            tableAnswers.setRowSelectionInterval(index - 1, index - 1);
-        }
-    }
-
-    private void answerMoveDown(DefaultTableModel model, int index) {
-        if (index >= 0 && index < tableAnswers.getRowCount() - 1) {
-            model.moveRow(index, index, index + 1);
-            tableAnswers.setRowSelectionInterval(index + 1, index + 1);
-        }
-    }
-
     private void answerSetCorrect(DefaultTableModel model, int index) {
         if (questionType != TYPE_SHORT_RESPONSE && index >= 0) {
             for (int i = 0; i < model.getRowCount(); i++) {
@@ -335,9 +332,11 @@ public class QuestionEditorPanel extends Panel implements ResultProvider, Action
         colorValid(labelQuestion, true);
         colorValid(comboBoxQuestionType, true);
         colorValid(labelQuestionType, true);
+        colorValid(labelItem, true);
         colorValid(scrollAnswers, true);
         colorValid(labelAnswers, true);
         labelAnswers.setText("Answers");
+        labelItem.setText("Associated Item");
 
         revalidate();
     }
@@ -345,7 +344,7 @@ public class QuestionEditorPanel extends Panel implements ResultProvider, Action
     private boolean inputValidation() {
         boolean valid = true;
 
-        if (textFieldQuestion.getText().isEmpty()) {
+        if (textFieldQuestion.getText().trim().isEmpty()) {
             colorValid(textFieldQuestion, false);
             colorValid(labelQuestion, false);
             valid = false;
@@ -356,6 +355,20 @@ public class QuestionEditorPanel extends Panel implements ResultProvider, Action
             colorValid(labelQuestionType, false);
             valid = false;
         }
+        
+        if (textFieldItem.getText().trim().isEmpty()) {
+        	labelItem.setText("Associated Item (Required)");
+        	colorValid(labelItem, false);
+        	valid = false;
+        }
+        
+        if (dataSource.exists(textFieldItem.getText().trim())) {
+        	if (question == null || !question.constructKeyItem().getName().trim().equals(textFieldItem.getText().trim())) {
+        		labelItem.setText("Associated Item (Already Exists)");
+        		colorValid(labelItem, false);
+        		valid = false;
+        	}
+        }       
 
         switch (questionType) {
             case TYPE_MULTIPLE_CHOICE:
@@ -407,22 +420,21 @@ public class QuestionEditorPanel extends Panel implements ResultProvider, Action
             QuestionFactory factory = new QuestionFactory();
 
             Question q;
-            if(question != null){
+            if (question != null) {
                 q = factory.createQuestion(
                         question.getID(),
                         textFieldQuestion.getText(),
                         getCorrectAnswer(),
                         answers.toArray(new String[0]),
-                        question.constructKeyItem().getName(),      //TODO fix this too. This makes item name impossible to edit
+                        textFieldItem.getText().trim(),
                         question.getQuestionType());
-            }else{
-                //TODO each question must have an item name associated with it. For examples refer to the "question" table of the questions.db file in the data directory
+            } else {
                 q = factory.createQuestion(
                         nextId,
                         textFieldQuestion.getText(),
                         getCorrectAnswer(),
                         answers.toArray(new String[0]),
-                        "DUMMY ITEM NAME",
+                        textFieldItem.getText().trim(),
                         questionType);
             }
 

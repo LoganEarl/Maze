@@ -11,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
@@ -21,7 +22,6 @@ import maze.model.Item;
 import maze.model.question.Question;
 import maze.view.Panel;
 import maze.view.PanelType;
-import maze.view.View;
 import maze.view.ViewUtils;
 import utils.ResultGeneric;
 import utils.ResultProvider;
@@ -37,6 +37,7 @@ public class QuestionPanel extends Panel implements ActionListener, ResultProvid
 	private Question question;
 	private GridBagConstraints gc;
 	
+	private JLabel labelHeading = new JLabel("Answer Question To Open Door");
 	private JTextPane textPaneQuestion = new JTextPane();
 	private JTextField textFieldAnswer = new JTextField();
 
@@ -57,7 +58,7 @@ public class QuestionPanel extends Panel implements ActionListener, ResultProvid
 		setLayout(new GridBagLayout());
 		gc = new GridBagConstraints();
 		gc.anchor = GridBagConstraints.NORTH;
-		gc.insets = new Insets(20, 0, 20, 0);	
+		gc.insets = new Insets(15, 0, 15, 0);	
 		
 		for (int i = 0; i < buttonAnswer.length; i++) {
 			buttonAnswer[i] = new JButton("");
@@ -75,18 +76,23 @@ public class QuestionPanel extends Panel implements ActionListener, ResultProvid
 	}
 	
 	private void insertAllComponents() {
-		ViewUtils.insertComponent(this, gc, textPaneQuestion, 		0, 0, 11, 1, 1100, 250);
-		ViewUtils.insertComponent(this, gc, textFieldAnswer, 		0, 1, 11, 2, 1100, 200);	
-		ViewUtils.insertComponent(this, gc, buttonAnswer[0], 		0, 1,  5, 1,  500, 100);
-		ViewUtils.insertComponent(this, gc, buttonAnswer[1], 		6, 1,  5, 1,  500, 100);
-		ViewUtils.insertComponent(this, gc, buttonAnswer[2], 		0, 2,  5, 1,  500, 100);
-		ViewUtils.insertComponent(this, gc, buttonAnswer[3], 		6, 2,  5, 1,  500, 100);	
-		ViewUtils.insertComponent(this, gc, buttonSubmit, 			0, 3,  3, 1,  300, 100);
-		ViewUtils.insertComponent(this, gc, buttonUseItem, 			4, 3,  3, 1,  300, 100);
-		ViewUtils.insertComponent(this, gc, buttonCancel, 			8, 3,  3, 1,  300, 100);
+		ViewUtils.insertComponent(this, gc, labelHeading, 			0, 0, 11, 1, 1100,  50);
+		ViewUtils.insertComponent(this, gc, textPaneQuestion, 		0, 1, 11, 1, 1100, 300);
+		ViewUtils.insertComponent(this, gc, textFieldAnswer, 		0, 2, 11, 2, 1100, 200);	
+		ViewUtils.insertComponent(this, gc, buttonAnswer[0], 		0, 2,  5, 1,  500, 100);
+		ViewUtils.insertComponent(this, gc, buttonAnswer[1], 		6, 2,  5, 1,  500, 100);
+		ViewUtils.insertComponent(this, gc, buttonAnswer[2], 		0, 3,  5, 1,  500, 100);
+		ViewUtils.insertComponent(this, gc, buttonAnswer[3], 		6, 3,  5, 1,  500, 100);	
+		ViewUtils.insertComponent(this, gc, buttonSubmit, 			0, 4,  3, 1,  300, 100);
+		ViewUtils.insertComponent(this, gc, buttonUseItem, 			4, 4,  3, 1,  300, 100);
+		ViewUtils.insertComponent(this, gc, buttonCancel, 			8, 4,  3, 1,  300, 100);
 	}
 	
 	private void initializeAllComponents() {
+		ViewUtils.componentSetFont(labelHeading, 48);
+		labelHeading.setHorizontalAlignment(SwingConstants.CENTER);
+		labelHeading.setForeground(ViewUtils.blueColor);
+		
 		ViewUtils.componentColorBorder(textPaneQuestion, ViewUtils.unselectedColor);
 		SimpleAttributeSet attributes = new SimpleAttributeSet();
 		StyleConstants.setAlignment(attributes, StyleConstants.ALIGN_CENTER);

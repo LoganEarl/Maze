@@ -88,7 +88,7 @@ public class GraphicsPanel extends Panel implements View.MapDetailView, MouseWhe
                             for (int y = Integer.signum(room1Y - room2Y); y != room1Y - room2Y; y += Integer.signum(room1Y - room2Y)) {
                                 graphics.drawImage(resManager.getImage("Hall_Vertical.png"), posX, posY - y * curScale, null);
                             }
-                            graphics.drawImage(getDoorImage(room, player, direction), posX, posY - Integer.signum(room1Y - room2Y) * curScale, null);
+                            graphics.drawImage(getDoorImage(room, player, direction), posX, posY - (room1Y - room2Y - 1) * curScale, null);
                             graphics.drawImage(getDoorImage(other, player, direction.opposite()), posX, posY - Integer.signum(room1Y - room2Y) * curScale, null);
                         }
                     }
@@ -114,9 +114,9 @@ public class GraphicsPanel extends Panel implements View.MapDetailView, MouseWhe
             } else if (door.getKeyItem() != null && player.hasItem(door.getKeyItem())) {
             	key += "_Star";
             } else if (door.isLocked() && door.getKeyItem() != null) {
-                key += "_Locked";
+                key += "_Blocked";
             } else if (door.isLocked()) {
-            	key += "_Blocked";
+            	key += "_Locked";
             } else {
                 key += "_Closed";
             }
