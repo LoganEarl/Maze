@@ -72,6 +72,7 @@ public class SQLiteQuestionDataSource implements QuestionDataSource {
                 getSQL.close();
             } catch (Exception e) {
                 e.printStackTrace();
+                assert false;
             }
         }
         return toReturn;

@@ -130,8 +130,8 @@ public class RandomWorldBuilder implements World.Builder {
             int[] distances = new int[toExplore.size()];
             for (int i = 0; i < allocations.length; i++) {
                 Direction d = toExplore.get(i);
+                distances[i] = rnd.nextInt(potentialDirections.get(d)) + 1;
                 if(allocations[i] > 0 && potentialDirections.get(d) > 0) {
-                    distances[i] = rnd.nextInt(potentialDirections.get(d)) + 1;
                     Point walker = roomPos.getAdjacent(d);
                     for (int j = 0; j < distances[i]; j++) {
                         reserved.add(walker);

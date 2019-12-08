@@ -13,8 +13,7 @@ class SQLiteQuestionFactory {
                 return new MultipleChoiceQuestion(databaseResult);
             if(BooleanQuestion.TYPE_BOOLEAN.equals(questionType))
                 return new BooleanQuestion(databaseResult);
-        }catch(SQLException e){
-            e.printStackTrace();
+        }catch(SQLException ignored){
         }
         return null;
     }

@@ -33,7 +33,7 @@ class RandomWorldBuilderTest {
 
     @Test
     void buildBaseTest() {
-        World builtWorld = new RandomWorldBuilder(2, questions, 0, 1111).build();
+        World builtWorld = new RandomWorldBuilder(2, questions, 2, 1111).build();
         assert(builtWorld != null);
         assert(builtWorld.getEntryRoom() != null);
         assert(builtWorld.getExitRoom() != null);
@@ -46,17 +46,25 @@ class RandomWorldBuilderTest {
 
     @Test
     void buildComplexTest(){
-        for(int seed = 0; seed < 1000; seed++) {
-            for (int i = 2; i < questions.size() / 1.5; i++) {
-                World builtWorld = new RandomWorldBuilder(2, questions, i%5, seed).build();
-                assert (builtWorld != null);
-                assert (builtWorld.getEntryRoom() != null);
-                assert (builtWorld.getExitRoom() != null);
-                assert (builtWorld.getEntryRoom() != builtWorld.getExitRoom());
-                assert (builtWorld.getPlayer() != null);
-                assert (builtWorld.getPlayer().getCurrentRoom() == builtWorld.getEntryRoom());
-                assert (builtWorld.baseRouteExists());
-                assert (builtWorld.getAllRooms().size() <= i);
+        for(int corridorLen = 0; corridorLen <= 5; corridorLen++) {
+            for (int seed = 0; seed < 1000; seed++) {
+                for (int i = 2; i < questions.size() / 1.5; i++) {
+                    System.out.printf("Testing Seed:%d Length:%d Rooms:%d\n",seed, corridorLen, i);
+                    World builtWorld = null;
+                    try {
+                        builtWorld = new RandomWorldBuilder(i, questions, corridorLen, seed).build();
+                    }catch (IllegalArgumentException e){
+                        assert false;
+                    }
+                    assert (builtWorld != null);
+                    assert (builtWorld.getEntryRoom() != null);
+                    assert (builtWorld.getExitRoom() != null);
+                    assert (builtWorld.getEntryRoom() != builtWorld.getExitRoom());
+                    assert (builtWorld.getPlayer() != null);
+                    assert (builtWorld.getPlayer().getCurrentRoom() == builtWorld.getEntryRoom());
+                    assert (builtWorld.baseRouteExists());
+                    //assert (builtWorld.getAllRooms().size() <= i);
+                }
             }
         }
     }
