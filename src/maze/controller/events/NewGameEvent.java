@@ -29,7 +29,7 @@ public class NewGameEvent implements GameEvent {
         int seed = (int) (Math.random() * ((1000 - 1) + 1)) + 1;
         
         System.out.println("New World Seed: " + seed);
-		World.Builder worldBuilder = new RandomWorldBuilder(12, questions, 3, seed);
+		World.Builder worldBuilder = new RandomWorldBuilder(12, questions, 1, seed);
 		world = worldBuilder.build();
 		
 		if (masterKey) {

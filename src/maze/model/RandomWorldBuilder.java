@@ -58,6 +58,7 @@ public class RandomWorldBuilder implements World.Builder {
             if(roomsAccessibleBeforeDoor.get(door).size() > 0)
                 mainItemableDoors.add(door);
         }
+        endRoom.isOnMainRoute = true;
 
         //phase 4 place conventional items
         int numKeys = mainItemableDoors.size()/3;
