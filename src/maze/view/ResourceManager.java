@@ -11,7 +11,8 @@ public class ResourceManager {
 	private HashMap<String, Image> unscaledImages;
 	private HashMap<String, Image> scaledImages;
 
-	private int scale = 256;
+	private int[] allScales = {16, 24, 32, 48, 64, 96, 128, 192, 256, 384, 512};
+	private int scaleIndex = 8;
 
 	public ResourceManager() {
 		unscaledImages = new HashMap<>();
@@ -41,27 +42,30 @@ public class ResourceManager {
 		for(HashMap.Entry<String, Image> entry : unscaledImages.entrySet()) {
 		    String key = entry.getKey();
 		    Image unscaledImage = entry.getValue();
-		    Image scaledImage = unscaledImage.getScaledInstance(scale, scale, Image.SCALE_SMOOTH);
+		    Image scaledImage = unscaledImage.getScaledInstance(allScales[scaleIndex], allScales[scaleIndex], Image.SCALE_SMOOTH);
 		    scaledImages.put(key, scaledImage);
 		}
 	}
 	
 	public void adjustScale(int amount) {
-		int newScale = scale + amount;
-		if (newScale > 512) {
-			newScale = 512;
+		int newScaleIndex = scaleIndex + amount;
+		
+		if (newScaleIndex >= allScales.length) {
+			newScaleIndex = allScales.length - 1;
 		}
-		if (newScale < 64) {
-			newScale = 64;
+		
+		if (newScaleIndex < 0) {
+			newScaleIndex = 0;
 		}
-		if (newScale != scale) {		
-			scale = newScale;
+
+		if (newScaleIndex != scaleIndex) {		
+			scaleIndex = newScaleIndex;
 			scaleAllImages();
 		}
 	}
 	
 	public int getScale() {
-		return scale;
+		return allScales[scaleIndex];
 	}
 
 	public Image getImage(String key) {

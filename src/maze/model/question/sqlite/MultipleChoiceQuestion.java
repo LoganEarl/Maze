@@ -103,6 +103,7 @@ public class MultipleChoiceQuestion implements SQLiteQuestion {
         if(databaseName == null || databaseName.isEmpty())
             throw new IllegalArgumentException("database name should not be empty");
         boolean update = DatabaseManager.executeStatement(REPLACE_QUESTION, databaseName, id, prompt, TYPE_MULTIPLE_CHOICE, keyItemName) > 0;
+        DatabaseManager.executeStatement(DELETE_ANSWERS, databaseName, id);
         for(String answer: possibleAnswers)
             if(update) {
                 int correctCode = correctAnswer.equals(answer)? 1:0;

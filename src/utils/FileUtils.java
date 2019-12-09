@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 
 public class FileUtils {
-    public static final String DATA_DIRECTORY = System.getProperty("user.dir").replace("\\", "/") + "/data/";
+    public static final String DATA_DIRECTORY = System.getenv("APPDATA").replace("\\", "/") + "/Dabuggers Maze/";
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void copyFile(File sourceFile, File destFile) {
         try {

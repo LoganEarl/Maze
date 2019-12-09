@@ -131,18 +131,18 @@ public class GraphicsPanel extends Panel implements View.MapDetailView, MouseWhe
 
     public void zoomTo(Zoom zoom) {
         if (zoom == Zoom.in) {
-            resManager.adjustScale(64);
+            resManager.adjustScale(1);
         } else {
-            resManager.adjustScale(-64);
+            resManager.adjustScale(-1);
         }
     }
 
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         if (e.getWheelRotation() < 0) {
-            resManager.adjustScale(64);
+            resManager.adjustScale(1);
         } else {
-            resManager.adjustScale(-64);
+            resManager.adjustScale(-1);
         }
         repaint();
     }

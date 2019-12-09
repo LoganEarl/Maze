@@ -33,8 +33,9 @@ public class MainMenuPanel extends Panel implements ResultReceiver, ActionListen
 	
 	private JButton buttonNewGame = new JButton("New Game");
 	private JButton buttonLoadGame = new JButton("Load Game");
-	private JButton buttonManageQuestions = new JButton("Manage Questions");
 	private JButton buttonMasterKey = new JButton("Master Key: Off");
+	private JButton buttonControls = new JButton("View Controls");
+	private JButton buttonManageQuestions = new JButton("Manage Questions");
 	
 	public MainMenuPanel(GameEventListener listener) {
 		super(PanelType.MAIN_MENU);
@@ -64,18 +65,19 @@ public class MainMenuPanel extends Panel implements ResultReceiver, ActionListen
 		file = new File("res/title.png");
 		try {
 			Image image = ImageIO.read(file);
-			g.drawImage(image, this.getWidth() / 2 - 50, getHeight() / 2 - 350, null);
+			g.drawImage(image, this.getWidth() / 2 - 50, getHeight() / 2 - 425, null);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	private void insertAllComponents() {
-		ViewUtils.insertComponent(this, gc, new JLabel(" "), 		0, 0, 1, 1, 520, 300);
+		ViewUtils.insertComponent(this, gc, new JLabel(" "), 		0, 0, 1, 1, 520, 250);
 		ViewUtils.insertComponent(this, gc, buttonNewGame, 			1, 1, 1, 1, 400,  80);
-		ViewUtils.insertComponent(this, gc, buttonLoadGame, 		1, 2, 1, 1, 400,  80);
-		ViewUtils.insertComponent(this, gc, buttonManageQuestions, 	1, 3, 1, 1, 400,  80);
-		ViewUtils.insertComponent(this, gc, buttonMasterKey, 		1, 4, 1, 1, 400,  80);
+		ViewUtils.insertComponent(this, gc, buttonLoadGame, 		1, 2, 1, 1, 400,  80);	
+		ViewUtils.insertComponent(this, gc, buttonMasterKey, 		1, 3, 1, 1, 400,  80);
+		ViewUtils.insertComponent(this, gc, buttonControls, 		1, 4, 1, 1, 400,  80);
+		ViewUtils.insertComponent(this, gc, buttonManageQuestions, 	1, 5, 1, 1, 400,  80);
 	}
 	
 	private void initializeAllComponents() {
@@ -109,6 +111,9 @@ public class MainMenuPanel extends Panel implements ResultReceiver, ActionListen
 			} else {
 				buttonMasterKey.setText("Master Key: Off");
 			}
+		} else if (buttonClicked == buttonControls) {
+	    	GameEvent gameEvent = new ResultEvent(ControlsPanel.class, this, null);
+	    	listener.onGameEvent(gameEvent);
 		} else {
 			JOptionPane.showMessageDialog(null, "Invalid Command: " + buttonClicked.getText());
 	    }		

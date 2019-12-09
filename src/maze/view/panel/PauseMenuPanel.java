@@ -30,6 +30,7 @@ public class PauseMenuPanel extends Panel implements ResultReceiver, ActionListe
 	private JButton buttonContinue = new JButton("Continue");
 	private JButton buttonSaveGame = new JButton("Save Game");
 	private JButton buttonLoadGame = new JButton("Load Game");
+	private JButton buttonControls = new JButton("View Controls");
 	private JButton buttonQuit = new JButton("Quit To Main Menu");
 	
 	public PauseMenuPanel(GameEventListener listener) {
@@ -50,7 +51,8 @@ public class PauseMenuPanel extends Panel implements ResultReceiver, ActionListe
 		ViewUtils.insertComponent(this, gc, buttonContinue, 	0, 1, 1, 1, 400,  80);
 		ViewUtils.insertComponent(this, gc, buttonSaveGame, 	0, 2, 1, 1, 400,  80);
 		ViewUtils.insertComponent(this, gc, buttonLoadGame, 	0, 3, 1, 1, 400,  80);
-		ViewUtils.insertComponent(this, gc, buttonQuit, 		0, 4, 1, 1, 400,  80);
+		ViewUtils.insertComponent(this, gc, buttonControls, 	0, 4, 1, 1, 400,  80);
+		ViewUtils.insertComponent(this, gc, buttonQuit, 		0, 5, 1, 1, 400,  80);
 	}
 	
 	private void initializeAllComponents() {
@@ -85,6 +87,9 @@ public class PauseMenuPanel extends Panel implements ResultReceiver, ActionListe
 		} else if (buttonClicked == buttonQuit) {
 			SwitchPanelEvent event = new SwitchPanelEvent(PanelType.MAIN_MENU);
 			listener.onGameEvent(event);
+		} else if (buttonClicked == buttonControls) {
+	    	GameEvent gameEvent = new ResultEvent(ControlsPanel.class, this, null);
+	    	listener.onGameEvent(gameEvent);
 		} else {
 			JOptionPane.showMessageDialog(null, "Invalid Command: " + buttonClicked.getText());
 	    }		

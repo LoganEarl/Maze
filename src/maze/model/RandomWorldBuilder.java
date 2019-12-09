@@ -14,6 +14,7 @@ public class RandomWorldBuilder implements World.Builder {
     private Random rnd;
     private List<Question> questions;
     private int maxCorridorLength;
+    private long randomSeed;
 
     public RandomWorldBuilder(int numRooms, Set<Question> questions, int maxCorridorLength, long randomSeed) {
         if(numRooms < 2)
@@ -28,6 +29,7 @@ public class RandomWorldBuilder implements World.Builder {
         this.numRooms = numRooms;
         this.questions = new ArrayList<>(questions);
         this.maxCorridorLength = maxCorridorLength;
+        this.randomSeed = randomSeed;
     }
 
     @Override
@@ -79,7 +81,7 @@ public class RandomWorldBuilder implements World.Builder {
             cur.addItem(new SkeletonKey());
         }
 
-        return new World(startRoom, endRoom);
+        return new World(startRoom, endRoom, randomSeed);
     }
 
     private static <T extends Room> Set<T> filterNonMainRouteOnly(Collection<T> in){

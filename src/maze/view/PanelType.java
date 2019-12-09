@@ -15,4 +15,5 @@ public enum PanelType {
 	SAVE_SELECTOR,
 	GAME_OVER,
 	GAME_WON,
+	CONTROLS
 }

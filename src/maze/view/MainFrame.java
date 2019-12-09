@@ -16,6 +16,7 @@ import maze.controller.events.MoveEvent;
 import maze.controller.events.SwitchPanelEvent;
 import maze.controller.events.ZoomEvent;
 import maze.model.question.QuestionDataSource;
+import maze.view.panel.ControlsPanel;
 import maze.view.panel.GameOverPanel;
 import maze.view.panel.GameWonPanel;
 import maze.view.panel.GraphicsPanel;
@@ -34,12 +35,14 @@ import utils.ResultProvider;
 import utils.ResultReceiver;
 
 public class MainFrame extends JFrame implements View {
+	private Controller controller;
 	private GameEventListener listener;
 	private QuestionDataSource dataSource;
 	private Map<PanelType, Panel> panels = new LinkedHashMap<>();
 
 	public MainFrame(Controller controller) {
 		super("DAbuggers Maze");
+		this.controller = controller;
 		this.listener = controller.getEventListener();
 		this.dataSource = controller.getDataSource();
 		
@@ -57,6 +60,7 @@ public class MainFrame extends JFrame implements View {
 		panels.put(PanelType.SAVE_SELECTOR, new SaveSelectorPanel());
 		panels.put(PanelType.GAME_OVER, new GameOverPanel(listener));
 		panels.put(PanelType.GAME_WON, new GameWonPanel(listener));
+		panels.put(PanelType.CONTROLS, new ControlsPanel());
 		
 		setSize(1280, 900);
 		setMinimumSize(new Dimension(1280, 900));
@@ -150,6 +154,12 @@ public class MainFrame extends JFrame implements View {
 		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_I, "ShowInventory", (e) -> {
 			SwitchPanelEvent event = new SwitchPanelEvent(PanelType.INVENTORY);
 			listener.onGameEvent(event);
+		});
+		
+		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_F12, "ShowSeed", (e) -> {
+			if (controller.getWorld() != null) {
+				JOptionPane.showMessageDialog(null, "Seed: " + controller.getWorld().getSeed());
+			}
 		});
 	}
 }
