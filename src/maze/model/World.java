@@ -69,9 +69,9 @@ public class World implements Serializable {
             return true;
 
         Set<Room> myVisited = new HashSet<>(visited);
-        Set<Item> foundItems = new HashSet<>(source.getItems());
+        //Set<Item> foundItems = new HashSet<>(source.getItems());
         Set<Item> myUsedItems = new HashSet<>(usedItems);
-        foundItems.addAll(usableItems);
+        usableItems.addAll(source.getItems());
         myVisited.add(source);
 
         //class A calls: explore as far as we can without using any items
@@ -79,7 +79,7 @@ public class World implements Serializable {
             Room nextRoom = exit.getOtherRoom(source);
             if(!myVisited.contains(nextRoom))
                 if(!exit.isLocked() || exit.isOpen())
-                    if(canPathTo(nextRoom, exitRoom, myVisited, foundItems, new HashSet<>()))
+                    if(canPathTo(nextRoom, exitRoom, myVisited, usableItems, new HashSet<>()))
                         return true;
         }
 
@@ -91,12 +91,11 @@ public class World implements Serializable {
             Room nextRoom = exit.getOtherRoom(source);
             if(!myVisited.contains(nextRoom)){
                 if(!exit.isLocked() || exit.isOpen()){
-                    if(canPathTo(nextRoom, exitRoom, myVisited, foundItems, myUsedItems))
+                    if(canPathTo(nextRoom, exitRoom, myVisited, usableItems, myUsedItems))
                         return true;
-                }else if(foundItems.contains(exit.getKeyItem()) && !myUsedItems.contains(exit.getKeyItem())){
+                }else if(usableItems.contains(exit.getKeyItem()) && !myUsedItems.contains(exit.getKeyItem())){
                     myUsedItems.add(exit.getKeyItem());
-                    foundItems.remove(exit.getKeyItem());
-                    if(canPathTo(nextRoom, exitRoom, myVisited, foundItems, myUsedItems))
+                    if(canPathTo(nextRoom, exitRoom, myVisited, usableItems, myUsedItems))
                         return true;
                 }
             }
@@ -110,14 +109,14 @@ public class World implements Serializable {
             Room nextRoom = exit.getOtherRoom(source);
             if(!myVisited.contains(nextRoom)){
                 if(!exit.isLocked() || exit.isOpen()){
-                    if(canPathTo(nextRoom, exitRoom, myVisited, foundItems, myUsedItems))
+                    if(canPathTo(nextRoom, exitRoom, myVisited, usableItems, myUsedItems))
                         return true;
                 }else{
-                    for(Item i:foundItems){
+                    for(Item i:usableItems){
                         if(i.answersQuestion(exit.getQuestion()) && !usedItems.contains(i)){
                             Set<Item> newUsedItems = new HashSet<>(usedItems);
                             newUsedItems.add(i);
-                            if(canPathTo(nextRoom, exitRoom, myVisited, foundItems, newUsedItems))
+                            if(canPathTo(nextRoom, exitRoom, myVisited, usableItems, newUsedItems))
                                 return true;
                         }
                     }
