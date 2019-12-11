@@ -2,6 +2,8 @@ package maze.model;
 
 import maze.Direction;
 import maze.model.question.Question;
+import maze.model.question.SkeletonKey;
+import maze.model.question.TestingQuestions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +16,7 @@ class PlayerTest {
 
     @BeforeEach
     void setUp() {
-        testWorld = new StubbedStaticWorldBuilder().build();
+        testWorld = new StubbedWorldBuilder().build();
         testPlayer = testWorld.getPlayer();
     }
 
@@ -28,10 +30,10 @@ class PlayerTest {
     void move() {
         testPlayer.getCurrentRoom().getDoor(Direction.north).lock();
         if ((testPlayer.move(Direction.north)))
-            fail();
+            assert false;
         testPlayer.getCurrentRoom().getDoor(Direction.north).open();
         if(!testPlayer.move(Direction.north))
-            fail();
+            assert false;
         Room starterRoom = testWorld.getEntryRoom();
         assert(testPlayer.getCurrentRoom() == starterRoom.getDoor(Direction.north).getOtherRoom(starterRoom));
     }
@@ -59,12 +61,13 @@ class PlayerTest {
     @Test
     void items() {
         assert(testPlayer.getItems().size() == 0);
-        testPlayer.addItem(Question.STUBBED_ITEM);
-        testPlayer.addItem(Question.SKELETON_KEY);
-        assert(testPlayer.getItems().contains(Question.SKELETON_KEY));
-        assert(testPlayer.getItems().contains(Question.STUBBED_ITEM));
-        testPlayer.removeItem(Question.SKELETON_KEY);
-        assert(!testPlayer.getItems().contains(Question.SKELETON_KEY));
-        assert(testPlayer.getItems().contains(Question.STUBBED_ITEM));
+        Item i0 = TestingQuestions.questions[0].constructKeyItem();
+        Item i1 = TestingQuestions.questions[1].constructKeyItem();
+        testPlayer.addItem(i0);
+        testPlayer.addItem(i1);
+        assert(testPlayer.getItems().contains(i0));
+        testPlayer.removeItem(i0);
+        assert(!testPlayer.getItems().contains(i0));
+        assert(testPlayer.getItems().contains(i1));
     }
 }

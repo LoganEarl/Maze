@@ -1,31 +1,70 @@
 package maze.view;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 
-import maze.controller.Controller;
-import maze.controller.events.*;
 import maze.Direction;
-import maze.model.Player;
-import maze.model.World;
+import maze.controller.Controller;
+import maze.controller.GameEventListener;
+import maze.controller.events.MoveEvent;
+import maze.controller.events.SwitchPanelEvent;
+import maze.controller.events.ZoomEvent;
+import maze.model.question.QuestionDataSource;
+import maze.view.panel.ControlsPanel;
+import maze.view.panel.GameOverPanel;
+import maze.view.panel.GameWonPanel;
+import maze.view.panel.GraphicsPanel;
+import maze.view.panel.InventoryPanel;
+import maze.view.panel.ItemSelectorPanel;
+import maze.view.panel.LoadingPanel;
+import maze.view.panel.MainMenuPanel;
+import maze.view.panel.MessagePanel;
+import maze.view.panel.PauseMenuPanel;
+import maze.view.panel.QuestionEditorPanel;
+import maze.view.panel.QuestionMenuPanel;
+import maze.view.panel.QuestionPanel;
+import maze.view.panel.QuestionSelectorPanel;
+import maze.view.panel.SaveSelectorPanel;
+import utils.ResultProvider;
+import utils.ResultReceiver;
 
-public class MainFrame extends JFrame {
+public class MainFrame extends JFrame implements View {
 	private Controller controller;
-	private MainMenuPanel mainMenuPanel;
-	public LoadingPanel loadingPanel;
-	private GraphicsPanel graphicsPanel;
+	private GameEventListener listener;
+	private QuestionDataSource dataSource;
+	private Map<PanelType, Panel> panels = new LinkedHashMap<>();
 
 	public MainFrame(Controller controller) {
-		super("Trivia Maze");
+		super("DAbuggers Maze");
 		this.controller = controller;
-
-		mainMenuPanel = new MainMenuPanel(controller);
-		loadingPanel = new LoadingPanel();
-		graphicsPanel = new GraphicsPanel();
-
+		this.listener = controller.getEventListener();
+		this.dataSource = controller.getDataSource();
+		
+		panels.put(PanelType.MAIN_MENU, new MainMenuPanel(listener));
+		panels.put(PanelType.LOADING, new LoadingPanel());
+		panels.put(PanelType.GRAPHICS, new GraphicsPanel(controller));
+		panels.put(PanelType.QUESTION, new QuestionPanel(listener));
+		panels.put(PanelType.QUESTION_MENU, new QuestionMenuPanel(listener, dataSource));
+		panels.put(PanelType.QUESTION_SELECTOR, new QuestionSelectorPanel(dataSource));
+		panels.put(PanelType.QUESTION_EDITOR, new QuestionEditorPanel(dataSource));
+		panels.put(PanelType.INVENTORY, new InventoryPanel(controller));
+		panels.put(PanelType.ITEM_SELECTOR, new ItemSelectorPanel(controller));
+		panels.put(PanelType.MESSAGE, new MessagePanel());
+		panels.put(PanelType.PAUSE_MENU, new PauseMenuPanel(listener));
+		panels.put(PanelType.SAVE_SELECTOR, new SaveSelectorPanel());
+		panels.put(PanelType.GAME_OVER, new GameOverPanel(listener));
+		panels.put(PanelType.GAME_WON, new GameWonPanel(listener));
+		panels.put(PanelType.CONTROLS, new ControlsPanel());
+		
+		setSize(1280, 900);
+		setMinimumSize(new Dimension(1280, 900));
+		
 		setLayout(new GridBagLayout());
 		GridBagConstraints gc = new GridBagConstraints();
 
@@ -34,52 +73,93 @@ public class MainFrame extends JFrame {
 		gc.weightx = 1;
 		gc.weighty = 1;
 		gc.fill = GridBagConstraints.BOTH;
+		
+		for (JPanel panel : panels.values()) {
+			add(panel, gc);
+		}
+		
+		switchToPanel(PanelType.MAIN_MENU);
 
-		add(mainMenuPanel, gc);
-		add(loadingPanel, gc);
-		add(graphicsPanel, gc);
+		bindKeys();
+	}
 
-		mainMenuPanel.setVisible(true);
-		loadingPanel.setVisible(false);
-		graphicsPanel.setVisible(false);
+	@Override
+	public MapDetailView getMapDetailView() {
+		return (GraphicsPanel) panels.get(PanelType.GRAPHICS);
+	}
 
+	public void switchToPanel(PanelType panelType) {
+		for (Panel panel : panels.values()) {
+			panel.setVisible(false);
+		}
+		panels.get(panelType).display();
+	}
+
+	@Override
+	public void promptForResult(Class<? extends ResultProvider> resultProvider, ResultReceiver resultReceiver, Object object) {
+		for (Panel panel : panels.values()) {
+			if (panel.getClass() == resultProvider) {
+				if (panel instanceof ResultProvider) {
+					switchToPanel(panel.getPanelType());
+					ResultProvider rp = (ResultProvider) panel;
+					rp.getResult(resultReceiver, object);
+					break;
+				}
+			}
+		}
+	}
+	
+	private void bindKeys() {
+		GraphicsPanel graphicsPanel = (GraphicsPanel) panels.get(PanelType.GRAPHICS);
+		
 		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_W, "MoveNorth", (e) -> {
-			MoveEvent moveEvent = new MoveEvent(Direction.south);
-			controller.onGameEvent(moveEvent);
+			MoveEvent moveEvent = new MoveEvent(Direction.north);
+			listener.onGameEvent(moveEvent);
+			SwingUtilities.invokeLater(graphicsPanel::repaint);
 		});
 
 		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_A, "MoveWest", (e) -> {
 			MoveEvent moveEvent = new MoveEvent(Direction.west);
-			controller.onGameEvent(moveEvent);
+			listener.onGameEvent(moveEvent);
+			SwingUtilities.invokeLater(graphicsPanel::repaint);
 		});
 
 		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_S, "MoveSouth", (e) -> {
-			MoveEvent moveEvent = new MoveEvent(Direction.north);
-			controller.onGameEvent(moveEvent);
+			MoveEvent moveEvent = new MoveEvent(Direction.south);
+			listener.onGameEvent(moveEvent);
+			SwingUtilities.invokeLater(graphicsPanel::repaint);
 		});
 
 		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_D, "MoveEast", (e) -> {
 			MoveEvent moveEvent = new MoveEvent(Direction.east);
-			controller.onGameEvent(moveEvent);
+			listener.onGameEvent(moveEvent);
+			SwingUtilities.invokeLater(graphicsPanel::repaint);
 		});
 
 		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_ESCAPE, "PauseMenu", (e) -> {
-			PauseMenuEvent event = new PauseMenuEvent();
-			controller.onGameEvent(event);
+			SwitchPanelEvent event = new SwitchPanelEvent(PanelType.PAUSE_MENU);
+			listener.onGameEvent(event);
 		});
-	}
-
-	public void initialize(Player player, World world) {
-		graphicsPanel.initialize(player, world);
-	}
-
-	public GraphicsPanel getGraphicsPanel() {
-		return graphicsPanel;
-	}
-
-	public void switchToPanel(Panel panel) {
-		mainMenuPanel.setVisible(panel == Panel.MAINMENU);
-		loadingPanel.setVisible(panel == Panel.LOADING);
-		graphicsPanel.setVisible(panel == Panel.GRAPHICS);
+		
+		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_ADD, "ZoomIn", (e) -> {
+			ZoomEvent event = new ZoomEvent(Zoom.in);
+			listener.onGameEvent(event);
+		});
+		
+		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_SUBTRACT, "ZoomOut", (e) -> {
+			ZoomEvent event = new ZoomEvent(Zoom.out);
+			listener.onGameEvent(event);
+		});
+		
+		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_I, "ShowInventory", (e) -> {
+			SwitchPanelEvent event = new SwitchPanelEvent(PanelType.INVENTORY);
+			listener.onGameEvent(event);
+		});
+		
+		KeyBinder.addKeyBinding(graphicsPanel, KeyEvent.VK_F12, "ShowSeed", (e) -> {
+			if (controller.getWorld() != null) {
+				JOptionPane.showMessageDialog(null, "Seed: " + controller.getWorld().getSeed());
+			}
+		});
 	}
 }

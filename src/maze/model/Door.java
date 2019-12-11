@@ -1,12 +1,16 @@
 package maze.model;
 
 import maze.model.question.Question;
+import maze.model.question.QuestionDataSource;
 import utils.Pair;
 
+import java.io.Serializable;
+
 @SuppressWarnings("WeakerAccess")
-public class Door {
+public class Door implements Serializable {
     private Pair<Room> connectedRooms;
-    private Question question;
+    transient private Question question;
+    private int questionId = -1;
     //locked due to repeated open attempts
     private boolean isLocked;
     //has been opened, either with an item or a question
@@ -16,16 +20,21 @@ public class Door {
     public Door(Pair<Room> connectedRooms, Question question, Item keyItem) {
         this.connectedRooms = connectedRooms;
         this.question = question;
+        this.questionId = question.getID();
         this.isLocked = false;
         this.isOpen = false;
         this.keyItem = keyItem;
     }
 
-    public Room getOtherRoom(Room sourceRoom){
+    void setKeyItem(Item key){
+        this.keyItem = key;
+    }
+
+    public Room getOtherRoom(Room sourceRoom) {
         return connectedRooms.otherItem(sourceRoom);
     }
 
-    public Pair<Room> getConnectedRooms(){
+    public Pair<Room> getConnectedRooms() {
         return connectedRooms;
     }
 
@@ -39,7 +48,7 @@ public class Door {
     }
 
     //doors cannot be unlocked once locked
-    public void lock(){
+    public void lock() {
         this.isLocked = true;
     }
 
@@ -48,12 +57,16 @@ public class Door {
         return isOpen;
     }
 
-    public void open(){
+    public void open() {
         this.isOpen = true;
     }
 
     //returns the key item or null if no item exists for this room
-    public Item getKeyItem(){
+    public Item getKeyItem() {
         return this.keyItem;
+    }
+
+    public void refreshQuestionFromStorage(QuestionDataSource dataSource) {
+        this.question = dataSource.getQuestionWithID(questionId);
     }
 }

@@ -1,32 +1,14 @@
 package maze.controller;
 
-import maze.model.Player;
 import maze.model.World;
-import maze.view.GraphicsPanel;
-import maze.view.MainFrame;
+import maze.model.question.QuestionDataSource;
+import maze.view.View;
 
-public class Controller implements GameEventListener {
-	private MainFrame mainFrame;
-	private Player player;
-	private World world;
-	
-	public void setMainFrame(MainFrame mainFrame) {
-		this.mainFrame = mainFrame;
-	}
-	
-	public void setPlayer(Player player) {
-		this.player = player;
-	}
-	
-	public void setWorld(World world) {
-		this.world = world;
-	}
-	
-	@Override
-	public void onGameEvent(GameEvent gameEvent) {
-		gameEvent.resolveTo(this, mainFrame, player, world);
-		GraphicsPanel graphicsPanel = mainFrame.getGraphicsPanel();
-		graphicsPanel.initialize(player, world);
-		graphicsPanel.repaint();
-	}
+public interface Controller {
+    void setWorld(World world);
+    void setView(View view);
+    World getWorld();
+    View getView();
+    QuestionDataSource getDataSource();
+    GameEventListener getEventListener();
 }

@@ -1,19 +1,34 @@
 package maze.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
 @SuppressWarnings("WeakerAccess")
-public class World {
+public class World implements Serializable {
     private Room entryRoom;
     private Room exitRoom;
     private Player player;
+    private long seed = -1;
 
     World(Room entryRoom, Room exitRoom) {
         this.entryRoom = entryRoom;
         this.exitRoom = exitRoom;
         this.player = new Player(entryRoom);
+    }
+
+    World(Room entryRoom, Room exitRoom, long seed){
+        this(entryRoom, exitRoom);
+        this.seed = seed;
+    }
+
+    public Set<Door> getAllDoors(){
+        Set<Room> allRooms = getAllRooms();
+        Set<Door> allDoors = new HashSet<>();
+        for(Room r: allRooms)
+            allDoors.addAll(r.getDoors());
+        return allDoors;
     }
 
     public Set<Room> getAllRooms(){
@@ -54,9 +69,9 @@ public class World {
             return true;
 
         Set<Room> myVisited = new HashSet<>(visited);
-        Set<Item> foundItems = new HashSet<>(source.getItems());
+        //Set<Item> foundItems = new HashSet<>(source.getItems());
         Set<Item> myUsedItems = new HashSet<>(usedItems);
-        foundItems.addAll(usableItems);
+        usableItems.addAll(source.getItems());
         myVisited.add(source);
 
         //class A calls: explore as far as we can without using any items
@@ -64,7 +79,7 @@ public class World {
             Room nextRoom = exit.getOtherRoom(source);
             if(!myVisited.contains(nextRoom))
                 if(!exit.isLocked() || exit.isOpen())
-                    if(canPathTo(nextRoom, exitRoom, myVisited, foundItems, new HashSet<>()))
+                    if(canPathTo(nextRoom, exitRoom, myVisited, usableItems, new HashSet<>()))
                         return true;
         }
 
@@ -76,12 +91,11 @@ public class World {
             Room nextRoom = exit.getOtherRoom(source);
             if(!myVisited.contains(nextRoom)){
                 if(!exit.isLocked() || exit.isOpen()){
-                    if(canPathTo(nextRoom, exitRoom, myVisited, foundItems, myUsedItems))
+                    if(canPathTo(nextRoom, exitRoom, myVisited, usableItems, myUsedItems))
                         return true;
-                }else if(foundItems.contains(exit.getKeyItem()) && !myUsedItems.contains(exit.getKeyItem())){
+                }else if(usableItems.contains(exit.getKeyItem()) && !myUsedItems.contains(exit.getKeyItem())){
                     myUsedItems.add(exit.getKeyItem());
-                    foundItems.remove(exit.getKeyItem());
-                    if(canPathTo(nextRoom, exitRoom, myVisited, foundItems, myUsedItems))
+                    if(canPathTo(nextRoom, exitRoom, myVisited, usableItems, myUsedItems))
                         return true;
                 }
             }
@@ -95,14 +109,14 @@ public class World {
             Room nextRoom = exit.getOtherRoom(source);
             if(!myVisited.contains(nextRoom)){
                 if(!exit.isLocked() || exit.isOpen()){
-                    if(canPathTo(nextRoom, exitRoom, myVisited, foundItems, myUsedItems))
+                    if(canPathTo(nextRoom, exitRoom, myVisited, usableItems, myUsedItems))
                         return true;
                 }else{
-                    for(Item i:foundItems){
-                        if(exit.getQuestion().isCorrect(i) && !usedItems.contains(i)){
+                    for(Item i:usableItems){
+                        if(i.answersQuestion(exit.getQuestion()) && !usedItems.contains(i)){
                             Set<Item> newUsedItems = new HashSet<>(usedItems);
                             newUsedItems.add(i);
-                            if(canPathTo(nextRoom, exitRoom, myVisited, foundItems, newUsedItems))
+                            if(canPathTo(nextRoom, exitRoom, myVisited, usableItems, newUsedItems))
                                 return true;
                         }
                     }
@@ -123,6 +137,10 @@ public class World {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public long getSeed(){
+        return this.seed;
     }
 
     public interface Builder {

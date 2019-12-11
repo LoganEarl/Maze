@@ -2,6 +2,7 @@ package maze.model;
 
 import maze.Direction;
 import maze.model.question.Question;
+import maze.model.question.SkeletonKey;
 import utils.Pair;
 
 import java.util.*;
@@ -13,22 +14,22 @@ public class RandomWorldBuilder implements World.Builder {
     private Random rnd;
     private List<Question> questions;
     private int maxCorridorLength;
+    private long randomSeed;
 
-    public RandomWorldBuilder(int numRooms, List<Question> questions, int maxCorridorLength, long randomSeed) {
-        if(questions == null || questions.size() < 2)
-            throw new IllegalArgumentException("Not enough questions provided");
-        if(questions.size() < numRooms * 1.5)
-            throw new IllegalArgumentException("Not enough questions");
+    public RandomWorldBuilder(int numRooms, Set<Question> questions, int maxCorridorLength, long randomSeed) {
         if(numRooms < 2)
             throw new IllegalArgumentException("Need at least 2 rooms");
+        if(questions == null || questions.size() < numRooms * 1.5)
+            throw new IllegalArgumentException("Not enough questions");
         if(maxCorridorLength < 0)
-            throw new IllegalArgumentException("Corridors must have a length of 0 or more");
+            throw new IllegalArgumentException("Corridor length must be greater than or equal to 0");
         rnd = new Random(randomSeed);
 
 
         this.numRooms = numRooms;
-        this.questions = questions;
+        this.questions = new ArrayList<>(questions);
         this.maxCorridorLength = maxCorridorLength;
+        this.randomSeed = randomSeed;
     }
 
     @Override
@@ -36,7 +37,6 @@ public class RandomWorldBuilder implements World.Builder {
         //phase 1 generate rooms
         Map<Point, TempRoom> rooms = new LinkedHashMap<>();
         generateRooms(numRooms, new Point(0, 0), null, rooms, new LinkedHashSet<>());
-
 
         //phase 2 make start and end
         TempRoom startRoom, endRoom;
@@ -60,12 +60,14 @@ public class RandomWorldBuilder implements World.Builder {
             if(roomsAccessibleBeforeDoor.get(door).size() > 0)
                 mainItemableDoors.add(door);
         }
+        endRoom.isOnMainRoute = true;
 
         //phase 4 place conventional items
         int numKeys = mainItemableDoors.size()/3;
-        for(int i = 0; i < numKeys; i++){
+        for(int i = 0; i <= numKeys - 1; i++){
             int doorIndex = (i * 3);
-            Item key = mainItemableDoors.get(doorIndex).getKeyItem();
+            Item key = mainItemableDoors.get(doorIndex).getQuestion().constructKeyItem();
+            mainItemableDoors.get(doorIndex).setKeyItem(key);
             Set<TempRoom> possibleRooms = roomsAccessibleBeforeDoor.get(mainItemableDoors.get(doorIndex));
             possibleRooms.toArray(new TempRoom[0])[rnd.nextInt(possibleRooms.size())].addItem(key);
         }
@@ -76,10 +78,10 @@ public class RandomWorldBuilder implements World.Builder {
         for(int i = 0; i < numSkeletonKeys; i++){
             TempRoom cur = possibleRooms.toArray(new TempRoom[0])[rnd.nextInt(possibleRooms.size())];
             possibleRooms.remove(cur);
-            cur.addItem(new Item.SkeletonKey());
+            cur.addItem(new SkeletonKey());
         }
 
-        return new World(startRoom, endRoom);
+        return new World(startRoom, endRoom, randomSeed);
     }
 
     private static <T extends Room> Set<T> filterNonMainRouteOnly(Collection<T> in){
@@ -131,8 +133,8 @@ public class RandomWorldBuilder implements World.Builder {
             int[] distances = new int[toExplore.size()];
             for (int i = 0; i < allocations.length; i++) {
                 Direction d = toExplore.get(i);
+                distances[i] = rnd.nextInt(potentialDirections.get(d)) + 1;
                 if(allocations[i] > 0 && potentialDirections.get(d) > 0) {
-                    distances[i] = rnd.nextInt(potentialDirections.get(d)) + 1;
                     Point walker = roomPos.getAdjacent(d);
                     for (int j = 0; j < distances[i]; j++) {
                         reserved.add(walker);
